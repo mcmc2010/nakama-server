@@ -350,12 +350,12 @@ type moduleInfo struct {
 }
 
 type RuntimeInfo struct {
-	GoRpcFunctions         []string
-	LuaRpcFunctions        []string
+	GoRpcFunctions []string
+	//LuaRpcFunctions        []string
 	JavaScriptRpcFunctions []string
 	GoModules              []*moduleInfo
-	LuaModules             []*moduleInfo
-	JavaScriptModules      []*moduleInfo
+	//LuaModules             []*moduleInfo
+	JavaScriptModules []*moduleInfo
 }
 
 type RuntimeBeforeReqFunctions struct {
@@ -647,10 +647,10 @@ func CheckRuntime(logger *zap.Logger, config Config, version string) error {
 	}
 
 	// Check any Lua runtime modules.
-	err = CheckRuntimeProviderLua(logger, config, version, paths)
-	if err != nil {
-		return err
-	}
+	// err = CheckRuntimeProviderLua(logger, config, version, paths)
+	// if err != nil {
+	// 	return err
+	// }
 
 	// Check any JavaScript runtime modules.
 	err = CheckRuntimeProviderJavascript(logger, config, version)
@@ -694,11 +694,11 @@ func NewRuntime(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.
 		return nil, nil, err
 	}
 
-	luaModules, luaRPCFns, luaBeforeRtFns, luaAfterRtFns, luaBeforeReqFns, luaAfterReqFns, luaMatchmakerMatchedFn, luaTournamentEndFn, luaTournamentResetFn, luaLeaderboardResetFn, luaShutdownFn, luaPurchaseNotificationAppleFn, luaSubscriptionNotificationAppleFn, luaPurchaseNotificationGoogleFn, luaSubscriptionNotificationGoogleFn, luaIndexFilterFns, err := NewRuntimeProviderLua(ctx, logger, startupLogger, db, protojsonMarshaler, protojsonUnmarshaler, config, version, socialClient, leaderboardCache, leaderboardRankCache, leaderboardScheduler, sessionRegistry, sessionCache, statusRegistry, matchRegistry, partyRegistry, tracker, metrics, streamManager, router, satoriClient, allEventFns.eventFunction, runtimeConfig.Path, paths, matchProvider, storageIndex)
-	if err != nil {
-		startupLogger.Error("Error initialising Lua runtime provider", zap.Error(err))
-		return nil, nil, err
-	}
+	// luaModules, luaRPCFns, luaBeforeRtFns, luaAfterRtFns, luaBeforeReqFns, luaAfterReqFns, luaMatchmakerMatchedFn, luaTournamentEndFn, luaTournamentResetFn, luaLeaderboardResetFn, luaShutdownFn, luaPurchaseNotificationAppleFn, luaSubscriptionNotificationAppleFn, luaPurchaseNotificationGoogleFn, luaSubscriptionNotificationGoogleFn, luaIndexFilterFns, err := NewRuntimeProviderLua(ctx, logger, startupLogger, db, protojsonMarshaler, protojsonUnmarshaler, config, version, socialClient, leaderboardCache, leaderboardRankCache, leaderboardScheduler, sessionRegistry, sessionCache, statusRegistry, matchRegistry, partyRegistry, tracker, metrics, streamManager, router, satoriClient, allEventFns.eventFunction, runtimeConfig.Path, paths, matchProvider, storageIndex)
+	// if err != nil {
+	// 	startupLogger.Error("Error initialising Lua runtime provider", zap.Error(err))
+	// 	return nil, nil, err
+	// }
 
 	jsModules, jsRPCFns, jsBeforeRtFns, jsAfterRtFns, jsBeforeReqFns, jsAfterReqFns, jsMatchmakerMatchedFn, jsTournamentEndFn, jsTournamentResetFn, jsLeaderboardResetFn, jsShutdownFn, jsPurchaseNotificationAppleFn, jsSubscriptionNotificationAppleFn, jsPurchaseNotificationGoogleFn, jsSubscriptionNotificationGoogleFn, jsIndexFilterFns, err := NewRuntimeProviderJS(ctx, logger, startupLogger, db, protojsonMarshaler, protojsonUnmarshaler, config, version, socialClient, leaderboardCache, leaderboardRankCache, leaderboardScheduler, sessionRegistry, sessionCache, statusRegistry, matchRegistry, partyRegistry, tracker, metrics, streamManager, router, satoriClient, allEventFns.eventFunction, runtimeConfig.Path, runtimeConfig.JsEntrypoint, matchProvider, storageIndex)
 	if err != nil {
@@ -706,9 +706,11 @@ func NewRuntime(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.
 		return nil, nil, err
 	}
 
-	allModules := make([]string, 0, len(jsModules)+len(luaModules)+len(goModules))
+	allModules := make([]string, 0, len(jsModules)+
+		//len(luaModules)+
+		len(goModules))
 	allModules = append(allModules, jsModules...)
-	allModules = append(allModules, luaModules...)
+	//allModules = append(allModules, luaModules...)
 	allModules = append(allModules, goModules...)
 
 	startupLogger.Info("Found runtime modules", zap.Int("count", len(allModules)), zap.Strings("modules", allModules))
@@ -723,51 +725,57 @@ func NewRuntime(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.
 		startupLogger.Info("Registered event function invocation", zap.String("id", "session_end"))
 	}
 
-	allRPCFunctions := make(map[string]RuntimeRpcFunction, len(goRPCFns)+len(luaRPCFns)+len(jsRPCFns))
+	allRPCFunctions := make(map[string]RuntimeRpcFunction, len(goRPCFns)+
+		//len(luaRPCFns)+
+		len(jsRPCFns))
 	jsRpcIDs := make(map[string]bool, len(jsRPCFns))
 	for id, fn := range jsRPCFns {
 		allRPCFunctions[id] = fn
 		jsRpcIDs[id] = true
 		startupLogger.Info("Registered JavaScript runtime RPC function invocation", zap.String("id", id))
 	}
-	luaRpcIDs := make(map[string]bool, len(luaRPCFns))
-	for id, fn := range luaRPCFns {
-		allRPCFunctions[id] = fn
-		delete(jsRpcIDs, id)
-		luaRpcIDs[id] = true
-		startupLogger.Info("Registered Lua runtime RPC function invocation", zap.String("id", id))
-	}
+	// luaRpcIDs := make(map[string]bool, len(luaRPCFns))
+	// for id, fn := range luaRPCFns {
+	// 	allRPCFunctions[id] = fn
+	// 	delete(jsRpcIDs, id)
+	// 	luaRpcIDs[id] = true
+	// 	startupLogger.Info("Registered Lua runtime RPC function invocation", zap.String("id", id))
+	// }
 	goRpcIDs := make(map[string]bool, len(goRPCFns))
 	for id, fn := range goRPCFns {
 		allRPCFunctions[id] = fn
-		delete(luaRpcIDs, id)
+		delete(jsRpcIDs, id)
 		goRpcIDs[id] = true
 		startupLogger.Info("Registered Go runtime RPC function invocation", zap.String("id", id))
 	}
 
-	allBeforeRtFunctions := make(map[string]RuntimeBeforeRtFunction, len(jsBeforeRtFns)+len(luaBeforeRtFns)+len(goBeforeRtFns))
+	allBeforeRtFunctions := make(map[string]RuntimeBeforeRtFunction, len(jsBeforeRtFns)+
+		//len(luaBeforeRtFns)+
+		len(goBeforeRtFns))
 	for id, fn := range jsBeforeRtFns {
 		allBeforeRtFunctions[id] = fn
 		startupLogger.Info("Registered JavaScript runtime Before function invocation", zap.String("id", strings.TrimPrefix(strings.TrimPrefix(id, API_PREFIX), RTAPI_PREFIX)))
 	}
-	for id, fn := range luaBeforeRtFns {
-		allBeforeRtFunctions[id] = fn
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", strings.TrimPrefix(strings.TrimPrefix(id, API_PREFIX), RTAPI_PREFIX)))
-	}
+	// for id, fn := range luaBeforeRtFns {
+	// 	allBeforeRtFunctions[id] = fn
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", strings.TrimPrefix(strings.TrimPrefix(id, API_PREFIX), RTAPI_PREFIX)))
+	// }
 	for id, fn := range goBeforeRtFns {
 		allBeforeRtFunctions[id] = fn
 		startupLogger.Info("Registered Go runtime Before function invocation", zap.String("id", strings.TrimPrefix(strings.TrimPrefix(id, API_PREFIX), RTAPI_PREFIX)))
 	}
 
-	allAfterRtFunctions := make(map[string]RuntimeAfterRtFunction, len(jsAfterRtFns)+len(luaAfterRtFns)+len(goAfterRtFns))
+	allAfterRtFunctions := make(map[string]RuntimeAfterRtFunction, len(jsAfterRtFns)+
+		//len(luaAfterRtFns)+
+		len(goAfterRtFns))
 	for id, fn := range jsAfterRtFns {
 		allAfterRtFunctions[id] = fn
 		startupLogger.Info("Registered JavaScript runtime After function invocation", zap.String("id", strings.TrimPrefix(strings.TrimPrefix(id, API_PREFIX), RTAPI_PREFIX)))
 	}
-	for id, fn := range luaAfterRtFns {
-		allAfterRtFunctions[id] = fn
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", strings.TrimPrefix(strings.TrimPrefix(id, API_PREFIX), RTAPI_PREFIX)))
-	}
+	// for id, fn := range luaAfterRtFns {
+	// 	allAfterRtFunctions[id] = fn
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", strings.TrimPrefix(strings.TrimPrefix(id, API_PREFIX), RTAPI_PREFIX)))
+	// }
 	for id, fn := range goAfterRtFns {
 		allAfterRtFunctions[id] = fn
 		startupLogger.Info("Registered Go runtime After function invocation", zap.String("id", strings.TrimPrefix(strings.TrimPrefix(id, API_PREFIX), RTAPI_PREFIX)))
@@ -1023,330 +1031,330 @@ func NewRuntime(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.
 	}
 
 	// Register Lua Before Req functions
-	if luaBeforeReqFns.beforeGetAccountFunction != nil {
-		allBeforeReqFunctions.beforeGetAccountFunction = luaBeforeReqFns.beforeGetAccountFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "getaccount"))
-	}
-	if luaBeforeReqFns.beforeGetMatchmakerStatsFunction != nil {
-		allBeforeReqFunctions.beforeGetMatchmakerStatsFunction = luaBeforeReqFns.beforeGetMatchmakerStatsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "getmatchmakerstats"))
-	}
-	if luaBeforeReqFns.beforeUpdateAccountFunction != nil {
-		allBeforeReqFunctions.beforeUpdateAccountFunction = luaBeforeReqFns.beforeUpdateAccountFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "updateaccount"))
-	}
-	if luaBeforeReqFns.beforeDeleteAccountFunction != nil {
-		allBeforeReqFunctions.beforeDeleteAccountFunction = luaBeforeReqFns.beforeDeleteAccountFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "deleteaccount"))
-	}
-	if luaBeforeReqFns.beforeSessionRefreshFunction != nil {
-		allBeforeReqFunctions.beforeSessionRefreshFunction = luaBeforeReqFns.beforeSessionRefreshFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "sessionrefresh"))
-	}
-	if luaBeforeReqFns.beforeSessionLogoutFunction != nil {
-		allBeforeReqFunctions.beforeSessionLogoutFunction = luaBeforeReqFns.beforeSessionLogoutFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "sessionlogout"))
-	}
-	if luaBeforeReqFns.beforeAuthenticateAppleFunction != nil {
-		allBeforeReqFunctions.beforeAuthenticateAppleFunction = luaBeforeReqFns.beforeAuthenticateAppleFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticateapple"))
-	}
-	if luaBeforeReqFns.beforeAuthenticateCustomFunction != nil {
-		allBeforeReqFunctions.beforeAuthenticateCustomFunction = luaBeforeReqFns.beforeAuthenticateCustomFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticatecustom"))
-	}
-	if luaBeforeReqFns.beforeAuthenticateDeviceFunction != nil {
-		allBeforeReqFunctions.beforeAuthenticateDeviceFunction = luaBeforeReqFns.beforeAuthenticateDeviceFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticatedevice"))
-	}
-	if luaBeforeReqFns.beforeAuthenticateEmailFunction != nil {
-		allBeforeReqFunctions.beforeAuthenticateEmailFunction = luaBeforeReqFns.beforeAuthenticateEmailFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticateemail"))
-	}
-	if luaBeforeReqFns.beforeAuthenticateFacebookFunction != nil {
-		allBeforeReqFunctions.beforeAuthenticateFacebookFunction = luaBeforeReqFns.beforeAuthenticateFacebookFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticatefacebook"))
-	}
-	if luaBeforeReqFns.beforeAuthenticateFacebookInstantGameFunction != nil {
-		allBeforeReqFunctions.beforeAuthenticateFacebookInstantGameFunction = luaBeforeReqFns.beforeAuthenticateFacebookInstantGameFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticatefacebookinstantgame"))
-	}
-	if luaBeforeReqFns.beforeAuthenticateGameCenterFunction != nil {
-		allBeforeReqFunctions.beforeAuthenticateGameCenterFunction = luaBeforeReqFns.beforeAuthenticateGameCenterFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticategamecenter"))
-	}
-	if luaBeforeReqFns.beforeAuthenticateGoogleFunction != nil {
-		allBeforeReqFunctions.beforeAuthenticateGoogleFunction = luaBeforeReqFns.beforeAuthenticateGoogleFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticategoogle"))
-	}
-	if luaBeforeReqFns.beforeAuthenticateSteamFunction != nil {
-		allBeforeReqFunctions.beforeAuthenticateSteamFunction = luaBeforeReqFns.beforeAuthenticateSteamFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticatesteam"))
-	}
-	if luaBeforeReqFns.beforeListChannelMessagesFunction != nil {
-		allBeforeReqFunctions.beforeListChannelMessagesFunction = luaBeforeReqFns.beforeListChannelMessagesFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listchannelmessages"))
-	}
-	if luaBeforeReqFns.beforeListFriendsFunction != nil {
-		allBeforeReqFunctions.beforeListFriendsFunction = luaBeforeReqFns.beforeListFriendsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listfriends"))
-	}
-	if luaBeforeReqFns.beforeListFriendsOfFriendsFunction != nil {
-		allBeforeReqFunctions.beforeListFriendsOfFriendsFunction = luaBeforeReqFns.beforeListFriendsOfFriendsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listfriendsoffriends"))
-	}
-	if luaBeforeReqFns.beforeAddFriendsFunction != nil {
-		allBeforeReqFunctions.beforeAddFriendsFunction = luaBeforeReqFns.beforeAddFriendsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "addfriends"))
-	}
-	if luaBeforeReqFns.beforeDeleteFriendsFunction != nil {
-		allBeforeReqFunctions.beforeDeleteFriendsFunction = luaBeforeReqFns.beforeDeleteFriendsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "deletefriends"))
-	}
-	if luaBeforeReqFns.beforeBlockFriendsFunction != nil {
-		allBeforeReqFunctions.beforeBlockFriendsFunction = luaBeforeReqFns.beforeBlockFriendsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "blockfriends"))
-	}
-	if luaBeforeReqFns.beforeImportFacebookFriendsFunction != nil {
-		allBeforeReqFunctions.beforeImportFacebookFriendsFunction = luaBeforeReqFns.beforeImportFacebookFriendsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "importfacebookfriends"))
-	}
-	if luaBeforeReqFns.beforeImportSteamFriendsFunction != nil {
-		allBeforeReqFunctions.beforeImportSteamFriendsFunction = luaBeforeReqFns.beforeImportSteamFriendsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "importsteamfriends"))
-	}
-	if luaBeforeReqFns.beforeCreateGroupFunction != nil {
-		allBeforeReqFunctions.beforeCreateGroupFunction = luaBeforeReqFns.beforeCreateGroupFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "creategroup"))
-	}
-	if luaBeforeReqFns.beforeUpdateGroupFunction != nil {
-		allBeforeReqFunctions.beforeUpdateGroupFunction = luaBeforeReqFns.beforeUpdateGroupFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "updategroup"))
-	}
-	if luaBeforeReqFns.beforeDeleteGroupFunction != nil {
-		allBeforeReqFunctions.beforeDeleteGroupFunction = luaBeforeReqFns.beforeDeleteGroupFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "deletegroup"))
-	}
-	if luaBeforeReqFns.beforeJoinGroupFunction != nil {
-		allBeforeReqFunctions.beforeJoinGroupFunction = luaBeforeReqFns.beforeJoinGroupFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "joingroup"))
-	}
-	if luaBeforeReqFns.beforeLeaveGroupFunction != nil {
-		allBeforeReqFunctions.beforeLeaveGroupFunction = luaBeforeReqFns.beforeLeaveGroupFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "leavegroup"))
-	}
-	if luaBeforeReqFns.beforeAddGroupUsersFunction != nil {
-		allBeforeReqFunctions.beforeAddGroupUsersFunction = luaBeforeReqFns.beforeAddGroupUsersFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "addgroupusers"))
-	}
-	if luaBeforeReqFns.beforeBanGroupUsersFunction != nil {
-		allBeforeReqFunctions.beforeBanGroupUsersFunction = luaBeforeReqFns.beforeBanGroupUsersFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "bangroupusers"))
-	}
-	if luaBeforeReqFns.beforeKickGroupUsersFunction != nil {
-		allBeforeReqFunctions.beforeKickGroupUsersFunction = luaBeforeReqFns.beforeKickGroupUsersFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "kickgroupusers"))
-	}
-	if luaBeforeReqFns.beforePromoteGroupUsersFunction != nil {
-		allBeforeReqFunctions.beforePromoteGroupUsersFunction = luaBeforeReqFns.beforePromoteGroupUsersFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "promotegroupusers"))
-	}
-	if luaBeforeReqFns.beforeListGroupUsersFunction != nil {
-		allBeforeReqFunctions.beforeListGroupUsersFunction = luaBeforeReqFns.beforeListGroupUsersFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listgroupusers"))
-	}
-	if luaBeforeReqFns.beforeListUserGroupsFunction != nil {
-		allBeforeReqFunctions.beforeListUserGroupsFunction = luaBeforeReqFns.beforeListUserGroupsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listusergroups"))
-	}
-	if luaBeforeReqFns.beforeListGroupsFunction != nil {
-		allBeforeReqFunctions.beforeListGroupsFunction = luaBeforeReqFns.beforeListGroupsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listgroups"))
-	}
-	if luaBeforeReqFns.beforeDeleteLeaderboardRecordFunction != nil {
-		allBeforeReqFunctions.beforeDeleteLeaderboardRecordFunction = luaBeforeReqFns.beforeDeleteLeaderboardRecordFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "deleteleaderboardrecord"))
-	}
-	if luaBeforeReqFns.beforeDeleteTournamentRecordFunction != nil {
-		allBeforeReqFunctions.beforeDeleteTournamentRecordFunction = luaBeforeReqFns.beforeDeleteTournamentRecordFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "deletetournamentrecord"))
-	}
-	if luaBeforeReqFns.beforeListLeaderboardRecordsFunction != nil {
-		allBeforeReqFunctions.beforeListLeaderboardRecordsFunction = luaBeforeReqFns.beforeListLeaderboardRecordsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listleaderboardrecords"))
-	}
-	if luaBeforeReqFns.beforeWriteLeaderboardRecordFunction != nil {
-		allBeforeReqFunctions.beforeWriteLeaderboardRecordFunction = luaBeforeReqFns.beforeWriteLeaderboardRecordFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "writeleaderboardrecord"))
-	}
-	if luaBeforeReqFns.beforeListLeaderboardRecordsAroundOwnerFunction != nil {
-		allBeforeReqFunctions.beforeListLeaderboardRecordsAroundOwnerFunction = luaBeforeReqFns.beforeListLeaderboardRecordsAroundOwnerFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listleaderboardrecordsaroundowner"))
-	}
-	if luaBeforeReqFns.beforeLinkAppleFunction != nil {
-		allBeforeReqFunctions.beforeLinkAppleFunction = luaBeforeReqFns.beforeLinkAppleFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linkapple"))
-	}
-	if luaBeforeReqFns.beforeLinkCustomFunction != nil {
-		allBeforeReqFunctions.beforeLinkCustomFunction = luaBeforeReqFns.beforeLinkCustomFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linkcustom"))
-	}
-	if luaBeforeReqFns.beforeLinkDeviceFunction != nil {
-		allBeforeReqFunctions.beforeLinkDeviceFunction = luaBeforeReqFns.beforeLinkDeviceFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linkdevice"))
-	}
-	if luaBeforeReqFns.beforeLinkEmailFunction != nil {
-		allBeforeReqFunctions.beforeLinkEmailFunction = luaBeforeReqFns.beforeLinkEmailFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linkemail"))
-	}
-	if luaBeforeReqFns.beforeLinkFacebookFunction != nil {
-		allBeforeReqFunctions.beforeLinkFacebookFunction = luaBeforeReqFns.beforeLinkFacebookFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linkfacebook"))
-	}
-	if luaBeforeReqFns.beforeLinkFacebookInstantGameFunction != nil {
-		allBeforeReqFunctions.beforeLinkFacebookInstantGameFunction = luaBeforeReqFns.beforeLinkFacebookInstantGameFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linkfacebookinstantgame"))
-	}
-	if luaBeforeReqFns.beforeLinkGameCenterFunction != nil {
-		allBeforeReqFunctions.beforeLinkGameCenterFunction = luaBeforeReqFns.beforeLinkGameCenterFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linkgamecenter"))
-	}
-	if luaBeforeReqFns.beforeLinkGoogleFunction != nil {
-		allBeforeReqFunctions.beforeLinkGoogleFunction = luaBeforeReqFns.beforeLinkGoogleFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linkgoogle"))
-	}
-	if luaBeforeReqFns.beforeLinkSteamFunction != nil {
-		allBeforeReqFunctions.beforeLinkSteamFunction = luaBeforeReqFns.beforeLinkSteamFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linksteam"))
-	}
-	if luaBeforeReqFns.beforeListMatchesFunction != nil {
-		allBeforeReqFunctions.beforeListMatchesFunction = luaBeforeReqFns.beforeListMatchesFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listmatches"))
-	}
-	if luaBeforeReqFns.beforeListNotificationsFunction != nil {
-		allBeforeReqFunctions.beforeListNotificationsFunction = luaBeforeReqFns.beforeListNotificationsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listnotifications"))
-	}
-	if luaBeforeReqFns.beforeDeleteNotificationsFunction != nil {
-		allBeforeReqFunctions.beforeDeleteNotificationsFunction = luaBeforeReqFns.beforeDeleteNotificationsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "deletenotifications"))
-	}
-	if luaBeforeReqFns.beforeListStorageObjectsFunction != nil {
-		allBeforeReqFunctions.beforeListStorageObjectsFunction = luaBeforeReqFns.beforeListStorageObjectsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "liststorageobjects"))
-	}
-	if luaBeforeReqFns.beforeReadStorageObjectsFunction != nil {
-		allBeforeReqFunctions.beforeReadStorageObjectsFunction = luaBeforeReqFns.beforeReadStorageObjectsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "readstorageobjects"))
-	}
-	if luaBeforeReqFns.beforeWriteStorageObjectsFunction != nil {
-		allBeforeReqFunctions.beforeWriteStorageObjectsFunction = luaBeforeReqFns.beforeWriteStorageObjectsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "writestorageobjects"))
-	}
-	if luaBeforeReqFns.beforeDeleteStorageObjectsFunction != nil {
-		allBeforeReqFunctions.beforeDeleteStorageObjectsFunction = luaBeforeReqFns.beforeDeleteStorageObjectsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "deletestorageobjects"))
-	}
-	if luaBeforeReqFns.beforeJoinTournamentFunction != nil {
-		allBeforeReqFunctions.beforeJoinTournamentFunction = luaBeforeReqFns.beforeJoinTournamentFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "jointournament"))
-	}
-	if luaBeforeReqFns.beforeListTournamentRecordsFunction != nil {
-		allBeforeReqFunctions.beforeListTournamentRecordsFunction = luaBeforeReqFns.beforeListTournamentRecordsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listtournamentrecords"))
-	}
-	if luaBeforeReqFns.beforeListTournamentsFunction != nil {
-		allBeforeReqFunctions.beforeListTournamentsFunction = luaBeforeReqFns.beforeListTournamentsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listtournaments"))
-	}
-	if luaBeforeReqFns.beforeWriteTournamentRecordFunction != nil {
-		allBeforeReqFunctions.beforeWriteTournamentRecordFunction = luaBeforeReqFns.beforeWriteTournamentRecordFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "writetournamentrecord"))
-	}
-	if luaBeforeReqFns.beforeListTournamentRecordsAroundOwnerFunction != nil {
-		allBeforeReqFunctions.beforeListTournamentRecordsAroundOwnerFunction = luaBeforeReqFns.beforeListTournamentRecordsAroundOwnerFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listtournamentrecordsaroundowner"))
-	}
-	if luaBeforeReqFns.beforeUnlinkAppleFunction != nil {
-		allBeforeReqFunctions.beforeUnlinkAppleFunction = luaBeforeReqFns.beforeUnlinkAppleFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinkapple"))
-	}
-	if luaBeforeReqFns.beforeUnlinkCustomFunction != nil {
-		allBeforeReqFunctions.beforeUnlinkCustomFunction = luaBeforeReqFns.beforeUnlinkCustomFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinkcustom"))
-	}
-	if luaBeforeReqFns.beforeUnlinkDeviceFunction != nil {
-		allBeforeReqFunctions.beforeUnlinkDeviceFunction = luaBeforeReqFns.beforeUnlinkDeviceFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinkdevice"))
-	}
-	if luaBeforeReqFns.beforeUnlinkEmailFunction != nil {
-		allBeforeReqFunctions.beforeUnlinkEmailFunction = luaBeforeReqFns.beforeUnlinkEmailFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinkemail"))
-	}
-	if luaBeforeReqFns.beforeUnlinkFacebookFunction != nil {
-		allBeforeReqFunctions.beforeUnlinkFacebookFunction = luaBeforeReqFns.beforeUnlinkFacebookFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinkfacebook"))
-	}
-	if luaBeforeReqFns.beforeUnlinkFacebookInstantGameFunction != nil {
-		allBeforeReqFunctions.beforeUnlinkFacebookInstantGameFunction = luaBeforeReqFns.beforeUnlinkFacebookInstantGameFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinkfacebookinstantgame"))
-	}
-	if luaBeforeReqFns.beforeUnlinkGameCenterFunction != nil {
-		allBeforeReqFunctions.beforeUnlinkGameCenterFunction = luaBeforeReqFns.beforeUnlinkGameCenterFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinkgamecenter"))
-	}
-	if luaBeforeReqFns.beforeUnlinkGoogleFunction != nil {
-		allBeforeReqFunctions.beforeUnlinkGoogleFunction = luaBeforeReqFns.beforeUnlinkGoogleFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinkgoogle"))
-	}
-	if luaBeforeReqFns.beforeUnlinkSteamFunction != nil {
-		allBeforeReqFunctions.beforeUnlinkSteamFunction = luaBeforeReqFns.beforeUnlinkSteamFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinksteam"))
-	}
-	if luaBeforeReqFns.beforeGetUsersFunction != nil {
-		allBeforeReqFunctions.beforeGetUsersFunction = luaBeforeReqFns.beforeGetUsersFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "getusers"))
-	}
-	if luaBeforeReqFns.beforeValidatePurchaseAppleFunction != nil {
-		allBeforeReqFunctions.beforeValidatePurchaseAppleFunction = luaBeforeReqFns.beforeValidatePurchaseAppleFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "validatepurchaseapple"))
-	}
-	if luaBeforeReqFns.beforeValidatePurchaseGoogleFunction != nil {
-		allBeforeReqFunctions.beforeValidatePurchaseGoogleFunction = luaBeforeReqFns.beforeValidatePurchaseGoogleFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "validatepurchasegoogle"))
-	}
-	if luaBeforeReqFns.beforeValidatePurchaseHuaweiFunction != nil {
-		allBeforeReqFunctions.beforeValidatePurchaseHuaweiFunction = luaBeforeReqFns.beforeValidatePurchaseHuaweiFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "validatepurchasehuawei"))
-	}
-	if luaBeforeReqFns.beforeValidatePurchaseFacebookInstantFunction != nil {
-		allBeforeReqFunctions.beforeValidatePurchaseFacebookInstantFunction = luaBeforeReqFns.beforeValidatePurchaseFacebookInstantFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "validatepurchasefacebookinstant"))
-	}
-	if luaBeforeReqFns.beforeValidateSubscriptionAppleFunction != nil {
-		allBeforeReqFunctions.beforeValidateSubscriptionAppleFunction = luaBeforeReqFns.beforeValidateSubscriptionAppleFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "validatesubscriptionapple"))
-	}
-	if luaBeforeReqFns.beforeValidateSubscriptionGoogleFunction != nil {
-		allBeforeReqFunctions.beforeValidateSubscriptionGoogleFunction = luaBeforeReqFns.beforeValidateSubscriptionGoogleFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "validatesubscriptiongoogle"))
-	}
-	if luaBeforeReqFns.beforeGetSubscriptionFunction != nil {
-		allBeforeReqFunctions.beforeGetSubscriptionFunction = luaBeforeReqFns.beforeGetSubscriptionFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "getsubscription"))
-	}
-	if luaBeforeReqFns.beforeListSubscriptionsFunction != nil {
-		allBeforeReqFunctions.beforeListSubscriptionsFunction = luaBeforeReqFns.beforeListSubscriptionsFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listsubscriptions"))
-	}
-	if luaBeforeReqFns.beforeListPartiesFunction != nil {
-		allBeforeReqFunctions.beforeListPartiesFunction = luaBeforeReqFns.beforeListPartiesFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listparties"))
-	}
-	if luaBeforeReqFns.beforeEventFunction != nil {
-		allBeforeReqFunctions.beforeEventFunction = luaBeforeReqFns.beforeEventFunction
-		startupLogger.Info("Registered Lua runtime Before custom events function invocation")
-	}
+	// if luaBeforeReqFns.beforeGetAccountFunction != nil {
+	// 	allBeforeReqFunctions.beforeGetAccountFunction = luaBeforeReqFns.beforeGetAccountFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "getaccount"))
+	// }
+	// if luaBeforeReqFns.beforeGetMatchmakerStatsFunction != nil {
+	// 	allBeforeReqFunctions.beforeGetMatchmakerStatsFunction = luaBeforeReqFns.beforeGetMatchmakerStatsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "getmatchmakerstats"))
+	// }
+	// if luaBeforeReqFns.beforeUpdateAccountFunction != nil {
+	// 	allBeforeReqFunctions.beforeUpdateAccountFunction = luaBeforeReqFns.beforeUpdateAccountFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "updateaccount"))
+	// }
+	// if luaBeforeReqFns.beforeDeleteAccountFunction != nil {
+	// 	allBeforeReqFunctions.beforeDeleteAccountFunction = luaBeforeReqFns.beforeDeleteAccountFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "deleteaccount"))
+	// }
+	// if luaBeforeReqFns.beforeSessionRefreshFunction != nil {
+	// 	allBeforeReqFunctions.beforeSessionRefreshFunction = luaBeforeReqFns.beforeSessionRefreshFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "sessionrefresh"))
+	// }
+	// if luaBeforeReqFns.beforeSessionLogoutFunction != nil {
+	// 	allBeforeReqFunctions.beforeSessionLogoutFunction = luaBeforeReqFns.beforeSessionLogoutFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "sessionlogout"))
+	// }
+	// if luaBeforeReqFns.beforeAuthenticateAppleFunction != nil {
+	// 	allBeforeReqFunctions.beforeAuthenticateAppleFunction = luaBeforeReqFns.beforeAuthenticateAppleFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticateapple"))
+	// }
+	// if luaBeforeReqFns.beforeAuthenticateCustomFunction != nil {
+	// 	allBeforeReqFunctions.beforeAuthenticateCustomFunction = luaBeforeReqFns.beforeAuthenticateCustomFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticatecustom"))
+	// }
+	// if luaBeforeReqFns.beforeAuthenticateDeviceFunction != nil {
+	// 	allBeforeReqFunctions.beforeAuthenticateDeviceFunction = luaBeforeReqFns.beforeAuthenticateDeviceFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticatedevice"))
+	// }
+	// if luaBeforeReqFns.beforeAuthenticateEmailFunction != nil {
+	// 	allBeforeReqFunctions.beforeAuthenticateEmailFunction = luaBeforeReqFns.beforeAuthenticateEmailFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticateemail"))
+	// }
+	// if luaBeforeReqFns.beforeAuthenticateFacebookFunction != nil {
+	// 	allBeforeReqFunctions.beforeAuthenticateFacebookFunction = luaBeforeReqFns.beforeAuthenticateFacebookFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticatefacebook"))
+	// }
+	// if luaBeforeReqFns.beforeAuthenticateFacebookInstantGameFunction != nil {
+	// 	allBeforeReqFunctions.beforeAuthenticateFacebookInstantGameFunction = luaBeforeReqFns.beforeAuthenticateFacebookInstantGameFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticatefacebookinstantgame"))
+	// }
+	// if luaBeforeReqFns.beforeAuthenticateGameCenterFunction != nil {
+	// 	allBeforeReqFunctions.beforeAuthenticateGameCenterFunction = luaBeforeReqFns.beforeAuthenticateGameCenterFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticategamecenter"))
+	// }
+	// if luaBeforeReqFns.beforeAuthenticateGoogleFunction != nil {
+	// 	allBeforeReqFunctions.beforeAuthenticateGoogleFunction = luaBeforeReqFns.beforeAuthenticateGoogleFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticategoogle"))
+	// }
+	// if luaBeforeReqFns.beforeAuthenticateSteamFunction != nil {
+	// 	allBeforeReqFunctions.beforeAuthenticateSteamFunction = luaBeforeReqFns.beforeAuthenticateSteamFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "authenticatesteam"))
+	// }
+	// if luaBeforeReqFns.beforeListChannelMessagesFunction != nil {
+	// 	allBeforeReqFunctions.beforeListChannelMessagesFunction = luaBeforeReqFns.beforeListChannelMessagesFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listchannelmessages"))
+	// }
+	// if luaBeforeReqFns.beforeListFriendsFunction != nil {
+	// 	allBeforeReqFunctions.beforeListFriendsFunction = luaBeforeReqFns.beforeListFriendsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listfriends"))
+	// }
+	// if luaBeforeReqFns.beforeListFriendsOfFriendsFunction != nil {
+	// 	allBeforeReqFunctions.beforeListFriendsOfFriendsFunction = luaBeforeReqFns.beforeListFriendsOfFriendsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listfriendsoffriends"))
+	// }
+	// if luaBeforeReqFns.beforeAddFriendsFunction != nil {
+	// 	allBeforeReqFunctions.beforeAddFriendsFunction = luaBeforeReqFns.beforeAddFriendsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "addfriends"))
+	// }
+	// if luaBeforeReqFns.beforeDeleteFriendsFunction != nil {
+	// 	allBeforeReqFunctions.beforeDeleteFriendsFunction = luaBeforeReqFns.beforeDeleteFriendsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "deletefriends"))
+	// }
+	// if luaBeforeReqFns.beforeBlockFriendsFunction != nil {
+	// 	allBeforeReqFunctions.beforeBlockFriendsFunction = luaBeforeReqFns.beforeBlockFriendsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "blockfriends"))
+	// }
+	// if luaBeforeReqFns.beforeImportFacebookFriendsFunction != nil {
+	// 	allBeforeReqFunctions.beforeImportFacebookFriendsFunction = luaBeforeReqFns.beforeImportFacebookFriendsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "importfacebookfriends"))
+	// }
+	// if luaBeforeReqFns.beforeImportSteamFriendsFunction != nil {
+	// 	allBeforeReqFunctions.beforeImportSteamFriendsFunction = luaBeforeReqFns.beforeImportSteamFriendsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "importsteamfriends"))
+	// }
+	// if luaBeforeReqFns.beforeCreateGroupFunction != nil {
+	// 	allBeforeReqFunctions.beforeCreateGroupFunction = luaBeforeReqFns.beforeCreateGroupFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "creategroup"))
+	// }
+	// if luaBeforeReqFns.beforeUpdateGroupFunction != nil {
+	// 	allBeforeReqFunctions.beforeUpdateGroupFunction = luaBeforeReqFns.beforeUpdateGroupFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "updategroup"))
+	// }
+	// if luaBeforeReqFns.beforeDeleteGroupFunction != nil {
+	// 	allBeforeReqFunctions.beforeDeleteGroupFunction = luaBeforeReqFns.beforeDeleteGroupFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "deletegroup"))
+	// }
+	// if luaBeforeReqFns.beforeJoinGroupFunction != nil {
+	// 	allBeforeReqFunctions.beforeJoinGroupFunction = luaBeforeReqFns.beforeJoinGroupFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "joingroup"))
+	// }
+	// if luaBeforeReqFns.beforeLeaveGroupFunction != nil {
+	// 	allBeforeReqFunctions.beforeLeaveGroupFunction = luaBeforeReqFns.beforeLeaveGroupFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "leavegroup"))
+	// }
+	// if luaBeforeReqFns.beforeAddGroupUsersFunction != nil {
+	// 	allBeforeReqFunctions.beforeAddGroupUsersFunction = luaBeforeReqFns.beforeAddGroupUsersFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "addgroupusers"))
+	// }
+	// if luaBeforeReqFns.beforeBanGroupUsersFunction != nil {
+	// 	allBeforeReqFunctions.beforeBanGroupUsersFunction = luaBeforeReqFns.beforeBanGroupUsersFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "bangroupusers"))
+	// }
+	// if luaBeforeReqFns.beforeKickGroupUsersFunction != nil {
+	// 	allBeforeReqFunctions.beforeKickGroupUsersFunction = luaBeforeReqFns.beforeKickGroupUsersFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "kickgroupusers"))
+	// }
+	// if luaBeforeReqFns.beforePromoteGroupUsersFunction != nil {
+	// 	allBeforeReqFunctions.beforePromoteGroupUsersFunction = luaBeforeReqFns.beforePromoteGroupUsersFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "promotegroupusers"))
+	// }
+	// if luaBeforeReqFns.beforeListGroupUsersFunction != nil {
+	// 	allBeforeReqFunctions.beforeListGroupUsersFunction = luaBeforeReqFns.beforeListGroupUsersFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listgroupusers"))
+	// }
+	// if luaBeforeReqFns.beforeListUserGroupsFunction != nil {
+	// 	allBeforeReqFunctions.beforeListUserGroupsFunction = luaBeforeReqFns.beforeListUserGroupsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listusergroups"))
+	// }
+	// if luaBeforeReqFns.beforeListGroupsFunction != nil {
+	// 	allBeforeReqFunctions.beforeListGroupsFunction = luaBeforeReqFns.beforeListGroupsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listgroups"))
+	// }
+	// if luaBeforeReqFns.beforeDeleteLeaderboardRecordFunction != nil {
+	// 	allBeforeReqFunctions.beforeDeleteLeaderboardRecordFunction = luaBeforeReqFns.beforeDeleteLeaderboardRecordFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "deleteleaderboardrecord"))
+	// }
+	// if luaBeforeReqFns.beforeDeleteTournamentRecordFunction != nil {
+	// 	allBeforeReqFunctions.beforeDeleteTournamentRecordFunction = luaBeforeReqFns.beforeDeleteTournamentRecordFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "deletetournamentrecord"))
+	// }
+	// if luaBeforeReqFns.beforeListLeaderboardRecordsFunction != nil {
+	// 	allBeforeReqFunctions.beforeListLeaderboardRecordsFunction = luaBeforeReqFns.beforeListLeaderboardRecordsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listleaderboardrecords"))
+	// }
+	// if luaBeforeReqFns.beforeWriteLeaderboardRecordFunction != nil {
+	// 	allBeforeReqFunctions.beforeWriteLeaderboardRecordFunction = luaBeforeReqFns.beforeWriteLeaderboardRecordFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "writeleaderboardrecord"))
+	// }
+	// if luaBeforeReqFns.beforeListLeaderboardRecordsAroundOwnerFunction != nil {
+	// 	allBeforeReqFunctions.beforeListLeaderboardRecordsAroundOwnerFunction = luaBeforeReqFns.beforeListLeaderboardRecordsAroundOwnerFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listleaderboardrecordsaroundowner"))
+	// }
+	// if luaBeforeReqFns.beforeLinkAppleFunction != nil {
+	// 	allBeforeReqFunctions.beforeLinkAppleFunction = luaBeforeReqFns.beforeLinkAppleFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linkapple"))
+	// }
+	// if luaBeforeReqFns.beforeLinkCustomFunction != nil {
+	// 	allBeforeReqFunctions.beforeLinkCustomFunction = luaBeforeReqFns.beforeLinkCustomFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linkcustom"))
+	// }
+	// if luaBeforeReqFns.beforeLinkDeviceFunction != nil {
+	// 	allBeforeReqFunctions.beforeLinkDeviceFunction = luaBeforeReqFns.beforeLinkDeviceFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linkdevice"))
+	// }
+	// if luaBeforeReqFns.beforeLinkEmailFunction != nil {
+	// 	allBeforeReqFunctions.beforeLinkEmailFunction = luaBeforeReqFns.beforeLinkEmailFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linkemail"))
+	// }
+	// if luaBeforeReqFns.beforeLinkFacebookFunction != nil {
+	// 	allBeforeReqFunctions.beforeLinkFacebookFunction = luaBeforeReqFns.beforeLinkFacebookFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linkfacebook"))
+	// }
+	// if luaBeforeReqFns.beforeLinkFacebookInstantGameFunction != nil {
+	// 	allBeforeReqFunctions.beforeLinkFacebookInstantGameFunction = luaBeforeReqFns.beforeLinkFacebookInstantGameFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linkfacebookinstantgame"))
+	// }
+	// if luaBeforeReqFns.beforeLinkGameCenterFunction != nil {
+	// 	allBeforeReqFunctions.beforeLinkGameCenterFunction = luaBeforeReqFns.beforeLinkGameCenterFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linkgamecenter"))
+	// }
+	// if luaBeforeReqFns.beforeLinkGoogleFunction != nil {
+	// 	allBeforeReqFunctions.beforeLinkGoogleFunction = luaBeforeReqFns.beforeLinkGoogleFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linkgoogle"))
+	// }
+	// if luaBeforeReqFns.beforeLinkSteamFunction != nil {
+	// 	allBeforeReqFunctions.beforeLinkSteamFunction = luaBeforeReqFns.beforeLinkSteamFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "linksteam"))
+	// }
+	// if luaBeforeReqFns.beforeListMatchesFunction != nil {
+	// 	allBeforeReqFunctions.beforeListMatchesFunction = luaBeforeReqFns.beforeListMatchesFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listmatches"))
+	// }
+	// if luaBeforeReqFns.beforeListNotificationsFunction != nil {
+	// 	allBeforeReqFunctions.beforeListNotificationsFunction = luaBeforeReqFns.beforeListNotificationsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listnotifications"))
+	// }
+	// if luaBeforeReqFns.beforeDeleteNotificationsFunction != nil {
+	// 	allBeforeReqFunctions.beforeDeleteNotificationsFunction = luaBeforeReqFns.beforeDeleteNotificationsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "deletenotifications"))
+	// }
+	// if luaBeforeReqFns.beforeListStorageObjectsFunction != nil {
+	// 	allBeforeReqFunctions.beforeListStorageObjectsFunction = luaBeforeReqFns.beforeListStorageObjectsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "liststorageobjects"))
+	// }
+	// if luaBeforeReqFns.beforeReadStorageObjectsFunction != nil {
+	// 	allBeforeReqFunctions.beforeReadStorageObjectsFunction = luaBeforeReqFns.beforeReadStorageObjectsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "readstorageobjects"))
+	// }
+	// if luaBeforeReqFns.beforeWriteStorageObjectsFunction != nil {
+	// 	allBeforeReqFunctions.beforeWriteStorageObjectsFunction = luaBeforeReqFns.beforeWriteStorageObjectsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "writestorageobjects"))
+	// }
+	// if luaBeforeReqFns.beforeDeleteStorageObjectsFunction != nil {
+	// 	allBeforeReqFunctions.beforeDeleteStorageObjectsFunction = luaBeforeReqFns.beforeDeleteStorageObjectsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "deletestorageobjects"))
+	// }
+	// if luaBeforeReqFns.beforeJoinTournamentFunction != nil {
+	// 	allBeforeReqFunctions.beforeJoinTournamentFunction = luaBeforeReqFns.beforeJoinTournamentFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "jointournament"))
+	// }
+	// if luaBeforeReqFns.beforeListTournamentRecordsFunction != nil {
+	// 	allBeforeReqFunctions.beforeListTournamentRecordsFunction = luaBeforeReqFns.beforeListTournamentRecordsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listtournamentrecords"))
+	// }
+	// if luaBeforeReqFns.beforeListTournamentsFunction != nil {
+	// 	allBeforeReqFunctions.beforeListTournamentsFunction = luaBeforeReqFns.beforeListTournamentsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listtournaments"))
+	// }
+	// if luaBeforeReqFns.beforeWriteTournamentRecordFunction != nil {
+	// 	allBeforeReqFunctions.beforeWriteTournamentRecordFunction = luaBeforeReqFns.beforeWriteTournamentRecordFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "writetournamentrecord"))
+	// }
+	// if luaBeforeReqFns.beforeListTournamentRecordsAroundOwnerFunction != nil {
+	// 	allBeforeReqFunctions.beforeListTournamentRecordsAroundOwnerFunction = luaBeforeReqFns.beforeListTournamentRecordsAroundOwnerFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listtournamentrecordsaroundowner"))
+	// }
+	// if luaBeforeReqFns.beforeUnlinkAppleFunction != nil {
+	// 	allBeforeReqFunctions.beforeUnlinkAppleFunction = luaBeforeReqFns.beforeUnlinkAppleFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinkapple"))
+	// }
+	// if luaBeforeReqFns.beforeUnlinkCustomFunction != nil {
+	// 	allBeforeReqFunctions.beforeUnlinkCustomFunction = luaBeforeReqFns.beforeUnlinkCustomFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinkcustom"))
+	// }
+	// if luaBeforeReqFns.beforeUnlinkDeviceFunction != nil {
+	// 	allBeforeReqFunctions.beforeUnlinkDeviceFunction = luaBeforeReqFns.beforeUnlinkDeviceFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinkdevice"))
+	// }
+	// if luaBeforeReqFns.beforeUnlinkEmailFunction != nil {
+	// 	allBeforeReqFunctions.beforeUnlinkEmailFunction = luaBeforeReqFns.beforeUnlinkEmailFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinkemail"))
+	// }
+	// if luaBeforeReqFns.beforeUnlinkFacebookFunction != nil {
+	// 	allBeforeReqFunctions.beforeUnlinkFacebookFunction = luaBeforeReqFns.beforeUnlinkFacebookFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinkfacebook"))
+	// }
+	// if luaBeforeReqFns.beforeUnlinkFacebookInstantGameFunction != nil {
+	// 	allBeforeReqFunctions.beforeUnlinkFacebookInstantGameFunction = luaBeforeReqFns.beforeUnlinkFacebookInstantGameFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinkfacebookinstantgame"))
+	// }
+	// if luaBeforeReqFns.beforeUnlinkGameCenterFunction != nil {
+	// 	allBeforeReqFunctions.beforeUnlinkGameCenterFunction = luaBeforeReqFns.beforeUnlinkGameCenterFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinkgamecenter"))
+	// }
+	// if luaBeforeReqFns.beforeUnlinkGoogleFunction != nil {
+	// 	allBeforeReqFunctions.beforeUnlinkGoogleFunction = luaBeforeReqFns.beforeUnlinkGoogleFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinkgoogle"))
+	// }
+	// if luaBeforeReqFns.beforeUnlinkSteamFunction != nil {
+	// 	allBeforeReqFunctions.beforeUnlinkSteamFunction = luaBeforeReqFns.beforeUnlinkSteamFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "unlinksteam"))
+	// }
+	// if luaBeforeReqFns.beforeGetUsersFunction != nil {
+	// 	allBeforeReqFunctions.beforeGetUsersFunction = luaBeforeReqFns.beforeGetUsersFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "getusers"))
+	// }
+	// if luaBeforeReqFns.beforeValidatePurchaseAppleFunction != nil {
+	// 	allBeforeReqFunctions.beforeValidatePurchaseAppleFunction = luaBeforeReqFns.beforeValidatePurchaseAppleFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "validatepurchaseapple"))
+	// }
+	// if luaBeforeReqFns.beforeValidatePurchaseGoogleFunction != nil {
+	// 	allBeforeReqFunctions.beforeValidatePurchaseGoogleFunction = luaBeforeReqFns.beforeValidatePurchaseGoogleFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "validatepurchasegoogle"))
+	// }
+	// if luaBeforeReqFns.beforeValidatePurchaseHuaweiFunction != nil {
+	// 	allBeforeReqFunctions.beforeValidatePurchaseHuaweiFunction = luaBeforeReqFns.beforeValidatePurchaseHuaweiFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "validatepurchasehuawei"))
+	// }
+	// if luaBeforeReqFns.beforeValidatePurchaseFacebookInstantFunction != nil {
+	// 	allBeforeReqFunctions.beforeValidatePurchaseFacebookInstantFunction = luaBeforeReqFns.beforeValidatePurchaseFacebookInstantFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "validatepurchasefacebookinstant"))
+	// }
+	// if luaBeforeReqFns.beforeValidateSubscriptionAppleFunction != nil {
+	// 	allBeforeReqFunctions.beforeValidateSubscriptionAppleFunction = luaBeforeReqFns.beforeValidateSubscriptionAppleFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "validatesubscriptionapple"))
+	// }
+	// if luaBeforeReqFns.beforeValidateSubscriptionGoogleFunction != nil {
+	// 	allBeforeReqFunctions.beforeValidateSubscriptionGoogleFunction = luaBeforeReqFns.beforeValidateSubscriptionGoogleFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "validatesubscriptiongoogle"))
+	// }
+	// if luaBeforeReqFns.beforeGetSubscriptionFunction != nil {
+	// 	allBeforeReqFunctions.beforeGetSubscriptionFunction = luaBeforeReqFns.beforeGetSubscriptionFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "getsubscription"))
+	// }
+	// if luaBeforeReqFns.beforeListSubscriptionsFunction != nil {
+	// 	allBeforeReqFunctions.beforeListSubscriptionsFunction = luaBeforeReqFns.beforeListSubscriptionsFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listsubscriptions"))
+	// }
+	// if luaBeforeReqFns.beforeListPartiesFunction != nil {
+	// 	allBeforeReqFunctions.beforeListPartiesFunction = luaBeforeReqFns.beforeListPartiesFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listparties"))
+	// }
+	// if luaBeforeReqFns.beforeEventFunction != nil {
+	// 	allBeforeReqFunctions.beforeEventFunction = luaBeforeReqFns.beforeEventFunction
+	// 	startupLogger.Info("Registered Lua runtime Before custom events function invocation")
+	// }
 
 	// Register Go Before Req functions
 	if goBeforeReqFns.beforeGetAccountFunction != nil {
@@ -1921,326 +1929,326 @@ func NewRuntime(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.
 	}
 
 	// Register Lua After req Functions
-	if luaAfterReqFns.afterGetAccountFunction != nil {
-		allAfterReqFunctions.afterGetAccountFunction = luaAfterReqFns.afterGetAccountFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "getaccount"))
-	}
-	if luaAfterReqFns.afterGetMatchmakerStatsFunction != nil {
-		allAfterReqFunctions.afterGetMatchmakerStatsFunction = luaAfterReqFns.afterGetMatchmakerStatsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "getmatchmakerstats"))
-	}
-	if luaAfterReqFns.afterUpdateAccountFunction != nil {
-		allAfterReqFunctions.afterUpdateAccountFunction = luaAfterReqFns.afterUpdateAccountFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "updateaccount"))
-	}
-	if luaAfterReqFns.afterDeleteAccountFunction != nil {
-		allAfterReqFunctions.afterDeleteAccountFunction = luaAfterReqFns.afterDeleteAccountFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "deleteaccount"))
-	}
-	if luaAfterReqFns.afterSessionRefreshFunction != nil {
-		allAfterReqFunctions.afterSessionRefreshFunction = luaAfterReqFns.afterSessionRefreshFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "sessionrefresh"))
-	}
-	if luaAfterReqFns.afterSessionLogoutFunction != nil {
-		allAfterReqFunctions.afterSessionLogoutFunction = luaAfterReqFns.afterSessionLogoutFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "sessionlogout"))
-	}
-	if luaAfterReqFns.afterAuthenticateAppleFunction != nil {
-		allAfterReqFunctions.afterAuthenticateAppleFunction = luaAfterReqFns.afterAuthenticateAppleFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticateapple"))
-	}
-	if luaAfterReqFns.afterAuthenticateCustomFunction != nil {
-		allAfterReqFunctions.afterAuthenticateCustomFunction = luaAfterReqFns.afterAuthenticateCustomFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticatecustom"))
-	}
-	if luaAfterReqFns.afterAuthenticateDeviceFunction != nil {
-		allAfterReqFunctions.afterAuthenticateDeviceFunction = luaAfterReqFns.afterAuthenticateDeviceFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticatedevice"))
-	}
-	if luaAfterReqFns.afterAuthenticateEmailFunction != nil {
-		allAfterReqFunctions.afterAuthenticateEmailFunction = luaAfterReqFns.afterAuthenticateEmailFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticateemail"))
-	}
-	if luaAfterReqFns.afterAuthenticateFacebookFunction != nil {
-		allAfterReqFunctions.afterAuthenticateFacebookFunction = luaAfterReqFns.afterAuthenticateFacebookFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticatefacebook"))
-	}
-	if luaAfterReqFns.afterAuthenticateFacebookInstantGameFunction != nil {
-		allAfterReqFunctions.afterAuthenticateFacebookInstantGameFunction = luaAfterReqFns.afterAuthenticateFacebookInstantGameFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticatefacebookinstantgame"))
-	}
-	if luaAfterReqFns.afterAuthenticateGameCenterFunction != nil {
-		allAfterReqFunctions.afterAuthenticateGameCenterFunction = luaAfterReqFns.afterAuthenticateGameCenterFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticategamecenter"))
-	}
-	if luaAfterReqFns.afterAuthenticateGoogleFunction != nil {
-		allAfterReqFunctions.afterAuthenticateGoogleFunction = luaAfterReqFns.afterAuthenticateGoogleFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticategoogle"))
-	}
-	if luaAfterReqFns.afterAuthenticateSteamFunction != nil {
-		allAfterReqFunctions.afterAuthenticateSteamFunction = luaAfterReqFns.afterAuthenticateSteamFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticatesteam"))
-	}
-	if luaAfterReqFns.afterListChannelMessagesFunction != nil {
-		allAfterReqFunctions.afterListChannelMessagesFunction = luaAfterReqFns.afterListChannelMessagesFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listchannelmessages"))
-	}
-	if luaAfterReqFns.afterListFriendsFunction != nil {
-		allAfterReqFunctions.afterListFriendsFunction = luaAfterReqFns.afterListFriendsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listfriends"))
-	}
-	if luaAfterReqFns.afterAddFriendsFunction != nil {
-		allAfterReqFunctions.afterAddFriendsFunction = luaAfterReqFns.afterAddFriendsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "addfriends"))
-	}
-	if luaAfterReqFns.afterDeleteFriendsFunction != nil {
-		allAfterReqFunctions.afterDeleteFriendsFunction = luaAfterReqFns.afterDeleteFriendsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "deletefriends"))
-	}
-	if luaAfterReqFns.afterBlockFriendsFunction != nil {
-		allAfterReqFunctions.afterBlockFriendsFunction = luaAfterReqFns.afterBlockFriendsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "blockfriends"))
-	}
-	if luaAfterReqFns.afterImportFacebookFriendsFunction != nil {
-		allAfterReqFunctions.afterImportFacebookFriendsFunction = luaAfterReqFns.afterImportFacebookFriendsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "importfacebookfriends"))
-	}
-	if luaAfterReqFns.afterImportSteamFriendsFunction != nil {
-		allAfterReqFunctions.afterImportSteamFriendsFunction = luaAfterReqFns.afterImportSteamFriendsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "importsteamfriends"))
-	}
-	if luaAfterReqFns.afterCreateGroupFunction != nil {
-		allAfterReqFunctions.afterCreateGroupFunction = luaAfterReqFns.afterCreateGroupFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "creategroup"))
-	}
-	if luaAfterReqFns.afterUpdateGroupFunction != nil {
-		allAfterReqFunctions.afterUpdateGroupFunction = luaAfterReqFns.afterUpdateGroupFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "updategroup"))
-	}
-	if luaAfterReqFns.afterDeleteGroupFunction != nil {
-		allAfterReqFunctions.afterDeleteGroupFunction = luaAfterReqFns.afterDeleteGroupFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "deletegroup"))
-	}
-	if luaAfterReqFns.afterJoinGroupFunction != nil {
-		allAfterReqFunctions.afterJoinGroupFunction = luaAfterReqFns.afterJoinGroupFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "joingroup"))
-	}
-	if luaAfterReqFns.afterLeaveGroupFunction != nil {
-		allAfterReqFunctions.afterLeaveGroupFunction = luaAfterReqFns.afterLeaveGroupFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "leavegroup"))
-	}
-	if luaAfterReqFns.afterAddGroupUsersFunction != nil {
-		allAfterReqFunctions.afterAddGroupUsersFunction = luaAfterReqFns.afterAddGroupUsersFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "addgroupusers"))
-	}
-	if luaAfterReqFns.afterBanGroupUsersFunction != nil {
-		allAfterReqFunctions.afterBanGroupUsersFunction = luaAfterReqFns.afterBanGroupUsersFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "bangroupusers"))
-	}
-	if luaAfterReqFns.afterKickGroupUsersFunction != nil {
-		allAfterReqFunctions.afterKickGroupUsersFunction = luaAfterReqFns.afterKickGroupUsersFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "kickgroupusers"))
-	}
-	if luaAfterReqFns.afterPromoteGroupUsersFunction != nil {
-		allAfterReqFunctions.afterPromoteGroupUsersFunction = luaAfterReqFns.afterPromoteGroupUsersFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "promotegroupusers"))
-	}
-	if luaAfterReqFns.afterListGroupUsersFunction != nil {
-		allAfterReqFunctions.afterListGroupUsersFunction = luaAfterReqFns.afterListGroupUsersFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listgroupusers"))
-	}
-	if luaAfterReqFns.afterListUserGroupsFunction != nil {
-		allAfterReqFunctions.afterListUserGroupsFunction = luaAfterReqFns.afterListUserGroupsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listusergroups"))
-	}
-	if luaAfterReqFns.afterListGroupsFunction != nil {
-		allAfterReqFunctions.afterListGroupsFunction = luaAfterReqFns.afterListGroupsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listgroups"))
-	}
-	if luaAfterReqFns.afterDeleteLeaderboardRecordFunction != nil {
-		allAfterReqFunctions.afterDeleteLeaderboardRecordFunction = luaAfterReqFns.afterDeleteLeaderboardRecordFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "deleteleaderboardrecord"))
-	}
-	if luaAfterReqFns.afterDeleteTournamentRecordFunction != nil {
-		allAfterReqFunctions.afterDeleteTournamentRecordFunction = luaAfterReqFns.afterDeleteTournamentRecordFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "deletetournamentrecord"))
-	}
-	if luaAfterReqFns.afterListLeaderboardRecordsFunction != nil {
-		allAfterReqFunctions.afterListLeaderboardRecordsFunction = luaAfterReqFns.afterListLeaderboardRecordsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listleaderboardrecords"))
-	}
-	if luaAfterReqFns.afterWriteLeaderboardRecordFunction != nil {
-		allAfterReqFunctions.afterWriteLeaderboardRecordFunction = luaAfterReqFns.afterWriteLeaderboardRecordFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "writeleaderboardrecord"))
-	}
-	if luaAfterReqFns.afterListLeaderboardRecordsAroundOwnerFunction != nil {
-		allAfterReqFunctions.afterListLeaderboardRecordsAroundOwnerFunction = luaAfterReqFns.afterListLeaderboardRecordsAroundOwnerFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listleaderboardrecordsaroundowner"))
-	}
-	if luaAfterReqFns.afterLinkAppleFunction != nil {
-		allAfterReqFunctions.afterLinkAppleFunction = luaAfterReqFns.afterLinkAppleFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linkapple"))
-	}
-	if luaAfterReqFns.afterLinkCustomFunction != nil {
-		allAfterReqFunctions.afterLinkCustomFunction = luaAfterReqFns.afterLinkCustomFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linkcustom"))
-	}
-	if luaAfterReqFns.afterLinkDeviceFunction != nil {
-		allAfterReqFunctions.afterLinkDeviceFunction = luaAfterReqFns.afterLinkDeviceFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linkdevice"))
-	}
-	if luaAfterReqFns.afterLinkEmailFunction != nil {
-		allAfterReqFunctions.afterLinkEmailFunction = luaAfterReqFns.afterLinkEmailFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linkemail"))
-	}
-	if luaAfterReqFns.afterLinkFacebookFunction != nil {
-		allAfterReqFunctions.afterLinkFacebookFunction = luaAfterReqFns.afterLinkFacebookFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linkfacebook"))
-	}
-	if luaAfterReqFns.afterLinkFacebookInstantGameFunction != nil {
-		allAfterReqFunctions.afterLinkFacebookInstantGameFunction = luaAfterReqFns.afterLinkFacebookInstantGameFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linkfacebookinstantgame"))
-	}
-	if luaAfterReqFns.afterLinkGameCenterFunction != nil {
-		allAfterReqFunctions.afterLinkGameCenterFunction = luaAfterReqFns.afterLinkGameCenterFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linkgamecenter"))
-	}
-	if luaAfterReqFns.afterLinkGoogleFunction != nil {
-		allAfterReqFunctions.afterLinkGoogleFunction = luaAfterReqFns.afterLinkGoogleFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linkgoogle"))
-	}
-	if luaAfterReqFns.afterLinkSteamFunction != nil {
-		allAfterReqFunctions.afterLinkSteamFunction = luaAfterReqFns.afterLinkSteamFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linksteam"))
-	}
-	if luaAfterReqFns.afterListMatchesFunction != nil {
-		allAfterReqFunctions.afterListMatchesFunction = luaAfterReqFns.afterListMatchesFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listmatches"))
-	}
-	if luaAfterReqFns.afterListNotificationsFunction != nil {
-		allAfterReqFunctions.afterListNotificationsFunction = luaAfterReqFns.afterListNotificationsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listnotifications"))
-	}
-	if luaAfterReqFns.afterDeleteNotificationsFunction != nil {
-		allAfterReqFunctions.afterDeleteNotificationsFunction = luaAfterReqFns.afterDeleteNotificationsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "deletenotifications"))
-	}
-	if luaAfterReqFns.afterListStorageObjectsFunction != nil {
-		allAfterReqFunctions.afterListStorageObjectsFunction = luaAfterReqFns.afterListStorageObjectsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "liststorageobjects"))
-	}
-	if luaAfterReqFns.afterReadStorageObjectsFunction != nil {
-		allAfterReqFunctions.afterReadStorageObjectsFunction = luaAfterReqFns.afterReadStorageObjectsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "readstorageobjects"))
-	}
-	if luaAfterReqFns.afterWriteStorageObjectsFunction != nil {
-		allAfterReqFunctions.afterWriteStorageObjectsFunction = luaAfterReqFns.afterWriteStorageObjectsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "writestorageobjects"))
-	}
-	if luaAfterReqFns.afterDeleteStorageObjectsFunction != nil {
-		allAfterReqFunctions.afterDeleteStorageObjectsFunction = luaAfterReqFns.afterDeleteStorageObjectsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "deletestorageobjects"))
-	}
-	if luaAfterReqFns.afterJoinTournamentFunction != nil {
-		allAfterReqFunctions.afterJoinTournamentFunction = luaAfterReqFns.afterJoinTournamentFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "jointournament"))
-	}
-	if luaAfterReqFns.afterListTournamentRecordsFunction != nil {
-		allAfterReqFunctions.afterListTournamentRecordsFunction = luaAfterReqFns.afterListTournamentRecordsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listtournamentrecords"))
-	}
-	if luaAfterReqFns.afterListTournamentsFunction != nil {
-		allAfterReqFunctions.afterListTournamentsFunction = luaAfterReqFns.afterListTournamentsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listtournaments"))
-	}
-	if luaAfterReqFns.afterWriteTournamentRecordFunction != nil {
-		allAfterReqFunctions.afterWriteTournamentRecordFunction = luaAfterReqFns.afterWriteTournamentRecordFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "writetournamentrecord"))
-	}
-	if luaAfterReqFns.afterListTournamentRecordsAroundOwnerFunction != nil {
-		allAfterReqFunctions.afterListTournamentRecordsAroundOwnerFunction = luaAfterReqFns.afterListTournamentRecordsAroundOwnerFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listtournamentrecordsaroundowner"))
-	}
-	if luaAfterReqFns.afterUnlinkAppleFunction != nil {
-		allAfterReqFunctions.afterUnlinkAppleFunction = luaAfterReqFns.afterUnlinkAppleFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinkapple"))
-	}
-	if luaAfterReqFns.afterUnlinkCustomFunction != nil {
-		allAfterReqFunctions.afterUnlinkCustomFunction = luaAfterReqFns.afterUnlinkCustomFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinkcustom"))
-	}
-	if luaAfterReqFns.afterUnlinkDeviceFunction != nil {
-		allAfterReqFunctions.afterUnlinkDeviceFunction = luaAfterReqFns.afterUnlinkDeviceFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinkdevice"))
-	}
-	if luaAfterReqFns.afterUnlinkEmailFunction != nil {
-		allAfterReqFunctions.afterUnlinkEmailFunction = luaAfterReqFns.afterUnlinkEmailFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinkemail"))
-	}
-	if luaAfterReqFns.afterUnlinkFacebookFunction != nil {
-		allAfterReqFunctions.afterUnlinkFacebookFunction = luaAfterReqFns.afterUnlinkFacebookFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinkfacebook"))
-	}
-	if luaAfterReqFns.afterUnlinkFacebookInstantGameFunction != nil {
-		allAfterReqFunctions.afterUnlinkFacebookInstantGameFunction = luaAfterReqFns.afterUnlinkFacebookInstantGameFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinkfacebookinstantgame"))
-	}
-	if luaAfterReqFns.afterUnlinkGameCenterFunction != nil {
-		allAfterReqFunctions.afterUnlinkGameCenterFunction = luaAfterReqFns.afterUnlinkGameCenterFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinkgamecenter"))
-	}
-	if luaAfterReqFns.afterUnlinkGoogleFunction != nil {
-		allAfterReqFunctions.afterUnlinkGoogleFunction = luaAfterReqFns.afterUnlinkGoogleFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinkgoogle"))
-	}
-	if luaAfterReqFns.afterUnlinkSteamFunction != nil {
-		allAfterReqFunctions.afterUnlinkSteamFunction = luaAfterReqFns.afterUnlinkSteamFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinksteam"))
-	}
-	if luaAfterReqFns.afterGetUsersFunction != nil {
-		allAfterReqFunctions.afterGetUsersFunction = luaAfterReqFns.afterGetUsersFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "getusers"))
-	}
-	if luaAfterReqFns.afterValidatePurchaseAppleFunction != nil {
-		allAfterReqFunctions.afterValidatePurchaseAppleFunction = luaAfterReqFns.afterValidatePurchaseAppleFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "validatepurchaseapple"))
-	}
-	if luaAfterReqFns.afterValidatePurchaseGoogleFunction != nil {
-		allAfterReqFunctions.afterValidatePurchaseGoogleFunction = luaAfterReqFns.afterValidatePurchaseGoogleFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "validatepurchasegoogle"))
-	}
-	if luaAfterReqFns.afterValidatePurchaseHuaweiFunction != nil {
-		allAfterReqFunctions.afterValidatePurchaseHuaweiFunction = luaAfterReqFns.afterValidatePurchaseHuaweiFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "validatepurchasehuawei"))
-	}
-	if luaAfterReqFns.afterValidatePurchaseFacebookInstantFunction != nil {
-		allAfterReqFunctions.afterValidatePurchaseFacebookInstantFunction = luaAfterReqFns.afterValidatePurchaseFacebookInstantFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "validatepurchasefacebookinstant"))
-	}
-	if luaAfterReqFns.afterValidateSubscriptionAppleFunction != nil {
-		allAfterReqFunctions.afterValidateSubscriptionAppleFunction = luaAfterReqFns.afterValidateSubscriptionAppleFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "validatesubscriptionapple"))
-	}
-	if luaAfterReqFns.afterValidateSubscriptionGoogleFunction != nil {
-		allAfterReqFunctions.afterValidateSubscriptionGoogleFunction = luaAfterReqFns.afterValidateSubscriptionGoogleFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "validatesubscriptiongoogle"))
-	}
-	if luaAfterReqFns.afterGetSubscriptionFunction != nil {
-		allAfterReqFunctions.afterGetSubscriptionFunction = luaAfterReqFns.afterGetSubscriptionFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "getsubscription"))
-	}
-	if luaAfterReqFns.afterListSubscriptionsFunction != nil {
-		allAfterReqFunctions.afterListSubscriptionsFunction = luaAfterReqFns.afterListSubscriptionsFunction
-		startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listsubscriptions"))
-	}
-	if luaAfterReqFns.afterListPartiesFunction != nil {
-		allAfterReqFunctions.afterListPartiesFunction = luaAfterReqFns.afterListPartiesFunction
-		startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listparties"))
-	}
-	if luaAfterReqFns.afterEventFunction != nil {
-		allAfterReqFunctions.afterEventFunction = luaAfterReqFns.afterEventFunction
-		startupLogger.Info("Registered Lua runtime After custom events function invocation")
-	}
+	// if luaAfterReqFns.afterGetAccountFunction != nil {
+	// 	allAfterReqFunctions.afterGetAccountFunction = luaAfterReqFns.afterGetAccountFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "getaccount"))
+	// }
+	// if luaAfterReqFns.afterGetMatchmakerStatsFunction != nil {
+	// 	allAfterReqFunctions.afterGetMatchmakerStatsFunction = luaAfterReqFns.afterGetMatchmakerStatsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "getmatchmakerstats"))
+	// }
+	// if luaAfterReqFns.afterUpdateAccountFunction != nil {
+	// 	allAfterReqFunctions.afterUpdateAccountFunction = luaAfterReqFns.afterUpdateAccountFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "updateaccount"))
+	// }
+	// if luaAfterReqFns.afterDeleteAccountFunction != nil {
+	// 	allAfterReqFunctions.afterDeleteAccountFunction = luaAfterReqFns.afterDeleteAccountFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "deleteaccount"))
+	// }
+	// if luaAfterReqFns.afterSessionRefreshFunction != nil {
+	// 	allAfterReqFunctions.afterSessionRefreshFunction = luaAfterReqFns.afterSessionRefreshFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "sessionrefresh"))
+	// }
+	// if luaAfterReqFns.afterSessionLogoutFunction != nil {
+	// 	allAfterReqFunctions.afterSessionLogoutFunction = luaAfterReqFns.afterSessionLogoutFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "sessionlogout"))
+	// }
+	// if luaAfterReqFns.afterAuthenticateAppleFunction != nil {
+	// 	allAfterReqFunctions.afterAuthenticateAppleFunction = luaAfterReqFns.afterAuthenticateAppleFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticateapple"))
+	// }
+	// if luaAfterReqFns.afterAuthenticateCustomFunction != nil {
+	// 	allAfterReqFunctions.afterAuthenticateCustomFunction = luaAfterReqFns.afterAuthenticateCustomFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticatecustom"))
+	// }
+	// if luaAfterReqFns.afterAuthenticateDeviceFunction != nil {
+	// 	allAfterReqFunctions.afterAuthenticateDeviceFunction = luaAfterReqFns.afterAuthenticateDeviceFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticatedevice"))
+	// }
+	// if luaAfterReqFns.afterAuthenticateEmailFunction != nil {
+	// 	allAfterReqFunctions.afterAuthenticateEmailFunction = luaAfterReqFns.afterAuthenticateEmailFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticateemail"))
+	// }
+	// if luaAfterReqFns.afterAuthenticateFacebookFunction != nil {
+	// 	allAfterReqFunctions.afterAuthenticateFacebookFunction = luaAfterReqFns.afterAuthenticateFacebookFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticatefacebook"))
+	// }
+	// if luaAfterReqFns.afterAuthenticateFacebookInstantGameFunction != nil {
+	// 	allAfterReqFunctions.afterAuthenticateFacebookInstantGameFunction = luaAfterReqFns.afterAuthenticateFacebookInstantGameFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticatefacebookinstantgame"))
+	// }
+	// if luaAfterReqFns.afterAuthenticateGameCenterFunction != nil {
+	// 	allAfterReqFunctions.afterAuthenticateGameCenterFunction = luaAfterReqFns.afterAuthenticateGameCenterFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticategamecenter"))
+	// }
+	// if luaAfterReqFns.afterAuthenticateGoogleFunction != nil {
+	// 	allAfterReqFunctions.afterAuthenticateGoogleFunction = luaAfterReqFns.afterAuthenticateGoogleFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticategoogle"))
+	// }
+	// if luaAfterReqFns.afterAuthenticateSteamFunction != nil {
+	// 	allAfterReqFunctions.afterAuthenticateSteamFunction = luaAfterReqFns.afterAuthenticateSteamFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "authenticatesteam"))
+	// }
+	// if luaAfterReqFns.afterListChannelMessagesFunction != nil {
+	// 	allAfterReqFunctions.afterListChannelMessagesFunction = luaAfterReqFns.afterListChannelMessagesFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listchannelmessages"))
+	// }
+	// if luaAfterReqFns.afterListFriendsFunction != nil {
+	// 	allAfterReqFunctions.afterListFriendsFunction = luaAfterReqFns.afterListFriendsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listfriends"))
+	// }
+	// if luaAfterReqFns.afterAddFriendsFunction != nil {
+	// 	allAfterReqFunctions.afterAddFriendsFunction = luaAfterReqFns.afterAddFriendsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "addfriends"))
+	// }
+	// if luaAfterReqFns.afterDeleteFriendsFunction != nil {
+	// 	allAfterReqFunctions.afterDeleteFriendsFunction = luaAfterReqFns.afterDeleteFriendsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "deletefriends"))
+	// }
+	// if luaAfterReqFns.afterBlockFriendsFunction != nil {
+	// 	allAfterReqFunctions.afterBlockFriendsFunction = luaAfterReqFns.afterBlockFriendsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "blockfriends"))
+	// }
+	// if luaAfterReqFns.afterImportFacebookFriendsFunction != nil {
+	// 	allAfterReqFunctions.afterImportFacebookFriendsFunction = luaAfterReqFns.afterImportFacebookFriendsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "importfacebookfriends"))
+	// }
+	// if luaAfterReqFns.afterImportSteamFriendsFunction != nil {
+	// 	allAfterReqFunctions.afterImportSteamFriendsFunction = luaAfterReqFns.afterImportSteamFriendsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "importsteamfriends"))
+	// }
+	// if luaAfterReqFns.afterCreateGroupFunction != nil {
+	// 	allAfterReqFunctions.afterCreateGroupFunction = luaAfterReqFns.afterCreateGroupFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "creategroup"))
+	// }
+	// if luaAfterReqFns.afterUpdateGroupFunction != nil {
+	// 	allAfterReqFunctions.afterUpdateGroupFunction = luaAfterReqFns.afterUpdateGroupFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "updategroup"))
+	// }
+	// if luaAfterReqFns.afterDeleteGroupFunction != nil {
+	// 	allAfterReqFunctions.afterDeleteGroupFunction = luaAfterReqFns.afterDeleteGroupFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "deletegroup"))
+	// }
+	// if luaAfterReqFns.afterJoinGroupFunction != nil {
+	// 	allAfterReqFunctions.afterJoinGroupFunction = luaAfterReqFns.afterJoinGroupFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "joingroup"))
+	// }
+	// if luaAfterReqFns.afterLeaveGroupFunction != nil {
+	// 	allAfterReqFunctions.afterLeaveGroupFunction = luaAfterReqFns.afterLeaveGroupFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "leavegroup"))
+	// }
+	// if luaAfterReqFns.afterAddGroupUsersFunction != nil {
+	// 	allAfterReqFunctions.afterAddGroupUsersFunction = luaAfterReqFns.afterAddGroupUsersFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "addgroupusers"))
+	// }
+	// if luaAfterReqFns.afterBanGroupUsersFunction != nil {
+	// 	allAfterReqFunctions.afterBanGroupUsersFunction = luaAfterReqFns.afterBanGroupUsersFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "bangroupusers"))
+	// }
+	// if luaAfterReqFns.afterKickGroupUsersFunction != nil {
+	// 	allAfterReqFunctions.afterKickGroupUsersFunction = luaAfterReqFns.afterKickGroupUsersFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "kickgroupusers"))
+	// }
+	// if luaAfterReqFns.afterPromoteGroupUsersFunction != nil {
+	// 	allAfterReqFunctions.afterPromoteGroupUsersFunction = luaAfterReqFns.afterPromoteGroupUsersFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "promotegroupusers"))
+	// }
+	// if luaAfterReqFns.afterListGroupUsersFunction != nil {
+	// 	allAfterReqFunctions.afterListGroupUsersFunction = luaAfterReqFns.afterListGroupUsersFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listgroupusers"))
+	// }
+	// if luaAfterReqFns.afterListUserGroupsFunction != nil {
+	// 	allAfterReqFunctions.afterListUserGroupsFunction = luaAfterReqFns.afterListUserGroupsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listusergroups"))
+	// }
+	// if luaAfterReqFns.afterListGroupsFunction != nil {
+	// 	allAfterReqFunctions.afterListGroupsFunction = luaAfterReqFns.afterListGroupsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listgroups"))
+	// }
+	// if luaAfterReqFns.afterDeleteLeaderboardRecordFunction != nil {
+	// 	allAfterReqFunctions.afterDeleteLeaderboardRecordFunction = luaAfterReqFns.afterDeleteLeaderboardRecordFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "deleteleaderboardrecord"))
+	// }
+	// if luaAfterReqFns.afterDeleteTournamentRecordFunction != nil {
+	// 	allAfterReqFunctions.afterDeleteTournamentRecordFunction = luaAfterReqFns.afterDeleteTournamentRecordFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "deletetournamentrecord"))
+	// }
+	// if luaAfterReqFns.afterListLeaderboardRecordsFunction != nil {
+	// 	allAfterReqFunctions.afterListLeaderboardRecordsFunction = luaAfterReqFns.afterListLeaderboardRecordsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listleaderboardrecords"))
+	// }
+	// if luaAfterReqFns.afterWriteLeaderboardRecordFunction != nil {
+	// 	allAfterReqFunctions.afterWriteLeaderboardRecordFunction = luaAfterReqFns.afterWriteLeaderboardRecordFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "writeleaderboardrecord"))
+	// }
+	// if luaAfterReqFns.afterListLeaderboardRecordsAroundOwnerFunction != nil {
+	// 	allAfterReqFunctions.afterListLeaderboardRecordsAroundOwnerFunction = luaAfterReqFns.afterListLeaderboardRecordsAroundOwnerFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listleaderboardrecordsaroundowner"))
+	// }
+	// if luaAfterReqFns.afterLinkAppleFunction != nil {
+	// 	allAfterReqFunctions.afterLinkAppleFunction = luaAfterReqFns.afterLinkAppleFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linkapple"))
+	// }
+	// if luaAfterReqFns.afterLinkCustomFunction != nil {
+	// 	allAfterReqFunctions.afterLinkCustomFunction = luaAfterReqFns.afterLinkCustomFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linkcustom"))
+	// }
+	// if luaAfterReqFns.afterLinkDeviceFunction != nil {
+	// 	allAfterReqFunctions.afterLinkDeviceFunction = luaAfterReqFns.afterLinkDeviceFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linkdevice"))
+	// }
+	// if luaAfterReqFns.afterLinkEmailFunction != nil {
+	// 	allAfterReqFunctions.afterLinkEmailFunction = luaAfterReqFns.afterLinkEmailFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linkemail"))
+	// }
+	// if luaAfterReqFns.afterLinkFacebookFunction != nil {
+	// 	allAfterReqFunctions.afterLinkFacebookFunction = luaAfterReqFns.afterLinkFacebookFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linkfacebook"))
+	// }
+	// if luaAfterReqFns.afterLinkFacebookInstantGameFunction != nil {
+	// 	allAfterReqFunctions.afterLinkFacebookInstantGameFunction = luaAfterReqFns.afterLinkFacebookInstantGameFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linkfacebookinstantgame"))
+	// }
+	// if luaAfterReqFns.afterLinkGameCenterFunction != nil {
+	// 	allAfterReqFunctions.afterLinkGameCenterFunction = luaAfterReqFns.afterLinkGameCenterFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linkgamecenter"))
+	// }
+	// if luaAfterReqFns.afterLinkGoogleFunction != nil {
+	// 	allAfterReqFunctions.afterLinkGoogleFunction = luaAfterReqFns.afterLinkGoogleFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linkgoogle"))
+	// }
+	// if luaAfterReqFns.afterLinkSteamFunction != nil {
+	// 	allAfterReqFunctions.afterLinkSteamFunction = luaAfterReqFns.afterLinkSteamFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "linksteam"))
+	// }
+	// if luaAfterReqFns.afterListMatchesFunction != nil {
+	// 	allAfterReqFunctions.afterListMatchesFunction = luaAfterReqFns.afterListMatchesFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listmatches"))
+	// }
+	// if luaAfterReqFns.afterListNotificationsFunction != nil {
+	// 	allAfterReqFunctions.afterListNotificationsFunction = luaAfterReqFns.afterListNotificationsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listnotifications"))
+	// }
+	// if luaAfterReqFns.afterDeleteNotificationsFunction != nil {
+	// 	allAfterReqFunctions.afterDeleteNotificationsFunction = luaAfterReqFns.afterDeleteNotificationsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "deletenotifications"))
+	// }
+	// if luaAfterReqFns.afterListStorageObjectsFunction != nil {
+	// 	allAfterReqFunctions.afterListStorageObjectsFunction = luaAfterReqFns.afterListStorageObjectsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "liststorageobjects"))
+	// }
+	// if luaAfterReqFns.afterReadStorageObjectsFunction != nil {
+	// 	allAfterReqFunctions.afterReadStorageObjectsFunction = luaAfterReqFns.afterReadStorageObjectsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "readstorageobjects"))
+	// }
+	// if luaAfterReqFns.afterWriteStorageObjectsFunction != nil {
+	// 	allAfterReqFunctions.afterWriteStorageObjectsFunction = luaAfterReqFns.afterWriteStorageObjectsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "writestorageobjects"))
+	// }
+	// if luaAfterReqFns.afterDeleteStorageObjectsFunction != nil {
+	// 	allAfterReqFunctions.afterDeleteStorageObjectsFunction = luaAfterReqFns.afterDeleteStorageObjectsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "deletestorageobjects"))
+	// }
+	// if luaAfterReqFns.afterJoinTournamentFunction != nil {
+	// 	allAfterReqFunctions.afterJoinTournamentFunction = luaAfterReqFns.afterJoinTournamentFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "jointournament"))
+	// }
+	// if luaAfterReqFns.afterListTournamentRecordsFunction != nil {
+	// 	allAfterReqFunctions.afterListTournamentRecordsFunction = luaAfterReqFns.afterListTournamentRecordsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listtournamentrecords"))
+	// }
+	// if luaAfterReqFns.afterListTournamentsFunction != nil {
+	// 	allAfterReqFunctions.afterListTournamentsFunction = luaAfterReqFns.afterListTournamentsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listtournaments"))
+	// }
+	// if luaAfterReqFns.afterWriteTournamentRecordFunction != nil {
+	// 	allAfterReqFunctions.afterWriteTournamentRecordFunction = luaAfterReqFns.afterWriteTournamentRecordFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "writetournamentrecord"))
+	// }
+	// if luaAfterReqFns.afterListTournamentRecordsAroundOwnerFunction != nil {
+	// 	allAfterReqFunctions.afterListTournamentRecordsAroundOwnerFunction = luaAfterReqFns.afterListTournamentRecordsAroundOwnerFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listtournamentrecordsaroundowner"))
+	// }
+	// if luaAfterReqFns.afterUnlinkAppleFunction != nil {
+	// 	allAfterReqFunctions.afterUnlinkAppleFunction = luaAfterReqFns.afterUnlinkAppleFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinkapple"))
+	// }
+	// if luaAfterReqFns.afterUnlinkCustomFunction != nil {
+	// 	allAfterReqFunctions.afterUnlinkCustomFunction = luaAfterReqFns.afterUnlinkCustomFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinkcustom"))
+	// }
+	// if luaAfterReqFns.afterUnlinkDeviceFunction != nil {
+	// 	allAfterReqFunctions.afterUnlinkDeviceFunction = luaAfterReqFns.afterUnlinkDeviceFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinkdevice"))
+	// }
+	// if luaAfterReqFns.afterUnlinkEmailFunction != nil {
+	// 	allAfterReqFunctions.afterUnlinkEmailFunction = luaAfterReqFns.afterUnlinkEmailFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinkemail"))
+	// }
+	// if luaAfterReqFns.afterUnlinkFacebookFunction != nil {
+	// 	allAfterReqFunctions.afterUnlinkFacebookFunction = luaAfterReqFns.afterUnlinkFacebookFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinkfacebook"))
+	// }
+	// if luaAfterReqFns.afterUnlinkFacebookInstantGameFunction != nil {
+	// 	allAfterReqFunctions.afterUnlinkFacebookInstantGameFunction = luaAfterReqFns.afterUnlinkFacebookInstantGameFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinkfacebookinstantgame"))
+	// }
+	// if luaAfterReqFns.afterUnlinkGameCenterFunction != nil {
+	// 	allAfterReqFunctions.afterUnlinkGameCenterFunction = luaAfterReqFns.afterUnlinkGameCenterFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinkgamecenter"))
+	// }
+	// if luaAfterReqFns.afterUnlinkGoogleFunction != nil {
+	// 	allAfterReqFunctions.afterUnlinkGoogleFunction = luaAfterReqFns.afterUnlinkGoogleFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinkgoogle"))
+	// }
+	// if luaAfterReqFns.afterUnlinkSteamFunction != nil {
+	// 	allAfterReqFunctions.afterUnlinkSteamFunction = luaAfterReqFns.afterUnlinkSteamFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "unlinksteam"))
+	// }
+	// if luaAfterReqFns.afterGetUsersFunction != nil {
+	// 	allAfterReqFunctions.afterGetUsersFunction = luaAfterReqFns.afterGetUsersFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "getusers"))
+	// }
+	// if luaAfterReqFns.afterValidatePurchaseAppleFunction != nil {
+	// 	allAfterReqFunctions.afterValidatePurchaseAppleFunction = luaAfterReqFns.afterValidatePurchaseAppleFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "validatepurchaseapple"))
+	// }
+	// if luaAfterReqFns.afterValidatePurchaseGoogleFunction != nil {
+	// 	allAfterReqFunctions.afterValidatePurchaseGoogleFunction = luaAfterReqFns.afterValidatePurchaseGoogleFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "validatepurchasegoogle"))
+	// }
+	// if luaAfterReqFns.afterValidatePurchaseHuaweiFunction != nil {
+	// 	allAfterReqFunctions.afterValidatePurchaseHuaweiFunction = luaAfterReqFns.afterValidatePurchaseHuaweiFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "validatepurchasehuawei"))
+	// }
+	// if luaAfterReqFns.afterValidatePurchaseFacebookInstantFunction != nil {
+	// 	allAfterReqFunctions.afterValidatePurchaseFacebookInstantFunction = luaAfterReqFns.afterValidatePurchaseFacebookInstantFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "validatepurchasefacebookinstant"))
+	// }
+	// if luaAfterReqFns.afterValidateSubscriptionAppleFunction != nil {
+	// 	allAfterReqFunctions.afterValidateSubscriptionAppleFunction = luaAfterReqFns.afterValidateSubscriptionAppleFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "validatesubscriptionapple"))
+	// }
+	// if luaAfterReqFns.afterValidateSubscriptionGoogleFunction != nil {
+	// 	allAfterReqFunctions.afterValidateSubscriptionGoogleFunction = luaAfterReqFns.afterValidateSubscriptionGoogleFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "validatesubscriptiongoogle"))
+	// }
+	// if luaAfterReqFns.afterGetSubscriptionFunction != nil {
+	// 	allAfterReqFunctions.afterGetSubscriptionFunction = luaAfterReqFns.afterGetSubscriptionFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "getsubscription"))
+	// }
+	// if luaAfterReqFns.afterListSubscriptionsFunction != nil {
+	// 	allAfterReqFunctions.afterListSubscriptionsFunction = luaAfterReqFns.afterListSubscriptionsFunction
+	// 	startupLogger.Info("Registered Lua runtime After function invocation", zap.String("id", "listsubscriptions"))
+	// }
+	// if luaAfterReqFns.afterListPartiesFunction != nil {
+	// 	allAfterReqFunctions.afterListPartiesFunction = luaAfterReqFns.afterListPartiesFunction
+	// 	startupLogger.Info("Registered Lua runtime Before function invocation", zap.String("id", "listparties"))
+	// }
+	// if luaAfterReqFns.afterEventFunction != nil {
+	// 	allAfterReqFunctions.afterEventFunction = luaAfterReqFns.afterEventFunction
+	// 	startupLogger.Info("Registered Lua runtime After custom events function invocation")
+	// }
 
 	// Register Go After req functions
 	if goAfterReqFns.afterGetAccountFunction != nil {
@@ -2573,9 +2581,9 @@ func NewRuntime(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.
 	case goMatchmakerMatchedFn != nil:
 		allMatchmakerMatchedFunction = goMatchmakerMatchedFn
 		startupLogger.Info("Registered Go runtime Matchmaker Matched function invocation")
-	case luaMatchmakerMatchedFn != nil:
-		allMatchmakerMatchedFunction = luaMatchmakerMatchedFn
-		startupLogger.Info("Registered Lua runtime Matchmaker Matched function invocation")
+	// case luaMatchmakerMatchedFn != nil:
+	// 	allMatchmakerMatchedFunction = luaMatchmakerMatchedFn
+	// 	startupLogger.Info("Registered Lua runtime Matchmaker Matched function invocation")
 	case jsMatchmakerMatchedFn != nil:
 		allMatchmakerMatchedFunction = jsMatchmakerMatchedFn
 		startupLogger.Info("Registered JavaScript runtime Matchmaker Matched function invocation")
@@ -2600,9 +2608,9 @@ func NewRuntime(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.
 	case goTournamentEndFn != nil:
 		allTournamentEndFunction = goTournamentEndFn
 		startupLogger.Info("Registered Go runtime Tournament End function invocation")
-	case luaTournamentEndFn != nil:
-		allTournamentEndFunction = luaTournamentEndFn
-		startupLogger.Info("Registered Lua runtime Tournament End function invocation")
+	// case luaTournamentEndFn != nil:
+	// 	allTournamentEndFunction = luaTournamentEndFn
+	// 	startupLogger.Info("Registered Lua runtime Tournament End function invocation")
 	case jsTournamentEndFn != nil:
 		allTournamentEndFunction = jsTournamentEndFn
 		startupLogger.Info("Registered JavaScript runtime Tournament End function invocation")
@@ -2613,9 +2621,9 @@ func NewRuntime(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.
 	case goTournamentResetFn != nil:
 		allTournamentResetFunction = goTournamentResetFn
 		startupLogger.Info("Registered Go runtime Tournament Reset function invocation")
-	case luaTournamentResetFn != nil:
-		allTournamentResetFunction = luaTournamentResetFn
-		startupLogger.Info("Registered Lua runtime Tournament Reset function invocation")
+	// case luaTournamentResetFn != nil:
+	// 	allTournamentResetFunction = luaTournamentResetFn
+	// 	startupLogger.Info("Registered Lua runtime Tournament Reset function invocation")
 	case jsTournamentResetFn != nil:
 		allTournamentResetFunction = jsTournamentResetFn
 		startupLogger.Info("Registered JavaScript runtime Tournament Reset function invocation")
@@ -2626,9 +2634,9 @@ func NewRuntime(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.
 	case goLeaderboardResetFn != nil:
 		allLeaderboardResetFunction = goLeaderboardResetFn
 		startupLogger.Info("Registered Go runtime Leaderboard Reset function invocation")
-	case luaLeaderboardResetFn != nil:
-		allLeaderboardResetFunction = luaLeaderboardResetFn
-		startupLogger.Info("Registered Lua runtime Leaderboard Reset function invocation")
+	// case luaLeaderboardResetFn != nil:
+	// 	allLeaderboardResetFunction = luaLeaderboardResetFn
+	// 	startupLogger.Info("Registered Lua runtime Leaderboard Reset function invocation")
 	case jsLeaderboardResetFn != nil:
 		allLeaderboardResetFunction = jsLeaderboardResetFn
 		startupLogger.Info("Registered JavaScript runtime Leaderboard Reset function invocation")
@@ -2639,9 +2647,9 @@ func NewRuntime(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.
 	case goPurchaseNotificationAppleFn != nil:
 		allPurchaseNotificationAppleFunction = goPurchaseNotificationAppleFn
 		startupLogger.Info("Registered Go runtime Purchase Notification Apple function invocation")
-	case luaPurchaseNotificationAppleFn != nil:
-		allPurchaseNotificationAppleFunction = luaPurchaseNotificationAppleFn
-		startupLogger.Info("Registered Lua runtime Purchase Notification Apple function invocation")
+	// case luaPurchaseNotificationAppleFn != nil:
+	// 	allPurchaseNotificationAppleFunction = luaPurchaseNotificationAppleFn
+	// 	startupLogger.Info("Registered Lua runtime Purchase Notification Apple function invocation")
 	case jsPurchaseNotificationAppleFn != nil:
 		allPurchaseNotificationAppleFunction = jsPurchaseNotificationAppleFn
 		startupLogger.Info("Registered JavaScript runtime Purchase Notification Apple function invocation")
@@ -2652,9 +2660,9 @@ func NewRuntime(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.
 	case goSubscriptionNotificationAppleFn != nil:
 		allSubscriptionNotificationAppleFunction = goSubscriptionNotificationAppleFn
 		startupLogger.Info("Registered Go runtime Subscription Notification Apple function invocation")
-	case luaSubscriptionNotificationAppleFn != nil:
-		allSubscriptionNotificationAppleFunction = luaSubscriptionNotificationAppleFn
-		startupLogger.Info("Registered Lua runtime Subscription Notification Apple function invocation")
+	// case luaSubscriptionNotificationAppleFn != nil:
+	// 	allSubscriptionNotificationAppleFunction = luaSubscriptionNotificationAppleFn
+	// 	startupLogger.Info("Registered Lua runtime Subscription Notification Apple function invocation")
 	case jsSubscriptionNotificationAppleFn != nil:
 		allSubscriptionNotificationAppleFunction = jsSubscriptionNotificationAppleFn
 		startupLogger.Info("Registered JavaScript runtime Subscription Notification Apple function invocation")
@@ -2665,9 +2673,9 @@ func NewRuntime(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.
 	case goPurchaseNotificationGoogleFn != nil:
 		allPurchaseNotificationGoogleFunction = goPurchaseNotificationGoogleFn
 		startupLogger.Info("Registered Go runtime Purchase Notification Google function invocation")
-	case luaPurchaseNotificationGoogleFn != nil:
-		allPurchaseNotificationGoogleFunction = luaPurchaseNotificationGoogleFn
-		startupLogger.Info("Registered Lua runtime Purchase Notification Google function invocation")
+	// case luaPurchaseNotificationGoogleFn != nil:
+	// 	allPurchaseNotificationGoogleFunction = luaPurchaseNotificationGoogleFn
+	// 	startupLogger.Info("Registered Lua runtime Purchase Notification Google function invocation")
 	case jsPurchaseNotificationGoogleFn != nil:
 		allPurchaseNotificationGoogleFunction = jsPurchaseNotificationGoogleFn
 		startupLogger.Info("Registered JavaScript runtime Purchase Notification Google function invocation")
@@ -2678,9 +2686,9 @@ func NewRuntime(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.
 	case goSubscriptionNotificationGoogleFn != nil:
 		allSubscriptionNotificationGoogleFunction = goSubscriptionNotificationGoogleFn
 		startupLogger.Info("Registered Go runtime Subscription Notification Google function invocation")
-	case luaSubscriptionNotificationGoogleFn != nil:
-		allSubscriptionNotificationGoogleFunction = luaSubscriptionNotificationGoogleFn
-		startupLogger.Info("Registered Lua runtime Subscription Notification Google function invocation")
+	// case luaSubscriptionNotificationGoogleFn != nil:
+	// 	allSubscriptionNotificationGoogleFunction = luaSubscriptionNotificationGoogleFn
+	// 	startupLogger.Info("Registered Lua runtime Subscription Notification Google function invocation")
 	case jsSubscriptionNotificationGoogleFn != nil:
 		allSubscriptionNotificationGoogleFunction = jsSubscriptionNotificationGoogleFn
 		startupLogger.Info("Registered JavaScript runtime Subscription Notification Google function invocation")
@@ -2691,32 +2699,34 @@ func NewRuntime(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.
 	case goShutdownFn != nil:
 		allShutdownFunction = goShutdownFn
 		startupLogger.Info("Registered Go runtime Shutdown function invocation")
-	case luaShutdownFn != nil:
-		allShutdownFunction = luaShutdownFn
-		startupLogger.Info("Registered Lua runtime Shutdown function invocation")
+	// case luaShutdownFn != nil:
+	// 	allShutdownFunction = luaShutdownFn
+	// 	startupLogger.Info("Registered Lua runtime Shutdown function invocation")
 	case jsShutdownFn != nil:
 		allShutdownFunction = jsShutdownFn
 		startupLogger.Info("Registered JavaScript runtime Shutdown function invocation")
 	}
 
-	allStorageIndexFilterFunctions := make(map[string]RuntimeStorageIndexFilterFunction, len(goIndexFilterFns)+len(luaIndexFilterFns)+len(jsIndexFilterFns))
+	allStorageIndexFilterFunctions := make(map[string]RuntimeStorageIndexFilterFunction, len(goIndexFilterFns)+
+		//len(luaIndexFilterFns)+
+		len(jsIndexFilterFns))
 	jsIndexNames := make(map[string]bool, len(jsIndexFilterFns))
 	for id, fn := range jsIndexFilterFns {
 		allStorageIndexFilterFunctions[id] = fn
 		jsIndexNames[id] = true
 		startupLogger.Info("Registered JavaScript runtime storage index filter function invocation", zap.String("index_name", id))
 	}
-	luaIndexNames := make(map[string]bool, len(luaIndexFilterFns))
-	for id, fn := range luaIndexFilterFns {
-		allStorageIndexFilterFunctions[id] = fn
-		delete(jsIndexNames, id)
-		luaIndexNames[id] = true
-		startupLogger.Info("Registered Lua runtime storage index filter function invocation", zap.String("index_name", id))
-	}
+	// luaIndexNames := make(map[string]bool, len(luaIndexFilterFns))
+	// for id, fn := range luaIndexFilterFns {
+	// 	allStorageIndexFilterFunctions[id] = fn
+	// 	delete(jsIndexNames, id)
+	// 	luaIndexNames[id] = true
+	// 	startupLogger.Info("Registered Lua runtime storage index filter function invocation", zap.String("index_name", id))
+	// }
 	goIndexNames := make(map[string]bool, len(goIndexFilterFns))
 	for id, fn := range goIndexFilterFns {
 		allStorageIndexFilterFunctions[id] = fn
-		delete(luaIndexNames, id)
+		delete(jsIndexNames, id)
 		goIndexNames[id] = true
 		startupLogger.Info("Registered Go runtime storage index filter function invocation", zap.String("index_name", id))
 	}
@@ -2727,7 +2737,13 @@ func NewRuntime(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.
 		startupLogger.Info("Registered Go runtime Match creation function invocation", zap.String("name", name))
 	}
 
-	rInfo, err := runtimeInfo(paths, jsRpcIDs, luaRpcIDs, goRpcIDs, jsModules, luaModules, goModules)
+	rInfo, err := runtimeInfo(paths,
+		jsRpcIDs,
+		//luaRpcIDs,
+		goRpcIDs,
+		jsModules,
+		//luaModules,
+		goModules)
 	if err != nil {
 		logger.Error("Error getting runtime info data.", zap.Error(err))
 		return nil, nil, err
@@ -2762,22 +2778,26 @@ func NewRuntime(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.
 	}, rInfo, nil
 }
 
-func runtimeInfo(paths []string, jsRpcIDs, luaRpcIDs, goRpcIDs map[string]bool, jsModules, luaModules, goModules []string) (*RuntimeInfo, error) {
+func runtimeInfo(paths []string, jsRpcIDs,
+	//luaRpcIDs,
+	goRpcIDs map[string]bool, jsModules,
+	//luaModules,
+	goModules []string) (*RuntimeInfo, error) {
 	jsRpcs := make([]string, 0, len(jsRpcIDs))
 	for id := range jsRpcIDs {
 		jsRpcs = append(jsRpcs, id)
 	}
-	luaRpcs := make([]string, 0, len(luaRpcIDs))
-	for id := range luaRpcIDs {
-		luaRpcs = append(luaRpcs, id)
-	}
+	// luaRpcs := make([]string, 0, len(luaRpcIDs))
+	// for id := range luaRpcIDs {
+	// 	luaRpcs = append(luaRpcs, id)
+	// }
 	goRpcs := make([]string, 0, len(goRpcIDs))
 	for id := range goRpcIDs {
 		goRpcs = append(goRpcs, id)
 	}
 
 	jsModulePaths := make([]*moduleInfo, 0, len(jsModules))
-	luaModulePaths := make([]*moduleInfo, 0, len(luaModules))
+	//luaModulePaths := make([]*moduleInfo, 0, len(luaModules))
 	goModulePaths := make([]*moduleInfo, 0, len(goModules))
 	for _, p := range paths {
 		for _, m := range jsModules {
@@ -2792,18 +2812,18 @@ func runtimeInfo(paths []string, jsRpcIDs, luaRpcIDs, goRpcIDs map[string]bool, 
 				})
 			}
 		}
-		for _, m := range luaModules {
-			if strings.HasSuffix(p, m) {
-				fileInfo, err := os.Stat(p)
-				if err != nil {
-					return nil, err
-				}
-				luaModulePaths = append(luaModulePaths, &moduleInfo{
-					path:    p,
-					modTime: fileInfo.ModTime(),
-				})
-			}
-		}
+		// for _, m := range luaModules {
+		// 	if strings.HasSuffix(p, m) {
+		// 		fileInfo, err := os.Stat(p)
+		// 		if err != nil {
+		// 			return nil, err
+		// 		}
+		// 		luaModulePaths = append(luaModulePaths, &moduleInfo{
+		// 			path:    p,
+		// 			modTime: fileInfo.ModTime(),
+		// 		})
+		// 	}
+		// }
 		for _, m := range goModules {
 			if strings.HasSuffix(p, m) {
 				fileInfo, err := os.Stat(p)
@@ -2819,12 +2839,12 @@ func runtimeInfo(paths []string, jsRpcIDs, luaRpcIDs, goRpcIDs map[string]bool, 
 	}
 
 	return &RuntimeInfo{
-		LuaRpcFunctions:        luaRpcs,
+		//LuaRpcFunctions:        luaRpcs,
 		GoRpcFunctions:         goRpcs,
 		JavaScriptRpcFunctions: jsRpcs,
 		GoModules:              goModulePaths,
-		LuaModules:             luaModulePaths,
-		JavaScriptModules:      jsModulePaths,
+		//LuaModules:             luaModulePaths,
+		JavaScriptModules: jsModulePaths,
 	}, nil
 }
 

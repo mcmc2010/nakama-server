@@ -24,6 +24,9 @@
 package console
 
 import (
+	reflect "reflect"
+	sync "sync"
+
 	_ "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options"
 	api "github.com/heroiclabs/nakama-common/api"
 	rtapi "github.com/heroiclabs/nakama-common/rtapi"
@@ -33,8 +36,6 @@ import (
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
-	reflect "reflect"
-	sync "sync"
 )
 
 const (
@@ -4103,7 +4104,7 @@ type RuntimeInfo struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Lua registered RPC functions
-	LuaRpcFunctions []string `protobuf:"bytes,1,rep,name=lua_rpc_functions,json=luaRpcFunctions,proto3" json:"lua_rpc_functions,omitempty"`
+	//LuaRpcFunctions []string `protobuf:"bytes,1,rep,name=lua_rpc_functions,json=luaRpcFunctions,proto3" json:"lua_rpc_functions,omitempty"`
 	// Go registered RPC functions
 	GoRpcFunctions []string `protobuf:"bytes,2,rep,name=go_rpc_functions,json=goRpcFunctions,proto3" json:"go_rpc_functions,omitempty"`
 	// JavaScript registered RPC functions
@@ -4111,7 +4112,7 @@ type RuntimeInfo struct {
 	// Go loaded modules
 	GoModules []*RuntimeInfo_ModuleInfo `protobuf:"bytes,4,rep,name=go_modules,json=goModules,proto3" json:"go_modules,omitempty"`
 	// Lua loaded modules
-	LuaModules []*RuntimeInfo_ModuleInfo `protobuf:"bytes,5,rep,name=lua_modules,json=luaModules,proto3" json:"lua_modules,omitempty"`
+	//LuaModules []*RuntimeInfo_ModuleInfo `protobuf:"bytes,5,rep,name=lua_modules,json=luaModules,proto3" json:"lua_modules,omitempty"`
 	// JavaScript loaded modules
 	JsModules []*RuntimeInfo_ModuleInfo `protobuf:"bytes,6,rep,name=js_modules,json=jsModules,proto3" json:"js_modules,omitempty"`
 }
@@ -4148,12 +4149,12 @@ func (*RuntimeInfo) Descriptor() ([]byte, []int) {
 	return file_console_proto_rawDescGZIP(), []int{57}
 }
 
-func (x *RuntimeInfo) GetLuaRpcFunctions() []string {
-	if x != nil {
-		return x.LuaRpcFunctions
-	}
-	return nil
-}
+// func (x *RuntimeInfo) GetLuaRpcFunctions() []string {
+// 	if x != nil {
+// 		return x.LuaRpcFunctions
+// 	}
+// 	return nil
+// }
 
 func (x *RuntimeInfo) GetGoRpcFunctions() []string {
 	if x != nil {
@@ -4176,12 +4177,12 @@ func (x *RuntimeInfo) GetGoModules() []*RuntimeInfo_ModuleInfo {
 	return nil
 }
 
-func (x *RuntimeInfo) GetLuaModules() []*RuntimeInfo_ModuleInfo {
-	if x != nil {
-		return x.LuaModules
-	}
-	return nil
-}
+// func (x *RuntimeInfo) GetLuaModules() []*RuntimeInfo_ModuleInfo {
+// 	if x != nil {
+// 		return x.LuaModules
+// 	}
+// 	return nil
+// }
 
 func (x *RuntimeInfo) GetJsModules() []*RuntimeInfo_ModuleInfo {
 	if x != nil {

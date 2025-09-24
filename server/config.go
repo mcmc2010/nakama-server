@@ -216,21 +216,21 @@ func ValidateConfig(logger *zap.Logger, c Config) map[string]string {
 	if c.GetSocket().PingPeriodMs >= c.GetSocket().PongWaitMs {
 		logger.Fatal("Ping period value must be less than pong wait value", zap.Int("socket.ping_period_ms", c.GetSocket().PingPeriodMs), zap.Int("socket.pong_wait_ms", c.GetSocket().PongWaitMs))
 	}
-	if c.GetRuntime().GetLuaMinCount() < 0 {
-		logger.Fatal("Minimum Lua runtime instance count must be >= 0", zap.Int("runtime.lua_min_count", c.GetRuntime().GetLuaMinCount()))
-	}
-	if c.GetRuntime().GetLuaMaxCount() < 1 {
-		logger.Fatal("Maximum Lua runtime instance count must be >= 1", zap.Int("runtime.lua_max_count", c.GetRuntime().GetLuaMinCount()))
-	}
-	if c.GetRuntime().GetLuaMinCount() > c.GetRuntime().GetLuaMaxCount() {
-		logger.Fatal("Minimum Lua runtime instance count must be less than or equal to maximum Lua runtime instance count", zap.Int("runtime.lua_min_count", c.GetRuntime().GetLuaMinCount()), zap.Int("runtime.lua_max_count", c.GetRuntime().GetLuaMaxCount()))
-	}
-	if c.GetRuntime().GetLuaCallStackSize() < 1 {
-		logger.Fatal("Lua runtime instance call stack size must be >= 1", zap.Int("runtime.lua_call_stack_size", c.GetRuntime().GetLuaCallStackSize()))
-	}
-	if c.GetRuntime().GetLuaRegistrySize() < 128 {
-		logger.Fatal("Lua runtime instance registry size must be >= 128", zap.Int("runtime.registry_size", c.GetRuntime().GetLuaRegistrySize()))
-	}
+	// if c.GetRuntime().GetLuaMinCount() < 0 {
+	// 	logger.Fatal("Minimum Lua runtime instance count must be >= 0", zap.Int("runtime.lua_min_count", c.GetRuntime().GetLuaMinCount()))
+	// }
+	// if c.GetRuntime().GetLuaMaxCount() < 1 {
+	// 	logger.Fatal("Maximum Lua runtime instance count must be >= 1", zap.Int("runtime.lua_max_count", c.GetRuntime().GetLuaMinCount()))
+	// }
+	// if c.GetRuntime().GetLuaMinCount() > c.GetRuntime().GetLuaMaxCount() {
+	// 	logger.Fatal("Minimum Lua runtime instance count must be less than or equal to maximum Lua runtime instance count", zap.Int("runtime.lua_min_count", c.GetRuntime().GetLuaMinCount()), zap.Int("runtime.lua_max_count", c.GetRuntime().GetLuaMaxCount()))
+	// }
+	// if c.GetRuntime().GetLuaCallStackSize() < 1 {
+	// 	logger.Fatal("Lua runtime instance call stack size must be >= 1", zap.Int("runtime.lua_call_stack_size", c.GetRuntime().GetLuaCallStackSize()))
+	// }
+	// if c.GetRuntime().GetLuaRegistrySize() < 128 {
+	// 	logger.Fatal("Lua runtime instance registry size must be >= 128", zap.Int("runtime.registry_size", c.GetRuntime().GetLuaRegistrySize()))
+	// }
 	if c.GetRuntime().JsMinCount < 0 {
 		logger.Fatal("Minimum JavaScript runtime instance count must be >= 0", zap.Int("runtime.js_min_count", c.GetRuntime().JsMinCount))
 	}

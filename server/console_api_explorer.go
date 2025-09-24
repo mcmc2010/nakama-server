@@ -222,9 +222,9 @@ func (s *ConsoleServer) initRpcMethodCache() error {
 	for _, rpc := range s.runtimeInfo.JavaScriptRpcFunctions {
 		rpcs[MethodName(rpc)] = &console.ApiEndpointDescriptor{Method: rpc}
 	}
-	for _, rpc := range s.runtimeInfo.LuaRpcFunctions {
-		rpcs[MethodName(rpc)] = &console.ApiEndpointDescriptor{Method: rpc}
-	}
+	// for _, rpc := range s.runtimeInfo.LuaRpcFunctions {
+	// 	rpcs[MethodName(rpc)] = &console.ApiEndpointDescriptor{Method: rpc}
+	// }
 	for _, rpc := range s.runtimeInfo.GoRpcFunctions {
 		rpcs[MethodName(rpc)] = &console.ApiEndpointDescriptor{Method: rpc}
 	}
