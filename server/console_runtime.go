@@ -34,6 +34,7 @@ func (s *ConsoleServer) GetRuntime(ctx context.Context, in *emptypb.Empty) (*con
 		return result
 	}
 
+	//
 	return &console.RuntimeInfo{
 		//LuaRpcFunctions: s.runtimeInfo.LuaRpcFunctions,
 		GoRpcFunctions: s.runtimeInfo.GoRpcFunctions,

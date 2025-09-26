@@ -1123,63 +1123,63 @@ func (r *RuntimeConfig) Clone() *RuntimeConfig {
 }
 
 // Function to allow backwards compatibility for MinCount config
-func (r *RuntimeConfig) GetLuaMinCount() int {
-	if r.MinCount != 0 {
-		return r.MinCount
-	}
-	return r.LuaMinCount
-}
+// func (r *RuntimeConfig) GetLuaMinCount() int {
+// 	if r.MinCount != 0 {
+// 		return r.MinCount
+// 	}
+// 	return r.LuaMinCount
+// }
 
 // Function to allow backwards compatibility for MaxCount config
-func (r *RuntimeConfig) GetLuaMaxCount() int {
-	if r.MaxCount != 0 {
-		return r.MaxCount
-	}
-	return r.LuaMaxCount
-}
+// func (r *RuntimeConfig) GetLuaMaxCount() int {
+// 	if r.MaxCount != 0 {
+// 		return r.MaxCount
+// 	}
+// 	return r.LuaMaxCount
+// }
 
 // Function to allow backwards compatibility for CallStackSize config
-func (r *RuntimeConfig) GetLuaCallStackSize() int {
-	if r.CallStackSize != 0 {
-		return r.CallStackSize
-	}
-	return r.LuaCallStackSize
-}
+// func (r *RuntimeConfig) GetLuaCallStackSize() int {
+// 	if r.CallStackSize != 0 {
+// 		return r.CallStackSize
+// 	}
+// 	return r.LuaCallStackSize
+// }
 
 // Function to allow backwards compatibility for RegistrySize config
-func (r *RuntimeConfig) GetLuaRegistrySize() int {
-	if r.RegistrySize != 0 {
-		return r.RegistrySize
-	}
-	return r.LuaRegistrySize
-}
+// func (r *RuntimeConfig) GetLuaRegistrySize() int {
+// 	if r.RegistrySize != 0 {
+// 		return r.RegistrySize
+// 	}
+// 	return r.LuaRegistrySize
+// }
 
 // Function to allow backwards compatibility for LuaReadOnlyGlobals config
-func (r *RuntimeConfig) GetLuaReadOnlyGlobals() bool {
-	if !r.ReadOnlyGlobals {
-		return r.ReadOnlyGlobals
-	}
-	return r.LuaReadOnlyGlobals
-}
+// func (r *RuntimeConfig) GetLuaReadOnlyGlobals() bool {
+// 	if !r.ReadOnlyGlobals {
+// 		return r.ReadOnlyGlobals
+// 	}
+// 	return r.LuaReadOnlyGlobals
+// }
 
 func NewRuntimeConfig() *RuntimeConfig {
 	return &RuntimeConfig{
-		Environment:        make(map[string]string),
-		Env:                make([]string, 0),
-		Path:               "",
-		HTTPKey:            "defaulthttpkey",
-		LuaMinCount:        16,
-		LuaMaxCount:        48,
-		LuaCallStackSize:   128,
-		LuaRegistrySize:    512,
-		JsMinCount:         16,
-		JsMaxCount:         32,
-		EventQueueSize:     65536,
-		EventQueueWorkers:  8,
-		ReadOnlyGlobals:    true,
-		LuaReadOnlyGlobals: true,
-		JsReadOnlyGlobals:  true,
-		LuaApiStacktrace:   false,
+		Environment: make(map[string]string),
+		Env:         make([]string, 0),
+		Path:        "",
+		HTTPKey:     "defaulthttpkey",
+		//LuaMinCount:        16,
+		//LuaMaxCount:        48,
+		//LuaCallStackSize:   128,
+		//LuaRegistrySize:    512,
+		JsMinCount:        16,
+		JsMaxCount:        32,
+		EventQueueSize:    65536,
+		EventQueueWorkers: 8,
+		ReadOnlyGlobals:   true,
+		//LuaReadOnlyGlobals: true,
+		JsReadOnlyGlobals: true,
+		//LuaApiStacktrace:   false,
 	}
 }
 

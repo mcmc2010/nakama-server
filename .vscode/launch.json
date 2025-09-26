@@ -10,7 +10,9 @@
         "request": "launch",
         "mode": "auto",
         "program": "${workspaceFolder}",
-        "args": []
+        "args": [
+          "--config", "settings.yaml"
+        ]
       }
     ]
 }

@@ -12,7 +12,7 @@
 * **Parties** - Add team play to a game. Users can form a party and communicate with party members.
 * **Purchase Validation** - Validate in-app purchases and subscriptions.
 * **In-App Notifications** - Send messages and notifications to connected client sockets.
-* **Runtime code** - Extend the server with custom logic written in Lua, TypeScript/JavaScript, or native Go code.
+* **Runtime code** - Extend the server with custom logic written in TypeScript/JavaScript, or native Go code.
 * **Matchmaker**, **dashboard**, **metrics**, and [more](https://heroiclabs.com/docs).
 
 Build scalable games and apps with a production ready server used by ambitious game studios and app developers [all around the world](https://heroiclabs.com/customers/). Have a look at the [documentation](https://heroiclabs.com/docs) and join the [developer community](https://forum.heroiclabs.com) for more info.
@@ -46,14 +46,25 @@ You can run the servers with native binaries for your platform.
 3. Run a migration which will setup or upgrade the database schema:
 
    ```shell
-   nakama migrate up --database.address "root@127.0.0.1:26257"
+   nakama migrate up --database.address "root:<password>@127.0.0.1:5432/<dbname>"
+   # windows
+   ./nakama.exe migrate up --config settings.yaml
    ```
 
 4. Start Nakama and connect to the database:
 
    ```shell
-   nakama --database.address "root@127.0.0.1:26257"
+   nakama --database.address "root:<password>@127.0.0.1:5432/<dbname>"
    ```
+
+5.
+  ```shell
+  openssl rand -base64 64
+  openssl rand -hex 32 | tr '[:lower:]' '[:upper:]'
+  # windows
+  openssl rand -hex 32 | %{ $_.ToUpper() }
+  ./nakama.exe --config settings.yaml
+  ```
 
 When connected you'll see server output which describes all settings the server uses for [configuration](https://heroiclabs.com/docs/nakama/getting-started/configuration).
 
@@ -135,17 +146,20 @@ To build the codebase and generate all sources follow these steps.
 1. Install the toolchain.
 
    ```shell
-   go install \
-       "google.golang.org/protobuf/cmd/protoc-gen-go" \
-       "google.golang.org/grpc/cmd/protoc-gen-go-grpc" \
-       "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway" \
-       "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2"
+   go install "google.golang.org/protobuf/cmd/protoc-gen-go"
+   go install "google.golang.org/grpc/cmd/protoc-gen-go-grpc"
+   go install "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway"
+   go install "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2"
    ```
 
 2. Re-generate the protocol buffers and gateway code.
 
    ```shell
+   cd console
    env PATH="$HOME/go/bin:$PATH" go generate -x ./...
+   # windows
+   set PATH=%USERPROFILE%\go\bin;%PATH%
+   go generate -x ./...
    ```
 
 3. Build the codebase.

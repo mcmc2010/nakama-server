@@ -1146,17 +1146,17 @@ message RuntimeInfo {
   }
 
   // Lua registered RPC functions
-  repeated string lua_rpc_functions = 1;
+  // repeated string lua_rpc_functions = 1;
   // Go registered RPC functions
-  repeated string go_rpc_functions = 2;
+  repeated string go_rpc_functions = 1;
   // JavaScript registered RPC functions
-  repeated string js_rpc_functions = 3;
+  repeated string js_rpc_functions = 2;
   // Go loaded modules
-  repeated ModuleInfo go_modules = 4;
+  repeated ModuleInfo go_modules = 3;
   // Lua loaded modules
-  repeated ModuleInfo lua_modules = 5;
+  // repeated ModuleInfo lua_modules = 5;
   // JavaScript loaded modules
-  repeated ModuleInfo js_modules = 6;
+  repeated ModuleInfo js_modules = 4;
 }
 
 // An individual update to a user's wallet.

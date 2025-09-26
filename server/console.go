@@ -503,6 +503,12 @@ func (s *ConsoleServer) Stop() {
 
 func consoleInterceptorFunc(logger *zap.Logger, config Config, sessionCache SessionCache, loginAttmeptCache LoginAttemptCache) func(context.Context, interface{}, *grpc.UnaryServerInfo, grpc.UnaryHandler) (interface{}, error) {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+
+		// Log every request.
+		client_ip, _ := extractClientAddressFromContext(logger, ctx)
+		logger.Debug("(API) request", zap.String("method", info.FullMethod), zap.Any("request", req), zap.String("client_address", client_ip))
+
+		//
 		if info.FullMethod == "/nakama.console.Console/Authenticate" {
 			// Skip authentication check for Login endpoint.
 			return handler(ctx, req)

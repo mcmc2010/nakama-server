@@ -1,0 +1,39 @@
+# Nakama server configuration file
+# For more information, see https://heroiclabs.com/docs/nakama/reference/configuration/
+name: "nakama-server"
+data_dir: "./data/"
+
+socket:
+  address: "0.0.0.0"
+  port: 7350
+  server_key: "3E2134E8F76AF028F8B3E3752F425574C634CC009B74AF1D13427E229D482389"
+
+session:
+  encryption_key: "3A0EDFB5FD9F6CF368A2AFF1DC15F56009405E1ED017BF8603D6EF4E7C41E6E2"
+  refresh_encryption_key: "F497748B918A7EA881933A2DE6CCAE4D95501929455012522ADA0DABEE8F5A1EAB4CD02769F23E6F47E4C59B1C6572293F856535300AB403D8890A2D3F2C3836"
+
+runtime:
+  http_key: "defaultkey"
+
+database:
+  address:
+  #  - "root:game123...@localhost:5432/game?sslmode=require"
+    - "root:game123...@localhost:5432/game?sslmode=disable"
+  conn_max_lifetime_ms: 0
+  max_open_conns: 0
+  max_idle_conns: 100
+
+console:
+  address: "0.0.0.0"
+  port: 7351
+  username: "admin01"
+  password: "123456"
+  signing_key: "3AC8404618B60248544E0CDFC4C21F235120B7E095A836730FF78ACD33988D52"
+
+logger:
+  stdout: true
+  level: "info"
+  file: "logs/log.log"
+  local_time: true
+  rotation: true
+  max_size: 100
