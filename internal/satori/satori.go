@@ -32,7 +32,7 @@ import (
 	"unique"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/heroiclabs/nakama-common/runtime"
+	"github.com/heroiclabs/nakama/v3/common/runtime"
 	"github.com/heroiclabs/nakama/v3/internal/ctxkeys"
 	"go.uber.org/zap"
 )

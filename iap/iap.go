@@ -28,7 +28,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/heroiclabs/nakama-common/runtime"
+	"github.com/heroiclabs/nakama/v3/common/runtime"
 )
 
 const (

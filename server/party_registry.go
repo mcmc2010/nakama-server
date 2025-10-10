@@ -22,17 +22,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/blugelabs/bluge"
-	"github.com/blugelabs/bluge/index"
-	"github.com/blugelabs/bluge/search"
-	"github.com/heroiclabs/nakama-common/api"
-	"github.com/heroiclabs/nakama-common/runtime"
-	"go.uber.org/atomic"
 	"sync"
 	"time"
 
+	"github.com/blugelabs/bluge"
+	"github.com/blugelabs/bluge/index"
+	"github.com/blugelabs/bluge/search"
+	"github.com/heroiclabs/nakama/v3/common/api"
+	"github.com/heroiclabs/nakama/v3/common/runtime"
+	"go.uber.org/atomic"
+
 	"github.com/gofrs/uuid/v5"
-	"github.com/heroiclabs/nakama-common/rtapi"
+	"github.com/heroiclabs/nakama/v3/common/rtapi"
 	"go.uber.org/zap"
 )
 

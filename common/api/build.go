@@ -12,6 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package rtapi
+package api
 
-//go:generate protoc -I.. -I. --go_out=. --go_opt=paths=source_relative realtime.proto
+//go:generate ../../build/protoc -I../../build/include -I.. -I. --go_out=. --go_opt=paths=source_relative api.proto

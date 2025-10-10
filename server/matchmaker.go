@@ -17,16 +17,17 @@ package server
 import (
 	"context"
 	"fmt"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"sync"
 	"time"
+
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/blugelabs/bluge"
 	"github.com/gofrs/uuid/v5"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/heroiclabs/nakama-common/api"
-	"github.com/heroiclabs/nakama-common/rtapi"
-	"github.com/heroiclabs/nakama-common/runtime"
+	"github.com/heroiclabs/nakama/v3/common/api"
+	"github.com/heroiclabs/nakama/v3/common/rtapi"
+	"github.com/heroiclabs/nakama/v3/common/runtime"
 	"go.uber.org/atomic"
 	"go.uber.org/zap"
 )

@@ -94,8 +94,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/heroiclabs/nakama-common/api"
-	"github.com/heroiclabs/nakama-common/rtapi"
+	"github.com/heroiclabs/nakama/v3/common/api"
+	"github.com/heroiclabs/nakama/v3/common/rtapi"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 

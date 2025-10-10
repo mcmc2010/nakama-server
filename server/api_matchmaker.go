@@ -16,8 +16,9 @@ package server
 
 import (
 	"context"
+
 	"github.com/gofrs/uuid/v5"
-	"github.com/heroiclabs/nakama-common/api"
+	"github.com/heroiclabs/nakama/v3/common/api"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 )

@@ -155,10 +155,24 @@ To build the codebase and generate all sources follow these steps.
 2. Re-generate the protocol buffers and gateway code.
 
    ```shell
-   cd console
-   env PATH="$HOME/go/bin:$PATH" go generate -x ./...
+   # Macos/Linux
+   env PATH="$HOME/go/bin:$PATH"
    # windows
    set PATH=%USERPROFILE%\go\bin;%PATH%
+   ```
+
+   ```shell
+   # common
+   cd common/api
+   go generate -x ./...
+   cd common/rtapi
+   go generate -x ./...
+   ```
+
+   ```shell
+   cd apigrpc
+   go generate -x ./...
+   cd console
    go generate -x ./...
    ```
 

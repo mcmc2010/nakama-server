@@ -22,7 +22,7 @@ package nakama.api;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
-option go_package = "github.com/heroiclabs/nakama-common/api";
+option go_package = "github.com/heroiclabs/nakama/v3/common/api";
 
 option java_multiple_files = true;
 option java_outer_classname = "NakamaApi";
@@ -1222,22 +1222,22 @@ message ValidateSubscriptionGoogleRequest {
 }
 
 // Huawei IAP Purchase validation request
-message ValidatePurchaseHuaweiRequest {
-  // JSON encoded Huawei InAppPurchaseData.
-  string purchase = 1;
-  // InAppPurchaseData signature.
-  string signature = 2;
-  // Persist the purchase
-  google.protobuf.BoolValue persist = 3;
-}
+//message ValidatePurchaseHuaweiRequest {
+//  // JSON encoded Huawei InAppPurchaseData.
+//  string purchase = 1;
+//  // InAppPurchaseData signature.
+//  string signature = 2;
+//  // Persist the purchase
+//  google.protobuf.BoolValue persist = 3;
+//}
 
 // Facebook Instant IAP Purchase validation request
-message ValidatePurchaseFacebookInstantRequest {
-  // Base64 encoded Facebook Instant signedRequest receipt data payload.
-  string signed_request = 1;
-  // Persist the purchase
-  google.protobuf.BoolValue persist = 2;
-}
+//message ValidatePurchaseFacebookInstantRequest {
+//  // Base64 encoded Facebook Instant signedRequest receipt data payload.
+//  string signed_request = 1;
+//  // Persist the purchase
+//  google.protobuf.BoolValue persist = 2;
+//}
 
 // Validated Purchase stored by Nakama.
 message ValidatedPurchase {
@@ -1283,9 +1283,9 @@ enum StoreProvider {
   // Google Play Store
   GOOGLE_PLAY_STORE = 1;
   // Huawei App Gallery
-  HUAWEI_APP_GALLERY = 2;
+  //HUAWEI_APP_GALLERY = 2;
   // Facebook Instant Store
-  FACEBOOK_INSTANT_STORE = 3;
+  //FACEBOOK_INSTANT_STORE = 3;
 }
 
 // Environment where a purchase/subscription took place,

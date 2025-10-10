@@ -25,8 +25,8 @@ package console
 
 import (
 	_ "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options"
-	api "github.com/heroiclabs/nakama-common/api"
-	rtapi "github.com/heroiclabs/nakama-common/rtapi"
+	api "github.com/heroiclabs/nakama/v3/common/api"
+	rtapi "github.com/heroiclabs/nakama/v3/common/rtapi"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -5199,7 +5199,7 @@ var File_console_proto protoreflect.FileDescriptor
 
 const file_console_proto_rawDesc = "" +
 	"\n" +
-	"\rconsole.proto\x12\x0enakama.console\x1a\rapi/api.proto\x1a8github.com/heroiclabs/nakama-common/rtapi/realtime.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"T\n" +
+	"\rconsole.proto\x12\x0enakama.console\x1a\rapi/api.proto\x1a\x14rtapi/realtime.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"T\n" +
 	"\x15ApiEndpointDescriptor\x12\x16\n" +
 	"\x06method\x18\x01 \x01(\tR\x06method\x12#\n" +
 	"\rbody_template\x18\x02 \x01(\tR\fbodyTemplate\"w\n" +

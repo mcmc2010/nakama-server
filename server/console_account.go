@@ -27,7 +27,7 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid/v5"
-	"github.com/heroiclabs/nakama-common/api"
+	"github.com/heroiclabs/nakama/v3/common/api"
 	"github.com/heroiclabs/nakama/v3/console"
 	"github.com/jackc/pgx/v5/pgtype"
 	"go.uber.org/zap"

@@ -25,7 +25,7 @@ package apigrpc
 
 import (
 	_ "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options"
-	api "github.com/heroiclabs/nakama-common/api"
+	api "github.com/heroiclabs/nakama/v3/common/api"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -46,7 +46,7 @@ var File_apigrpc_proto protoreflect.FileDescriptor
 const file_apigrpc_proto_rawDesc = "" +
 	"\n" +
 	"\rapigrpc.proto\x12\n" +
-	"nakama.api\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\x1a1github.com/heroiclabs/nakama-common/api/api.proto2\xbdM\n" +
+	"nakama.api\x1a\rapi/api.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a.protoc-gen-openapiv2/options/annotations.proto2\xbdM\n" +
 	"\x06Nakama\x12W\n" +
 	"\n" +
 	"AddFriends\x12\x1d.nakama.api.AddFriendsRequest\x1a\x16.google.protobuf.Empty\"\x12\x82\xd3\xe4\x93\x02\f\"\n" +

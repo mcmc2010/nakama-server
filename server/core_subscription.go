@@ -31,8 +31,8 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid/v5"
-	"github.com/heroiclabs/nakama-common/api"
-	"github.com/heroiclabs/nakama-common/runtime"
+	"github.com/heroiclabs/nakama/v3/common/api"
+	"github.com/heroiclabs/nakama/v3/common/runtime"
 	"github.com/heroiclabs/nakama/v3/iap"
 
 	"github.com/jackc/pgerrcode"
