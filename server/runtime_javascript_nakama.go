@@ -257,60 +257,60 @@ func (n *RuntimeJavascriptNakamaModule) mappings(r *goja.Runtime) map[string]fun
 		"leaderboardRecordsHaystack":           n.leaderboardRecordsHaystack(r),
 		"purchaseValidateApple":                n.purchaseValidateApple(r),
 		"purchaseValidateGoogle":               n.purchaseValidateGoogle(r),
-		"purchaseValidateHuawei":               n.purchaseValidateHuawei(r),
-		"purchaseValidateFacebookInstant":      n.purchaseValidateFacebookInstant(r),
-		"purchaseGetByTransactionId":           n.purchaseGetByTransactionId(r),
-		"purchasesList":                        n.purchasesList(r),
-		"subscriptionValidateApple":            n.subscriptionValidateApple(r),
-		"subscriptionValidateGoogle":           n.subscriptionValidateGoogle(r),
-		"subscriptionGetByProductId":           n.subscriptionGetByProductId(r),
-		"subscriptionsList":                    n.subscriptionsList(r),
-		"tournamentCreate":                     n.tournamentCreate(r),
-		"tournamentDelete":                     n.tournamentDelete(r),
-		"tournamentAddAttempt":                 n.tournamentAddAttempt(r),
-		"tournamentJoin":                       n.tournamentJoin(r),
-		"tournamentList":                       n.tournamentList(r),
-		"tournamentsRanksDisable":              n.tournamentRanksDisable(r),
-		"tournamentsGetId":                     n.tournamentsGetId(r),
-		"tournamentRecordsList":                n.tournamentRecordsList(r),
-		"tournamentRecordWrite":                n.tournamentRecordWrite(r),
-		"tournamentRecordDelete":               n.tournamentRecordDelete(r),
-		"tournamentRecordsHaystack":            n.tournamentRecordsHaystack(r),
-		"groupsGetId":                          n.groupsGetId(r),
-		"groupCreate":                          n.groupCreate(r),
-		"groupUpdate":                          n.groupUpdate(r),
-		"groupDelete":                          n.groupDelete(r),
-		"groupUsersKick":                       n.groupUsersKick(r),
-		"groupUsersList":                       n.groupUsersList(r),
-		"userGroupsList":                       n.userGroupsList(r),
-		"friendsList":                          n.friendsList(r),
-		"friendsOfFriendsList":                 n.friendsOfFriendsList(r),
-		"friendsAdd":                           n.friendsAdd(r),
-		"friendsDelete":                        n.friendsDelete(r),
-		"friendsBlock":                         n.friendsBlock(r),
-		"friendMetadataUpdate":                 n.friendMetadataUpdate(r),
-		"groupUserJoin":                        n.groupUserJoin(r),
-		"groupUserLeave":                       n.groupUserLeave(r),
-		"groupUsersAdd":                        n.groupUsersAdd(r),
-		"groupUsersBan":                        n.groupUsersBan(r),
-		"groupUsersPromote":                    n.groupUsersPromote(r),
-		"groupUsersDemote":                     n.groupUsersDemote(r),
-		"groupsList":                           n.groupsList(r),
-		"groupsGetRandom":                      n.groupsGetRandom(r),
-		"fileRead":                             n.fileRead(r),
-		"localcacheGet":                        n.localcacheGet(r),
-		"localcachePut":                        n.localcachePut(r),
-		"localcacheDelete":                     n.localcacheDelete(r),
-		"localcacheClear":                      n.localcacheClear(r),
-		"channelMessageSend":                   n.channelMessageSend(r),
-		"channelMessageUpdate":                 n.channelMessageUpdate(r),
-		"channelMessageRemove":                 n.channelMessageRemove(r),
-		"channelMessagesList":                  n.channelMessagesList(r),
-		"channelIdBuild":                       n.channelIdBuild(r),
-		"binaryToString":                       n.binaryToString(r),
-		"stringToBinary":                       n.stringToBinary(r),
-		"storageIndexList":                     n.storageIndexList(r),
-		"partyList":                            n.partyList(r),
+		// "purchaseValidateHuawei":               n.purchaseValidateHuawei(r),
+		// "purchaseValidateFacebookInstant":      n.purchaseValidateFacebookInstant(r),
+		"purchaseGetByTransactionId": n.purchaseGetByTransactionId(r),
+		"purchasesList":              n.purchasesList(r),
+		"subscriptionValidateApple":  n.subscriptionValidateApple(r),
+		"subscriptionValidateGoogle": n.subscriptionValidateGoogle(r),
+		"subscriptionGetByProductId": n.subscriptionGetByProductId(r),
+		"subscriptionsList":          n.subscriptionsList(r),
+		"tournamentCreate":           n.tournamentCreate(r),
+		"tournamentDelete":           n.tournamentDelete(r),
+		"tournamentAddAttempt":       n.tournamentAddAttempt(r),
+		"tournamentJoin":             n.tournamentJoin(r),
+		"tournamentList":             n.tournamentList(r),
+		"tournamentsRanksDisable":    n.tournamentRanksDisable(r),
+		"tournamentsGetId":           n.tournamentsGetId(r),
+		"tournamentRecordsList":      n.tournamentRecordsList(r),
+		"tournamentRecordWrite":      n.tournamentRecordWrite(r),
+		"tournamentRecordDelete":     n.tournamentRecordDelete(r),
+		"tournamentRecordsHaystack":  n.tournamentRecordsHaystack(r),
+		"groupsGetId":                n.groupsGetId(r),
+		"groupCreate":                n.groupCreate(r),
+		"groupUpdate":                n.groupUpdate(r),
+		"groupDelete":                n.groupDelete(r),
+		"groupUsersKick":             n.groupUsersKick(r),
+		"groupUsersList":             n.groupUsersList(r),
+		"userGroupsList":             n.userGroupsList(r),
+		"friendsList":                n.friendsList(r),
+		"friendsOfFriendsList":       n.friendsOfFriendsList(r),
+		"friendsAdd":                 n.friendsAdd(r),
+		"friendsDelete":              n.friendsDelete(r),
+		"friendsBlock":               n.friendsBlock(r),
+		"friendMetadataUpdate":       n.friendMetadataUpdate(r),
+		"groupUserJoin":              n.groupUserJoin(r),
+		"groupUserLeave":             n.groupUserLeave(r),
+		"groupUsersAdd":              n.groupUsersAdd(r),
+		"groupUsersBan":              n.groupUsersBan(r),
+		"groupUsersPromote":          n.groupUsersPromote(r),
+		"groupUsersDemote":           n.groupUsersDemote(r),
+		"groupsList":                 n.groupsList(r),
+		"groupsGetRandom":            n.groupsGetRandom(r),
+		"fileRead":                   n.fileRead(r),
+		"localcacheGet":              n.localcacheGet(r),
+		"localcachePut":              n.localcachePut(r),
+		"localcacheDelete":           n.localcacheDelete(r),
+		"localcacheClear":            n.localcacheClear(r),
+		"channelMessageSend":         n.channelMessageSend(r),
+		"channelMessageUpdate":       n.channelMessageUpdate(r),
+		"channelMessageRemove":       n.channelMessageRemove(r),
+		"channelMessagesList":        n.channelMessagesList(r),
+		"channelIdBuild":             n.channelIdBuild(r),
+		"binaryToString":             n.binaryToString(r),
+		"stringToBinary":             n.stringToBinary(r),
+		"storageIndexList":           n.storageIndexList(r),
+		"partyList":                  n.partyList(r),
 	}
 }
 
@@ -6097,48 +6097,48 @@ func (n *RuntimeJavascriptNakamaModule) purchaseValidateGoogle(r *goja.Runtime) 
 // @param persist(type=bool, optional=true, default=true) Persist the purchase so that seenBefore can be computed to protect against replay attacks.
 // @return validation(nkruntime.ValidatePurchaseResponse) The resulting successfully validated purchases. Any previously validated purchases are returned with a seenBefore flag.
 // @return error(error) An optional error value if an error occurred.
-func (n *RuntimeJavascriptNakamaModule) purchaseValidateHuawei(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return func(f goja.FunctionCall) goja.Value {
-		if n.config.GetIAP().Huawei.ClientID == "" ||
-			n.config.GetIAP().Huawei.ClientSecret == "" ||
-			n.config.GetIAP().Huawei.PublicKey == "" {
-			panic(r.NewGoError(errors.New("huawei IAP is not configured")))
-		}
+// func (n *RuntimeJavascriptNakamaModule) purchaseValidateHuawei(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
+// 	return func(f goja.FunctionCall) goja.Value {
+// 		if n.config.GetIAP().Huawei.ClientID == "" ||
+// 			n.config.GetIAP().Huawei.ClientSecret == "" ||
+// 			n.config.GetIAP().Huawei.PublicKey == "" {
+// 			panic(r.NewGoError(errors.New("huawei IAP is not configured")))
+// 		}
 
-		userID := getJsString(r, f.Argument(0))
-		if userID == "" {
-			panic(r.NewTypeError("expects a user ID string"))
-		}
-		uid, err := uuid.FromString(userID)
-		if err != nil {
-			panic(r.NewTypeError("expects user ID to be a valid identifier"))
-		}
+// 		userID := getJsString(r, f.Argument(0))
+// 		if userID == "" {
+// 			panic(r.NewTypeError("expects a user ID string"))
+// 		}
+// 		uid, err := uuid.FromString(userID)
+// 		if err != nil {
+// 			panic(r.NewTypeError("expects user ID to be a valid identifier"))
+// 		}
 
-		receipt := getJsString(r, f.Argument(1))
-		if receipt == "" {
-			panic(r.NewTypeError("expects receipt"))
-		}
+// 		receipt := getJsString(r, f.Argument(1))
+// 		if receipt == "" {
+// 			panic(r.NewTypeError("expects receipt"))
+// 		}
 
-		signature := getJsString(r, f.Argument(2))
-		if signature == "" {
-			panic(r.NewTypeError("expects signature"))
-		}
+// 		signature := getJsString(r, f.Argument(2))
+// 		if signature == "" {
+// 			panic(r.NewTypeError("expects signature"))
+// 		}
 
-		persist := true
-		if f.Argument(3) != goja.Undefined() && f.Argument(3) != goja.Null() {
-			persist = getJsBool(r, f.Argument(3))
-		}
+// 		persist := true
+// 		if f.Argument(3) != goja.Undefined() && f.Argument(3) != goja.Null() {
+// 			persist = getJsBool(r, f.Argument(3))
+// 		}
 
-		validation, err := ValidatePurchaseHuawei(n.ctx, n.logger, n.db, uid, n.config.GetIAP().Huawei, receipt, signature, persist)
-		if err != nil {
-			panic(r.NewGoError(fmt.Errorf("error validating Huawei receipt: %s", err.Error())))
-		}
+// 		validation, err := ValidatePurchaseHuawei(n.ctx, n.logger, n.db, uid, n.config.GetIAP().Huawei, receipt, signature, persist)
+// 		if err != nil {
+// 			panic(r.NewGoError(fmt.Errorf("error validating Huawei receipt: %s", err.Error())))
+// 		}
 
-		validationResult := purchaseResponseToJsObject(validation)
+// 		validationResult := purchaseResponseToJsObject(validation)
 
-		return r.ToValue(validationResult)
-	}
-}
+// 		return r.ToValue(validationResult)
+// 	}
+// }
 
 // @group purchases
 // @summary Validates and stores a purchase receipt from Facebook Instant Games.
@@ -6147,41 +6147,41 @@ func (n *RuntimeJavascriptNakamaModule) purchaseValidateHuawei(r *goja.Runtime) 
 // @param persist(type=bool, optional=true, default=true) Persist the purchase so that seenBefore can be computed to protect against replay attacks.
 // @return validation(nkruntime.ValidatePurchaseResponse) The resulting successfully validated purchases. Any previously validated purchases are returned with a seenBefore flag.
 // @return error(error) An optional error value if an error occurred.
-func (n *RuntimeJavascriptNakamaModule) purchaseValidateFacebookInstant(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return func(f goja.FunctionCall) goja.Value {
-		if n.config.GetIAP().FacebookInstant.AppSecret == "" {
-			panic(r.NewGoError(errors.New("facebook instant IAP is not configured")))
-		}
+// func (n *RuntimeJavascriptNakamaModule) purchaseValidateFacebookInstant(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
+// 	return func(f goja.FunctionCall) goja.Value {
+// 		if n.config.GetIAP().FacebookInstant.AppSecret == "" {
+// 			panic(r.NewGoError(errors.New("facebook instant IAP is not configured")))
+// 		}
 
-		userID := getJsString(r, f.Argument(0))
-		if userID == "" {
-			panic(r.NewTypeError("expects a user ID string"))
-		}
-		uid, err := uuid.FromString(userID)
-		if err != nil {
-			panic(r.NewTypeError("expects user ID to be a valid identifier"))
-		}
+// 		userID := getJsString(r, f.Argument(0))
+// 		if userID == "" {
+// 			panic(r.NewTypeError("expects a user ID string"))
+// 		}
+// 		uid, err := uuid.FromString(userID)
+// 		if err != nil {
+// 			panic(r.NewTypeError("expects user ID to be a valid identifier"))
+// 		}
 
-		signedRequest := getJsString(r, f.Argument(1))
-		if signedRequest == "" {
-			panic(r.NewTypeError("expects signedRequest"))
-		}
+// 		signedRequest := getJsString(r, f.Argument(1))
+// 		if signedRequest == "" {
+// 			panic(r.NewTypeError("expects signedRequest"))
+// 		}
 
-		persist := true
-		if f.Argument(2) != goja.Undefined() && f.Argument(2) != goja.Null() {
-			persist = getJsBool(r, f.Argument(2))
-		}
+// 		persist := true
+// 		if f.Argument(2) != goja.Undefined() && f.Argument(2) != goja.Null() {
+// 			persist = getJsBool(r, f.Argument(2))
+// 		}
 
-		validation, err := ValidatePurchaseFacebookInstant(n.ctx, n.logger, n.db, uid, n.config.GetIAP().FacebookInstant, signedRequest, persist)
-		if err != nil {
-			panic(r.NewGoError(fmt.Errorf("error validating Facebook Instant receipt: %s", err.Error())))
-		}
+// 		validation, err := ValidatePurchaseFacebookInstant(n.ctx, n.logger, n.db, uid, n.config.GetIAP().FacebookInstant, signedRequest, persist)
+// 		if err != nil {
+// 			panic(r.NewGoError(fmt.Errorf("error validating Facebook Instant receipt: %s", err.Error())))
+// 		}
 
-		validationResult := purchaseResponseToJsObject(validation)
+// 		validationResult := purchaseResponseToJsObject(validation)
 
-		return r.ToValue(validationResult)
-	}
-}
+// 		return r.ToValue(validationResult)
+// 	}
+// }
 
 // @group purchases
 // @summary Look up a purchase receipt by transaction ID.

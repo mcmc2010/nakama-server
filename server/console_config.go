@@ -63,16 +63,16 @@ func (s *ConsoleServer) GetConfig(ctx context.Context, in *emptypb.Empty) (*cons
 	if cfg.GetIAP().Apple.SharedPassword != "" {
 		cfg.GetIAP().Apple.SharedPassword = ObfuscationString
 	}
-	if cfg.GetIAP().Huawei.ClientSecret != "" {
-		cfg.GetIAP().Huawei.ClientSecret = ObfuscationString
-	}
+	// if cfg.GetIAP().Huawei.ClientSecret != "" {
+	// 	cfg.GetIAP().Huawei.ClientSecret = ObfuscationString
+	// }
 
 	if cfg.GetSocial().FacebookInstantGame.AppSecret != "" {
 		cfg.GetSocial().FacebookInstantGame.AppSecret = ObfuscationString
 	}
-	if cfg.GetIAP().FacebookInstant.AppSecret != "" {
-		cfg.GetIAP().FacebookInstant.AppSecret = ObfuscationString
-	}
+	// if cfg.GetIAP().FacebookInstant.AppSecret != "" {
+	// 	cfg.GetIAP().FacebookInstant.AppSecret = ObfuscationString
+	// }
 
 	cfgBytes, err := json.Marshal(cfg)
 	if err != nil {

@@ -14,12 +14,7 @@ package iap
 import (
 	"bytes"
 	"context"
-	"crypto"
-	"crypto/hmac"
-	"crypto/rsa"
-	"crypto/sha256"
 	"crypto/x509"
-	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
 	"errors"
@@ -43,8 +38,6 @@ const (
 
 const (
 	AppleReceiptIsValid           = 0
-	HuaweiReceiptIsValid          = 0
-	HuaweiSandboxPurchaseType     = 0
 	AppleReceiptIsFromTestSandbox = 21007 // Receipt from test env was sent to prod. Should retry against the sandbox env.
 )
 
@@ -58,7 +51,6 @@ const accessTokenExpiresGracePeriod = 300 // 5 min grace period
 var cachedTokensGoogle = &googleTokenCache{
 	tokenMap: make(map[string]*accessTokenGoogle),
 }
-var cachedTokenHuawei accessTokenHuawei
 
 type googleTokenCache struct {
 	sync.RWMutex
@@ -77,10 +69,8 @@ func (e *ValidationError) Error() string {
 func (e *ValidationError) Unwrap() error { return e.Err }
 
 var (
-	ErrNon200ServiceApple     = errors.New("non-200 response from Apple service")
-	ErrNon200ServiceGoogle    = errors.New("non-200 response from Google service")
-	ErrNon200ServiceHuawei    = errors.New("non-200 response from Huawei service")
-	ErrInvalidSignatureHuawei = errors.New("inAppPurchaseData invalid signature")
+	ErrNon200ServiceApple  = errors.New("non-200 response from Apple service")
+	ErrNon200ServiceGoogle = errors.New("non-200 response from Google service")
 )
 
 func init() {
@@ -647,254 +637,4 @@ func GetSubscriptionV2Google(ctx context.Context, httpc *http.Client, clientEmai
 			Payload:    string(buf),
 		}
 	}
-}
-
-// Huawei
-
-type InAppPurchaseDataHuawei struct {
-	ApplicationID string `json:"applicationId"`
-	AutoRenewing  bool   `json:"autoRenewing"`
-	OrderId       string `json:"orderId"`
-	Kind          int    `json:"kind"`
-	PackageName   string `json:"packageName"`
-	ProductId     string `json:"productId"`
-	PurchaseTime  int64  `json:"purchaseTime"`
-	PurchaseToken string `json:"purchaseToken"`
-	AccountFlag   int    `json:"accountFlag"`
-	PurchaseType  int    `json:"purchaseType"` // Omitted field in production, value set to 0 in sandbox env.
-}
-
-type ValidateReceiptHuaweiResponse struct {
-	ResponseCode      string                  `json:"responseCode"`
-	ResponseMessage   string                  `json:"responseMessage"`
-	PurchaseTokenData InAppPurchaseDataHuawei `json:"purchaseTokenData"`
-	DataSignature     string                  `json:"dataSignature"`
-}
-
-type accessTokenHuawei struct {
-	// App-level access token.
-	AccessToken string `json:"access_token"`
-
-	// Remaining validity period of an access token, in seconds.
-	ExpiresIn int64 `json:"expires_in"`
-	// This value is always Bearer, indicating the type of the returned access token.
-	// TokenType    string	`json:"token_type"`
-
-	// Save the timestamp when AccessToken is obtained
-	ExpiredAt int64 `json:"-"`
-
-	// Request header string
-	HeaderString string `json:"-"`
-
-	sync.RWMutex
-}
-
-func (at *accessTokenHuawei) Expired() bool {
-	return at.ExpiredAt-accessTokenExpiresGracePeriod <= time.Now().Unix()
-}
-
-func getHuaweiAccessToken(ctx context.Context, httpc *http.Client, clientID, clientSecret string) (string, error) {
-	const authUrl = "https://oauth-login.cloud.huawei.com/oauth2/v3/token"
-
-	cachedTokenHuawei.RLock()
-	if cachedTokenHuawei.AccessToken != "" && !cachedTokenHuawei.Expired() {
-		cachedTokenHuawei.RUnlock()
-		return cachedTokenHuawei.AccessToken, nil
-	}
-	cachedTokenHuawei.RUnlock()
-	cachedTokenHuawei.Lock()
-	defer cachedTokenHuawei.Unlock()
-	if cachedTokenHuawei.AccessToken != "" && !cachedTokenHuawei.Expired() {
-		return cachedTokenHuawei.AccessToken, nil
-	}
-	urlValue := url.Values{"grant_type": {"client_credentials"}, "client_id": {clientID}, "client_secret": {clientSecret}}
-	body := urlValue.Encode()
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, authUrl, strings.NewReader(body))
-	if err != nil {
-		return "", err
-	}
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("Accept", "application/json")
-
-	resp, err := httpc.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	buf, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-
-	switch resp.StatusCode {
-	case 200:
-		var out accessTokenHuawei
-		if err := json.Unmarshal(buf, &out); err != nil {
-			return "", err
-		}
-		return out.AccessToken, nil
-	default:
-		return "", &ValidationError{
-			Err:        errors.New("non-200 response from Huawei auth"),
-			StatusCode: resp.StatusCode,
-			Payload:    string(buf),
-		}
-	}
-}
-
-// Validate an IAP receipt with the Huawei API
-func ValidateReceiptHuawei(ctx context.Context, httpc *http.Client, pubKey, clientID, clientSecret, purchaseData, signature string) (*ValidateReceiptHuaweiResponse, *InAppPurchaseDataHuawei, []byte, error) {
-	if len(purchaseData) < 1 {
-		return nil, nil, nil, errors.New("'purchaseData' must not be empty")
-	}
-
-	if len(signature) < 1 {
-		return nil, nil, nil, errors.New("'signature' must not be empty")
-	}
-
-	data := &InAppPurchaseDataHuawei{PurchaseType: -1} // Set sentinel value because field is omitted in prod purchases.
-	if err := json.Unmarshal([]byte(purchaseData), &data); err != nil {
-		return nil, nil, nil, err
-	}
-
-	// Verify Signature
-	err := verifySignatureHuawei(pubKey, purchaseData, signature)
-	if err != nil {
-		return nil, nil, nil, ErrInvalidSignatureHuawei
-	}
-
-	token, err := getHuaweiAccessToken(ctx, httpc, clientID, clientSecret)
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	rootUrl := "https://orders-at-dre.iap.dbankcloud.com"
-	if data.AccountFlag != 1 {
-		rootUrl = "https://orders-dre.iap.hicloud.com"
-	}
-
-	u := &url.URL{
-		Host:   rootUrl,
-		Path:   fmt.Sprintf("%s/applications/purchases/tokens/verify", rootUrl),
-		Scheme: "https",
-	}
-
-	reqBody, err := json.Marshal(map[string]string{
-		"purchaseToken": data.PurchaseToken,
-		"productId":     data.ProductId,
-	})
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, u.String(), bytes.NewBuffer(reqBody))
-	if err != nil {
-		return nil, nil, nil, err
-	}
-	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
-	req.Header.Set("Authorization", "Bearer "+token)
-
-	res, err := httpc.Do(req)
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	buf, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, data, nil, err
-	}
-
-	switch res.StatusCode {
-	case 200:
-		out := &ValidateReceiptHuaweiResponse{}
-		if err := json.Unmarshal(buf, &out); err != nil {
-			return nil, data, nil, err
-		}
-
-		return out, data, buf, nil
-	default:
-		return nil, nil, nil, &ValidationError{
-			Err:        ErrNon200ServiceHuawei,
-			StatusCode: res.StatusCode,
-			Payload:    string(buf),
-		}
-	}
-}
-
-// VerifySignature validate inapp order or subscription data signature. Returns nil if pass.
-//
-// Document: https://developer.huawei.com/consumer/en/doc/development/HMSCore-Guides-V5/verifying-signature-returned-result-0000001050033088-V5
-// Source code originated from https://github.com/HMS-Core/hms-iap-serverdemo/blob/92241f97fed1b68ddeb7cb37ea4ca6e6d33d2a87/demo/demo.go#L60
-func verifySignatureHuawei(base64EncodedPublicKey string, data string, signature string) (err error) {
-	publicKeyByte, err := base64.StdEncoding.DecodeString(base64EncodedPublicKey)
-	if err != nil {
-		return err
-	}
-	pub, err := x509.ParsePKIXPublicKey(publicKeyByte)
-	if err != nil {
-		return err
-	}
-	hashed := sha256.Sum256([]byte(data))
-	signatureByte, err := base64.StdEncoding.DecodeString(signature)
-	if err != nil {
-		return err
-	}
-	return rsa.VerifyPKCS1v15(pub.(*rsa.PublicKey), crypto.SHA256, hashed[:], signatureByte)
-}
-
-type FacebookInstantPaymentInfo struct {
-	Algorithm         string  `json:"algorithm"`
-	AppId             string  `json:"app_id"`
-	IsConsumed        bool    `json:"is_consumed"`
-	IssuedAt          float64 `json:"issued_at"`
-	PaymentActionType string  `json:"payment_action_type"`
-	PaymentId         string  `json:"payment_id"`
-	ProductId         string  `json:"product_id"`
-	PurchasePrice     struct {
-		Amount   string `json:"amount"`
-		Currency string `json:"currency"`
-	} `json:"purchase_price"`
-	PurchaseTime  float64 `json:"purchase_time"`
-	PurchaseToken string  `json:"purchase_token"`
-}
-
-// ValidateReceiptFacebookInstant from: https://developers.facebook.com/docs/games/monetize/in-app-purchases/instant-games#verification
-func ValidateReceiptFacebookInstant(appSecret, signedRequest string) (*FacebookInstantPaymentInfo, string, error) {
-	parts := strings.Split(signedRequest, ".")
-	if len(parts) != 2 {
-		return nil, "", errors.New("invalid signedRequest format")
-	}
-
-	// Decode the first part (SHA256 hash of the payment information)
-	signature, err := base64.RawURLEncoding.DecodeString(parts[0])
-	if err != nil {
-		return nil, "", errors.New("error decoding signedRequest first part:" + err.Error())
-	}
-
-	// Compute the HMAC-SHA256 hash of the payload using the app secret
-	hmacHash := hmac.New(sha256.New, []byte(appSecret))
-	hmacHash.Write([]byte(parts[1]))
-	computedSignature := hmacHash.Sum(nil)
-
-	// Compare the computed signature with the received signature
-	isValid := hmac.Equal(signature, computedSignature)
-
-	if !isValid {
-		return nil, "", errors.New("signedRequest verification failed")
-	}
-
-	// Decode the second part (payment information)
-	payload, err := base64.RawURLEncoding.DecodeString(parts[1])
-	if err != nil {
-		return nil, "", errors.New("error decoding signedRequest second part:" + err.Error())
-	}
-
-	// Parse the JSON payment information
-	var payment *FacebookInstantPaymentInfo
-	if err := json.Unmarshal(payload, &payment); err != nil {
-		return nil, "", errors.New("error parsing JSON payload:" + err.Error())
-	}
-
-	return payment, string(payload), nil
 }

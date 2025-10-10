@@ -91,8 +91,8 @@ type RuntimeConfig interface {
 type IAPConfig interface {
 	GetApple() IAPAppleConfig
 	GetGoogle() IAPGoogleConfig
-	GetHuawei() IAPHuaweiConfig
-	GetFacebookInstant() IAPFacebookInstantConfig
+	// GetHuawei() IAPHuaweiConfig
+	// GetFacebookInstant() IAPFacebookInstantConfig
 }
 
 type IAPAppleConfig interface {
@@ -113,15 +113,15 @@ type SatoriConfig interface {
 	GetSigningKey() string
 }
 
-type IAPHuaweiConfig interface {
-	GetPublicKey() string
-	GetClientID() string
-	GetClientSecret() string
-}
+// type IAPHuaweiConfig interface {
+// 	GetPublicKey() string
+// 	GetClientID() string
+// 	GetClientSecret() string
+// }
 
-type IAPFacebookInstantConfig interface {
-	GetAppSecret() string
-}
+// type IAPFacebookInstantConfig interface {
+// 	GetAppSecret() string
+// }
 
 type GoogleAuthConfig interface {
 	GetCredentialsJSON() string

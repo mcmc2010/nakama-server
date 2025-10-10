@@ -3232,33 +3232,33 @@ func (n *RuntimeGoNakamaModule) PurchaseValidateGoogle(ctx context.Context, user
 // @param persist(type=bool) Persist the purchase so that seenBefore can be computed to protect against replay attacks.
 // @return validation(*api.ValidatePurchaseResponse) The resulting successfully validated purchases. Any previously validated purchases are returned with a seenBefore flag.
 // @return error(error) An optional error value if an error occurred.
-func (n *RuntimeGoNakamaModule) PurchaseValidateHuawei(ctx context.Context, userID, signature, receipt string, persist bool) (*api.ValidatePurchaseResponse, error) {
-	if n.config.GetIAP().Huawei.ClientID == "" ||
-		n.config.GetIAP().Huawei.ClientSecret == "" ||
-		n.config.GetIAP().Huawei.PublicKey == "" {
-		return nil, errors.New("Huawei IAP is not configured.")
-	}
+// func (n *RuntimeGoNakamaModule) PurchaseValidateHuawei(ctx context.Context, userID, signature, receipt string, persist bool) (*api.ValidatePurchaseResponse, error) {
+// 	if n.config.GetIAP().Huawei.ClientID == "" ||
+// 		n.config.GetIAP().Huawei.ClientSecret == "" ||
+// 		n.config.GetIAP().Huawei.PublicKey == "" {
+// 		return nil, errors.New("Huawei IAP is not configured.")
+// 	}
 
-	uid, err := uuid.FromString(userID)
-	if err != nil {
-		return nil, errors.New("user ID must be a valid id string")
-	}
+// 	uid, err := uuid.FromString(userID)
+// 	if err != nil {
+// 		return nil, errors.New("user ID must be a valid id string")
+// 	}
 
-	if len(signature) < 1 {
-		return nil, errors.New("signature cannot be empty string")
-	}
+// 	if len(signature) < 1 {
+// 		return nil, errors.New("signature cannot be empty string")
+// 	}
 
-	if len(receipt) < 1 {
-		return nil, errors.New("receipt cannot be empty string")
-	}
+// 	if len(receipt) < 1 {
+// 		return nil, errors.New("receipt cannot be empty string")
+// 	}
 
-	validation, err := ValidatePurchaseHuawei(ctx, n.logger, n.db, uid, n.config.GetIAP().Huawei, receipt, signature, persist)
-	if err != nil {
-		return nil, err
-	}
+// 	validation, err := ValidatePurchaseHuawei(ctx, n.logger, n.db, uid, n.config.GetIAP().Huawei, receipt, signature, persist)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return validation, nil
-}
+// 	return validation, nil
+// }
 
 // @group purchases
 // @summary Validates and stores a purchase receipt from Facebook Instant Games.
@@ -3268,27 +3268,27 @@ func (n *RuntimeGoNakamaModule) PurchaseValidateHuawei(ctx context.Context, user
 // @param persist(type=bool) Persist the purchase so that seenBefore can be computed to protect against replay attacks.
 // @return validation(*api.ValidatePurchaseResponse) The resulting successfully validated purchases. Any previously validated purchases are returned with a seenBefore flag.
 // @return error(error) An optional error value if an error occurred.
-func (n *RuntimeGoNakamaModule) PurchaseValidateFacebookInstant(ctx context.Context, userID, signedRequest string, persist bool) (*api.ValidatePurchaseResponse, error) {
-	if n.config.GetIAP().FacebookInstant.AppSecret == "" {
-		return nil, errors.New("facebook instant IAP is not configured")
-	}
+// func (n *RuntimeGoNakamaModule) PurchaseValidateFacebookInstant(ctx context.Context, userID, signedRequest string, persist bool) (*api.ValidatePurchaseResponse, error) {
+// 	if n.config.GetIAP().FacebookInstant.AppSecret == "" {
+// 		return nil, errors.New("facebook instant IAP is not configured")
+// 	}
 
-	uid, err := uuid.FromString(userID)
-	if err != nil {
-		return nil, errors.New("user ID must be a valid id string")
-	}
+// 	uid, err := uuid.FromString(userID)
+// 	if err != nil {
+// 		return nil, errors.New("user ID must be a valid id string")
+// 	}
 
-	if len(signedRequest) < 1 {
-		return nil, errors.New("signedRequest cannot be empty string")
-	}
+// 	if len(signedRequest) < 1 {
+// 		return nil, errors.New("signedRequest cannot be empty string")
+// 	}
 
-	validation, err := ValidatePurchaseFacebookInstant(ctx, n.logger, n.db, uid, n.config.GetIAP().FacebookInstant, signedRequest, persist)
-	if err != nil {
-		return nil, err
-	}
+// 	validation, err := ValidatePurchaseFacebookInstant(ctx, n.logger, n.db, uid, n.config.GetIAP().FacebookInstant, signedRequest, persist)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return validation, nil
-}
+// 	return validation, nil
+// }
 
 // @group purchases
 // @summary List stored validated purchase receipts.

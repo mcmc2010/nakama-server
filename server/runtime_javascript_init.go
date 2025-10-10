@@ -264,20 +264,20 @@ func (im *RuntimeJavascriptInitModule) mappings(r *goja.Runtime) map[string]func
 		"registerAfterValidatePurchaseGoogle":             im.registerAfterValidatePurchaseGoogle(r),
 		"registerBeforeValidateSubscriptionGoogle":        im.registerBeforeValidateSubscriptionGoogle(r),
 		"registerAfterValidateSubscriptionGoogle":         im.registerAfterValidateSubscriptionGoogle(r),
-		"registerBeforeValidatePurchaseHuawei":            im.registerBeforeValidatePurchaseHuawei(r),
-		"registerAfterValidatePurchaseHuawei":             im.registerAfterValidatePurchaseHuawei(r),
-		"registerBeforeValidatePurchaseFacebookInstant":   im.registerBeforeValidatePurchaseFacebookInstant(r),
-		"registerAfterValidatePurchaseFacebookInstant":    im.registerAfterValidatePurchaseFacebookInstant(r),
-		"registerBeforeListSubscriptions":                 im.registerBeforeListSubscriptions(r),
-		"registerAfterListSubscriptions":                  im.registerAfterListSubscriptions(r),
-		"registerBeforeGetSubscription":                   im.registerBeforeGetSubscription(r),
-		"registerAfterGetSubscription":                    im.registerAfterGetSubscription(r),
-		"registerBeforeListParties":                       im.registerBeforeListParties(r),
-		"registerAfterListParties":                        im.registerAfterListParties(r),
-		"registerBeforeEvent":                             im.registerBeforeEvent(r),
-		"registerAfterEvent":                              im.registerAfterEvent(r),
-		"registerStorageIndex":                            im.registerStorageIndex(r),
-		"registerStorageIndexFilter":                      im.registerStorageIndexFilter(r),
+		// "registerBeforeValidatePurchaseHuawei":            im.registerBeforeValidatePurchaseHuawei(r),
+		// "registerAfterValidatePurchaseHuawei":             im.registerAfterValidatePurchaseHuawei(r),
+		// "registerBeforeValidatePurchaseFacebookInstant":   im.registerBeforeValidatePurchaseFacebookInstant(r),
+		// "registerAfterValidatePurchaseFacebookInstant":    im.registerAfterValidatePurchaseFacebookInstant(r),
+		"registerBeforeListSubscriptions": im.registerBeforeListSubscriptions(r),
+		"registerAfterListSubscriptions":  im.registerAfterListSubscriptions(r),
+		"registerBeforeGetSubscription":   im.registerBeforeGetSubscription(r),
+		"registerAfterGetSubscription":    im.registerAfterGetSubscription(r),
+		"registerBeforeListParties":       im.registerBeforeListParties(r),
+		"registerAfterListParties":        im.registerAfterListParties(r),
+		"registerBeforeEvent":             im.registerBeforeEvent(r),
+		"registerAfterEvent":              im.registerAfterEvent(r),
+		"registerStorageIndex":            im.registerStorageIndex(r),
+		"registerStorageIndexFilter":      im.registerStorageIndexFilter(r),
 	}
 }
 
@@ -362,18 +362,18 @@ func (im *RuntimeJavascriptInitModule) getConfig(r *goja.Runtime) func(goja.Func
 		_ = iapGoogleCfg.Set("private_key", rnc.GetIAP().GetGoogle().GetPrivateKey())
 		_ = iapGoogleCfg.Set("notifications_endpoint_id", rnc.GetIAP().GetGoogle().GetNotificationsEndpointId())
 
-		iapHuaweiCfg := r.NewObject()
-		_ = iapHuaweiCfg.Set("public_key", rnc.GetIAP().GetHuawei().GetPublicKey())
-		_ = iapHuaweiCfg.Set("client_id", rnc.GetIAP().GetHuawei().GetClientID())
-		_ = iapHuaweiCfg.Set("client_secret", rnc.GetIAP().GetHuawei().GetClientSecret())
+		// iapHuaweiCfg := r.NewObject()
+		// _ = iapHuaweiCfg.Set("public_key", rnc.GetIAP().GetHuawei().GetPublicKey())
+		// _ = iapHuaweiCfg.Set("client_id", rnc.GetIAP().GetHuawei().GetClientID())
+		// _ = iapHuaweiCfg.Set("client_secret", rnc.GetIAP().GetHuawei().GetClientSecret())
 
-		iapFacebookInstantCfg := r.NewObject()
-		_ = iapFacebookInstantCfg.Set("app_secret", rnc.GetIAP().GetFacebookInstant().GetAppSecret())
+		// iapFacebookInstantCfg := r.NewObject()
+		// _ = iapFacebookInstantCfg.Set("app_secret", rnc.GetIAP().GetFacebookInstant().GetAppSecret())
 		iapCfg := r.NewObject()
 		_ = iapCfg.Set("apple", iapAppleCfg)
 		_ = iapCfg.Set("google", iapGoogleCfg)
-		_ = iapCfg.Set("huawei", iapHuaweiCfg)
-		_ = iapCfg.Set("facebook_instant", iapFacebookInstantCfg)
+		// _ = iapCfg.Set("huawei", iapHuaweiCfg)
+		// _ = iapCfg.Set("facebook_instant", iapFacebookInstantCfg)
 		_ = cfgObj.Set("iap", iapCfg)
 
 		googleAuthCfg := r.NewObject()
@@ -1099,21 +1099,21 @@ func (im *RuntimeJavascriptInitModule) registerAfterValidateSubscriptionGoogle(r
 	return im.registerHook(r, RuntimeExecutionModeAfter, "registerAfterValidateSubscriptionGoogle", "validatesubscriptiongoogle")
 }
 
-func (im *RuntimeJavascriptInitModule) registerBeforeValidatePurchaseHuawei(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeBefore, "registerBeforeValidatePurchaseHuawei", "validatepurchasehuawei")
-}
+// func (im *RuntimeJavascriptInitModule) registerBeforeValidatePurchaseHuawei(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
+// 	return im.registerHook(r, RuntimeExecutionModeBefore, "registerBeforeValidatePurchaseHuawei", "validatepurchasehuawei")
+// }
 
-func (im *RuntimeJavascriptInitModule) registerAfterValidatePurchaseHuawei(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeAfter, "registerAfterValidatePurchaseHuawei", "validatepurchasehuawei")
-}
+// func (im *RuntimeJavascriptInitModule) registerAfterValidatePurchaseHuawei(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
+// 	return im.registerHook(r, RuntimeExecutionModeAfter, "registerAfterValidatePurchaseHuawei", "validatepurchasehuawei")
+// }
 
-func (im *RuntimeJavascriptInitModule) registerBeforeValidatePurchaseFacebookInstant(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeBefore, "registerBeforeValidatePurchaseFacebookInstant", "validatepurchasefacebookinstant")
-}
+// func (im *RuntimeJavascriptInitModule) registerBeforeValidatePurchaseFacebookInstant(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
+// 	return im.registerHook(r, RuntimeExecutionModeBefore, "registerBeforeValidatePurchaseFacebookInstant", "validatepurchasefacebookinstant")
+// }
 
-func (im *RuntimeJavascriptInitModule) registerAfterValidatePurchaseFacebookInstant(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeAfter, "registerAfterValidatePurchaseFacebookInstant", "validatepurchasefacebookinstant")
-}
+// func (im *RuntimeJavascriptInitModule) registerAfterValidatePurchaseFacebookInstant(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
+// 	return im.registerHook(r, RuntimeExecutionModeAfter, "registerAfterValidatePurchaseFacebookInstant", "validatepurchasefacebookinstant")
+// }
 
 func (im *RuntimeJavascriptInitModule) registerBeforeListSubscriptions(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
 	return im.registerHook(r, RuntimeExecutionModeBefore, "registerBeforeListSubscriptions", "listsubscriptions")
