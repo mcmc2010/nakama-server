@@ -85,7 +85,7 @@ type MatchGetStateResult struct {
 }
 
 type MatchRegistry interface {
-	// Create and start a new match, given a Lua module name or registered Go or JS match function.
+	// Create and start a new match, given a registered Go or JS match function.
 	CreateMatch(ctx context.Context, createFn RuntimeMatchCreateFunction, module string, params map[string]interface{}) (string, error)
 	// Register and initialise a match that's ready to run.
 	NewMatch(logger *zap.Logger, id uuid.UUID, core RuntimeMatchCore, stopped *atomic.Bool, params map[string]interface{}) (*MatchHandler, error)

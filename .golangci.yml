@@ -8,7 +8,6 @@ linters:
       - legacy
       - std-error-handling
     paths:
-      - internal/gopher-lua
       - internal/cronexpr
     rules:
         - path: _test\.go

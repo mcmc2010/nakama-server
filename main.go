@@ -111,7 +111,7 @@ func main() {
 			config := server.NewConfig(tmpLogger)
 			var runtimePath string
 			flags := flag.NewFlagSet("check", flag.ExitOnError)
-			flags.StringVar(&runtimePath, "runtime.path", filepath.Join(config.GetDataDir(), "modules"), "Path for the server to scan for Lua and Go library files.")
+			flags.StringVar(&runtimePath, "runtime.path", filepath.Join(config.GetDataDir(), "modules"), "Path for the server to scan for Go library files.")
 			if err := flags.Parse(os.Args[2:]); err != nil {
 				tmpLogger.Fatal("Could not parse check flags.")
 			}

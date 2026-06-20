@@ -219,21 +219,6 @@ func ValidateConfig(logger *zap.Logger, c Config) map[string]string {
 	if c.GetSocket().PingPeriodMs >= c.GetSocket().PongWaitMs {
 		logger.Fatal("Ping period value must be less than pong wait value", zap.Int("socket.ping_period_ms", c.GetSocket().PingPeriodMs), zap.Int("socket.pong_wait_ms", c.GetSocket().PongWaitMs))
 	}
-	if c.GetRuntime().GetLuaMinCount() < 0 {
-		logger.Fatal("Minimum Lua runtime instance count must be >= 0", zap.Int("runtime.lua_min_count", c.GetRuntime().GetLuaMinCount()))
-	}
-	if c.GetRuntime().GetLuaMaxCount() < 1 {
-		logger.Fatal("Maximum Lua runtime instance count must be >= 1", zap.Int("runtime.lua_max_count", c.GetRuntime().GetLuaMinCount()))
-	}
-	if c.GetRuntime().GetLuaMinCount() > c.GetRuntime().GetLuaMaxCount() {
-		logger.Fatal("Minimum Lua runtime instance count must be less than or equal to maximum Lua runtime instance count", zap.Int("runtime.lua_min_count", c.GetRuntime().GetLuaMinCount()), zap.Int("runtime.lua_max_count", c.GetRuntime().GetLuaMaxCount()))
-	}
-	if c.GetRuntime().GetLuaCallStackSize() < 1 {
-		logger.Fatal("Lua runtime instance call stack size must be >= 1", zap.Int("runtime.lua_call_stack_size", c.GetRuntime().GetLuaCallStackSize()))
-	}
-	if c.GetRuntime().GetLuaRegistrySize() < 128 {
-		logger.Fatal("Lua runtime instance registry size must be >= 128", zap.Int("runtime.registry_size", c.GetRuntime().GetLuaRegistrySize()))
-	}
 	if c.GetRuntime().JsMinCount < 0 {
 		logger.Fatal("Minimum JavaScript runtime instance count must be >= 0", zap.Int("runtime.js_min_count", c.GetRuntime().JsMinCount))
 	}
@@ -354,28 +339,6 @@ func ValidateConfig(logger *zap.Logger, c Config) map[string]string {
 	if c.GetRuntime().HTTPKey == "defaulthttpkey" {
 		logger.Warn("WARNING: insecure default parameter value, change this for production!", zap.String("param", "runtime.http_key"))
 		configWarnings["runtime.http_key"] = "Insecure default parameter value, change this for production!"
-	}
-
-	// Log warnings for deprecated c parameters.
-	if c.GetRuntime().MinCount != 0 {
-		logger.Warn("WARNING: deprecated configuration parameter", zap.String("deprecated", "runtime.min_count"), zap.String("param", "runtime.lua_min_count"))
-		configWarnings["runtime.min_count"] = "Deprecated configuration parameter"
-	}
-	if c.GetRuntime().MaxCount != 0 {
-		logger.Warn("WARNING: deprecated configuration parameter", zap.String("deprecated", "runtime.max_count"), zap.String("param", "runtime.lua_max_count"))
-		configWarnings["runtime.max_count"] = "Deprecated configuration parameter"
-	}
-	if c.GetRuntime().CallStackSize != 0 {
-		logger.Warn("WARNING: deprecated configuration parameter", zap.String("deprecated", "runtime.call_stack_size"), zap.String("param", "runtime.lua_call_stack_size"))
-		configWarnings["runtime.call_stack_size"] = "Deprecated configuration parameter"
-	}
-	if c.GetRuntime().RegistrySize != 0 {
-		logger.Warn("WARNING: deprecated configuration parameter", zap.String("deprecated", "runtime.registry_size"), zap.String("param", "runtime.lua_registry_size"))
-		configWarnings["runtime.registry_size"] = "Deprecated configuration parameter"
-	}
-	if !c.GetRuntime().ReadOnlyGlobals {
-		logger.Warn("WARNING: deprecated configuration parameter", zap.String("deprecated", "runtime.read_only_globals"), zap.String("param", "runtime.lua_read_only_globals"))
-		configWarnings["runtime.read_only_globals"] = "Deprecated configuration parameter"
 	}
 
 	if l := len(c.GetSocket().ResponseHeaders); l > 0 {
@@ -1081,24 +1044,13 @@ var _ runtime.RuntimeConfig = (*RuntimeConfig)(nil)
 type RuntimeConfig struct {
 	Environment        map[string]string `yaml:"-" json:"-"`
 	Env                []string          `yaml:"env" json:"env" usage:"Values to pass into Runtime as environment variables."`
-	Path               string            `yaml:"path" json:"path" usage:"Path for the server to scan for Lua and Go library files."`
+	Path               string            `yaml:"path" json:"path" usage:"Path for the server to scan for Go library files."`
 	HTTPKey            string            `yaml:"http_key" json:"http_key" usage:"Runtime HTTP Invocation key."`
-	MinCount           int               `yaml:"min_count" json:"min_count" usage:"Minimum number of Lua runtime instances to allocate. Default 0."` // Kept for backwards compatibility
-	LuaMinCount        int               `yaml:"lua_min_count" json:"lua_min_count" usage:"Minimum number of Lua runtime instances to allocate. Default 16."`
-	MaxCount           int               `yaml:"max_count" json:"max_count" usage:"Maximum number of Lua runtime instances to allocate. Default 0."` // Kept for backwards compatibility
-	LuaMaxCount        int               `yaml:"lua_max_count" json:"lua_max_count" usage:"Maximum number of Lua runtime instances to allocate. Default 48."`
 	JsMinCount         int               `yaml:"js_min_count" json:"js_min_count" usage:"Maximum number of Javascript runtime instances to allocate. Default 16."`
 	JsMaxCount         int               `yaml:"js_max_count" json:"js_max_count" usage:"Maximum number of Javascript runtime instances to allocate. Default 32."`
-	CallStackSize      int               `yaml:"call_stack_size" json:"call_stack_size" usage:"Size of each runtime instance's call stack. Default 0."` // Kept for backwards compatibility
-	LuaCallStackSize   int               `yaml:"lua_call_stack_size" json:"lua_call_stack_size" usage:"Size of each runtime instance's call stack. Default 128."`
-	RegistrySize       int               `yaml:"registry_size" json:"registry_size" usage:"Size of each Lua runtime instance's registry. Default 0."` // Kept for backwards compatibility
-	LuaRegistrySize    int               `yaml:"lua_registry_size" json:"lua_registry_size" usage:"Size of each Lua runtime instance's registry. Default 512."`
 	EventQueueSize     int               `yaml:"event_queue_size" json:"event_queue_size" usage:"Size of the event queue buffer. Default 65536."`
 	EventQueueWorkers  int               `yaml:"event_queue_workers" json:"event_queue_workers" usage:"Number of workers to use for concurrent processing of events. Default 8."`
-	ReadOnlyGlobals    bool              `yaml:"read_only_globals" json:"read_only_globals" usage:"When enabled marks all Lua runtime global tables as read-only to reduce memory footprint. Default true."` // Kept for backwards compatibility
-	LuaReadOnlyGlobals bool              `yaml:"lua_read_only_globals" json:"lua_read_only_globals" usage:"When enabled marks all Lua runtime global tables as read-only to reduce memory footprint. Default true."`
 	JsReadOnlyGlobals  bool              `yaml:"js_read_only_globals" json:"js_read_only_globals" usage:"When enabled marks all Javascript runtime globals as read-only to reduce memory footprint. Default true."`
-	LuaApiStacktrace   bool              `yaml:"lua_api_stacktrace" json:"lua_api_stacktrace" usage:"Include the Lua stacktrace in error responses returned to the client. Default false."`
 	JsEntrypoint       string            `yaml:"js_entrypoint" json:"js_entrypoint" usage:"Specifies the location of the bundled JavaScript runtime source code."`
 }
 
@@ -1131,64 +1083,17 @@ func (r *RuntimeConfig) Clone() *RuntimeConfig {
 	return &cfgCopy
 }
 
-// Function to allow backwards compatibility for MinCount config
-func (r *RuntimeConfig) GetLuaMinCount() int {
-	if r.MinCount != 0 {
-		return r.MinCount
-	}
-	return r.LuaMinCount
-}
-
-// Function to allow backwards compatibility for MaxCount config
-func (r *RuntimeConfig) GetLuaMaxCount() int {
-	if r.MaxCount != 0 {
-		return r.MaxCount
-	}
-	return r.LuaMaxCount
-}
-
-// Function to allow backwards compatibility for CallStackSize config
-func (r *RuntimeConfig) GetLuaCallStackSize() int {
-	if r.CallStackSize != 0 {
-		return r.CallStackSize
-	}
-	return r.LuaCallStackSize
-}
-
-// Function to allow backwards compatibility for RegistrySize config
-func (r *RuntimeConfig) GetLuaRegistrySize() int {
-	if r.RegistrySize != 0 {
-		return r.RegistrySize
-	}
-	return r.LuaRegistrySize
-}
-
-// Function to allow backwards compatibility for LuaReadOnlyGlobals config
-func (r *RuntimeConfig) GetLuaReadOnlyGlobals() bool {
-	if !r.ReadOnlyGlobals {
-		return r.ReadOnlyGlobals
-	}
-	return r.LuaReadOnlyGlobals
-}
-
 func NewRuntimeConfig() *RuntimeConfig {
 	return &RuntimeConfig{
-		Environment:        make(map[string]string),
-		Env:                make([]string, 0),
-		Path:               "",
-		HTTPKey:            "defaulthttpkey",
-		LuaMinCount:        16,
-		LuaMaxCount:        48,
-		LuaCallStackSize:   128,
-		LuaRegistrySize:    512,
-		JsMinCount:         16,
-		JsMaxCount:         32,
-		EventQueueSize:     65536,
-		EventQueueWorkers:  8,
-		ReadOnlyGlobals:    true,
-		LuaReadOnlyGlobals: true,
-		JsReadOnlyGlobals:  true,
-		LuaApiStacktrace:   false,
+		Environment:       make(map[string]string),
+		Env:               make([]string, 0),
+		Path:              "",
+		HTTPKey:           "defaulthttpkey",
+		JsMinCount:        16,
+		JsMaxCount:        32,
+		EventQueueSize:    65536,
+		EventQueueWorkers: 8,
+		JsReadOnlyGlobals: true,
 	}
 }
 

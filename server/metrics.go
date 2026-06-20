@@ -50,7 +50,6 @@ type Metrics interface {
 	MessageBytesSent(sentBytes int64)
 
 	GaugeRuntimes(value float64)
-	GaugeLuaRuntimes(value float64)
 	GaugeJsRuntimes(value float64)
 	GaugeAuthoritativeMatches(value float64)
 	GaugeParties(value float64)
@@ -443,14 +442,9 @@ func (m *LocalMetrics) MessageBytesSent(sentBytes int64) {
 	m.PrometheusScope.Counter("overall_message_sent_bytes").Inc(sentBytes)
 }
 
-// Set the absolute value of currently allocated Lua runtime VMs.
+// Set the absolute value of currently allocated runtime VMs.
 func (m *LocalMetrics) GaugeRuntimes(value float64) {
-	m.PrometheusScope.Gauge("lua_runtimes").Update(value)
-}
-
-// Set the absolute value of currently allocated Lua runtime VMs.
-func (m *LocalMetrics) GaugeLuaRuntimes(value float64) {
-	m.PrometheusScope.Gauge("lua_runtimes").Update(value)
+	m.PrometheusScope.Gauge("runtimes").Update(value)
 }
 
 // Set the absolute value of currently allocated JavaScript runtime VMs.
