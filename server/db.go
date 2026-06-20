@@ -36,8 +36,6 @@ const dbErrorDatabaseDoesNotExist = pgerrcode.InvalidCatalogName
 
 var ErrDatabaseDriverMismatch = errors.New("database driver mismatch")
 
-var isCockroach bool
-
 // DbConfig builds the pgx connection config from Nakama database settings.
 func DbConfig(config Config) (*pgx.ConnConfig, error) {
 	rawURL := config.GetDatabase().Addresses[0]
@@ -140,11 +138,6 @@ logger.Debug("Database connection config", zap.String("host", connConfig.Host), 
 	}
 
 	logger.Info("Database information", zap.String("version", dbVersion))
-	if strings.Split(dbVersion, " ")[0] == "CockroachDB" {
-		isCockroach = true
-	} else {
-		isCockroach = false
-	}
 
 	// Periodically check database hostname for underlying address changes.
 	go func() {
@@ -306,48 +299,7 @@ func ExecuteRetryablePgx(ctx context.Context, db *sql.DB, fn func(conn *pgx.Conn
 // ExecuteInTx runs fn inside tx which should already have begun.
 // fn is subject to the same restrictions as the fn passed to ExecuteTx.
 func ExecuteInTx(ctx context.Context, db *sql.DB, fn func(*sql.Tx) error) error {
-	if isCockroach {
-		return executeInTxCockroach(ctx, db, fn)
-	} else {
-		return executeInTxPostgres(ctx, db, fn)
-	}
-}
-
-// Retries fn() if transaction commit returned retryable error code
-// Every call to fn() happens in its own transaction. On retry previous transaction
-// is ROLLBACK'ed and new transaction is opened.
-func executeInTxPostgres(ctx context.Context, db *sql.DB, fn func(*sql.Tx) error) (err error) {
-	var tx *sql.Tx
-	defer func() {
-		if tx != nil {
-			_ = tx.Rollback()
-		}
-	}()
-
-	// Prevent infinite loop (unlikely, but possible)
-	for i := 0; i < 5; i++ {
-		if tx, err = db.BeginTx(ctx, nil); err != nil { // Can fail only if undernath connection is broken
-			tx = nil
-			return err
-		}
-		if err = fn(tx); err == nil {
-			err = tx.Commit()
-		}
-		var pgErr *pgconn.PgError
-		if errors.As(errorCause(err), &pgErr) && pgErr.Code[:2] == "40" {
-			// 40XXXX codes are retriable errors
-			if err = tx.Rollback(); err != nil && err != sql.ErrTxDone {
-				tx = nil
-				return err
-			}
-			continue
-		} else {
-			// Exit on successfull Commit or non retriable error
-			return err
-		}
-	}
-	// Stop trying after 5 attempts and return last op error
-	return err
+	return executeInTxCockroach(ctx, db, fn)
 }
 
 // CockroachDB has it's own way to resolve serialization conflicts.
@@ -407,57 +359,7 @@ func executeInTxCockroach(ctx context.Context, db *sql.DB, fn func(*sql.Tx) erro
 
 // Same as ExecuteInTx, but passes pgx.Tx to callback
 func ExecuteInTxPgx(ctx context.Context, db *sql.DB, fn func(pgx.Tx) error) error {
-	if isCockroach {
-		return executeInTxCockroachPgx(ctx, db, fn)
-	} else {
-		return executeInTxPostgresPgx(ctx, db, fn)
-	}
-}
-
-// Retries fn() if transaction commit returned retryable error code
-// Every call to fn() happens in its own transaction. On retry previous transaction
-// is ROLLBACK'ed and new transaction is opened.
-func executeInTxPostgresPgx(ctx context.Context, db *sql.DB, fn func(pgx.Tx) error) (err error) {
-	conn, err := db.Conn(ctx)
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
-	return conn.Raw(func(driverConn any) error {
-		conn := driverConn.(*stdlib.Conn).Conn()
-
-		var tx pgx.Tx
-		defer func() {
-			if tx != nil {
-				_ = tx.Rollback(ctx)
-			}
-		}()
-
-		// Prevent infinite loop (unlikely, but possible)
-		for i := 0; i < 5; i++ {
-			if tx, err = conn.BeginTx(ctx, pgx.TxOptions{}); err != nil { // Can fail only if undernath connection is broken
-				tx = nil
-				return err
-			}
-			if err = fn(tx); err == nil {
-				err = tx.Commit(ctx)
-			}
-			var pgErr *pgconn.PgError
-			if errors.As(errorCause(err), &pgErr) && pgErr.Code[:2] == "40" {
-				// 40XXXX codes are retriable errors
-				if err = tx.Rollback(ctx); err != nil && err != sql.ErrTxDone {
-					tx = nil
-					return err
-				}
-				continue
-			} else {
-				// Exit on successfull Commit or non retriable error
-				return err
-			}
-		}
-		// Stop trying after 5 attempts and return last op error
-		return err
-	})
+	return executeInTxCockroachPgx(ctx, db, fn)
 }
 
 // CockroachDB has it's own way to resolve serialization conflicts.

@@ -10,3 +10,5 @@
 - 移除全部单元测试文件
 - 移除 docker-compose-tests.yml
 - 移除 Satori Analytics 集成（internal/satori/、server/console_satori.go 及所有运行时绑定）
+- 移除 PostgreSQL 兼容支持，仅保留 CockroachDB
+- 删除 docker-compose-postgres.yml
