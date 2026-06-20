@@ -440,7 +440,6 @@ type config struct {
 	Console          *ConsoleConfig     `yaml:"console" json:"console" usage:"Console settings."`
 	Leaderboard      *LeaderboardConfig `yaml:"leaderboard" json:"leaderboard" usage:"Leaderboard settings."`
 	Matchmaker       *MatchmakerConfig  `yaml:"matchmaker" json:"matchmaker" usage:"Matchmaker settings."`
-	IAP              *IAPConfig         `yaml:"iap" json:"iap" usage:"In-App Purchase settings."`
 	GoogleAuth       *GoogleAuthConfig  `yaml:"google_auth" json:"google_auth" usage:"Google's auth settings."`
 	Storage          *StorageConfig     `yaml:"storage" json:"storage" usage:"Storage settings."`
 	MFA              *MFAConfig         `yaml:"mfa" json:"mfa" usage:"MFA settings."`
@@ -470,7 +469,6 @@ func NewConfig(logger *zap.Logger) *config {
 		Console:          NewConsoleConfig(),
 		Leaderboard:      NewLeaderboardConfig(),
 		Matchmaker:       NewMatchmakerConfig(),
-		IAP:              NewIAPConfig(),
 		GoogleAuth:       NewGoogleAuthConfig(),
 		Storage:          NewStorageConfig(),
 		Party:            NewPartyConfig(),
@@ -502,7 +500,6 @@ func (c *config) Clone() (Config, error) {
 		Console:          c.Console.Clone(),
 		Leaderboard:      c.Leaderboard.Clone(),
 		Matchmaker:       c.Matchmaker.Clone(),
-		IAP:              c.IAP.Clone(),
 		GoogleAuth:       c.GoogleAuth.Clone(),
 		Storage:          c.Storage.Clone(),
 		MFA:              c.MFA.Clone(),
@@ -573,7 +570,7 @@ func (c *config) GetMatchmaker() *MatchmakerConfig {
 }
 
 func (c *config) GetIAP() *IAPConfig {
-	return c.IAP
+	return nil
 }
 
 func (c *config) GetGoogleAuth() *GoogleAuthConfig {
@@ -603,7 +600,6 @@ func (c *config) GetRuntimeConfig() (runtime.Config, error) {
 	var soc runtime.SocketConfig = clone.GetSocket()
 	var socialConf runtime.SocialConfig = clone.GetSocial()
 	var rc runtime.RuntimeConfig = clone.GetRuntime()
-	var iap runtime.IAPConfig = clone.GetIAP()
 	var gauth runtime.GoogleAuthConfig = clone.GetGoogleAuth()
 
 	cn := &RuntimeConfigClone{
@@ -614,7 +610,6 @@ func (c *config) GetRuntimeConfig() (runtime.Config, error) {
 		Socket:        soc,
 		Social:        socialConf,
 		Runtime:       rc,
-		Iap:           iap,
 		GoogleAuth:    gauth,
 	}
 
@@ -1243,133 +1238,12 @@ func NewMatchmakerConfig() *MatchmakerConfig {
 	}
 }
 
-var _ runtime.IAPConfig = (*IAPConfig)(nil)
+type IAPConfig struct{}
 
-type IAPConfig struct {
-	Apple           *IAPAppleConfig           `yaml:"apple" json:"apple" usage:"Apple App Store purchase validation configuration."`
-	Google          *IAPGoogleConfig          `yaml:"google" json:"google" usage:"Google Play Store purchase validation configuration."`
-	Huawei          *IAPHuaweiConfig          `yaml:"huawei" json:"huawei" usage:"Huawei purchase validation configuration."`
-	FacebookInstant *IAPFacebookInstantConfig `yaml:"facebook_instant" json:"facebook_instant" usage:"Facebook Instant purchase validation configuration."`
-}
-
-func (cfg *IAPConfig) GetApple() runtime.IAPAppleConfig {
-	return cfg.Apple
-}
-
-func (cfg *IAPConfig) GetGoogle() runtime.IAPGoogleConfig {
-	return cfg.Google
-}
-
-func (cfg *IAPConfig) GetHuawei() runtime.IAPHuaweiConfig {
-	return cfg.Huawei
-}
-
-func (cfg *IAPConfig) GetFacebookInstant() runtime.IAPFacebookInstantConfig {
-	return cfg.FacebookInstant
-}
-
-func (cfg *IAPConfig) Clone() *IAPConfig {
-	if cfg == nil {
-		return nil
-	}
-
-	cfgCopy := *cfg
-
-	if cfg.Google != nil {
-		c := *(cfg.Google)
-		cfgCopy.Google = &c
-	}
-	if cfg.Apple != nil {
-		c := *(cfg.Apple)
-		cfgCopy.Apple = &c
-	}
-	if cfg.FacebookInstant != nil {
-		c := *(cfg.FacebookInstant)
-		cfgCopy.FacebookInstant = &c
-	}
-	if cfg.Huawei != nil {
-		c := *(cfg.Huawei)
-		cfgCopy.Huawei = &c
-	}
-
-	return &cfgCopy
-}
-
-func NewIAPConfig() *IAPConfig {
-	return &IAPConfig{
-		Apple:           &IAPAppleConfig{},
-		Google:          &IAPGoogleConfig{},
-		Huawei:          &IAPHuaweiConfig{},
-		FacebookInstant: &IAPFacebookInstantConfig{},
-	}
-}
-
-var _ runtime.IAPAppleConfig = (*IAPAppleConfig)(nil)
-
-type IAPAppleConfig struct {
-	SharedPassword          string `yaml:"shared_password" json:"shared_password" usage:"Your Apple Store App IAP shared password. Only necessary for validation of auto-renewable subscriptions."`
-	NotificationsEndpointId string `yaml:"notifications_endpoint_id" json:"notifications_endpoint_id" usage:"The callback endpoint identifier for Apple Store subscription notifications."`
-}
-
-func (iap IAPAppleConfig) GetSharedPassword() string {
-	return iap.SharedPassword
-}
-
-func (iap IAPAppleConfig) GetNotificationsEndpointId() string {
-	return iap.NotificationsEndpointId
-}
-
-var _ runtime.IAPGoogleConfig = (*IAPGoogleConfig)(nil)
-
-type IAPGoogleConfig struct {
-	ClientEmail             string `yaml:"client_email" json:"client_email" usage:"Google Service Account client email."`
-	PrivateKey              string `yaml:"private_key" json:"private_key" usage:"Google Service Account private key."`
-	NotificationsEndpointId string `yaml:"notifications_endpoint_id" json:"notifications_endpoint_id" usage:"The callback endpoint identifier for Android subscription notifications."`
-	RefundCheckPeriodMin    int    `yaml:"refund_check_period_min" json:"refund_check_period_min" usage:"[DEPRECATED] Defines the polling interval in minutes of the Google IAP refund API."`
-	PackageName             string `yaml:"package_name" json:"package_name" usage:"[DEPRECATED] Google Play Store App Package Name."`
-}
-
-func (iapg *IAPGoogleConfig) GetClientEmail() string {
-	return iapg.ClientEmail
-}
-
-func (iapg *IAPGoogleConfig) GetPrivateKey() string {
-	return iapg.PrivateKey
-}
-
-func (iapg *IAPGoogleConfig) GetNotificationsEndpointId() string {
-	return iapg.NotificationsEndpointId
-}
-
-var _ runtime.IAPHuaweiConfig = (*IAPHuaweiConfig)(nil)
-
-type IAPHuaweiConfig struct {
-	PublicKey    string `yaml:"public_key" json:"public_key" usage:"Huawei IAP store Base64 encoded Public Key."`
-	ClientID     string `yaml:"client_id" json:"client_id" usage:"Huawei OAuth client secret."`
-	ClientSecret string `yaml:"client_secret" json:"client_secret" usage:"Huawei OAuth app client secret."`
-}
-
-func (i IAPHuaweiConfig) GetPublicKey() string {
-	return i.PublicKey
-}
-
-func (i IAPHuaweiConfig) GetClientID() string {
-	return i.ClientID
-}
-
-func (i IAPHuaweiConfig) GetClientSecret() string {
-	return i.ClientSecret
-}
-
-var _ runtime.IAPFacebookInstantConfig = (*IAPFacebookInstantConfig)(nil)
-
-type IAPFacebookInstantConfig struct {
-	AppSecret string `yaml:"app_secret" json:"app_secret" usage:"Facebook Instant OAuth app client secret."`
-}
-
-func (i IAPFacebookInstantConfig) GetAppSecret() string {
-	return i.AppSecret
-}
+func (cfg *IAPConfig) GetApple() runtime.IAPAppleConfig           { return nil }
+func (cfg *IAPConfig) GetGoogle() runtime.IAPGoogleConfig         { return nil }
+func (cfg *IAPConfig) GetHuawei() runtime.IAPHuaweiConfig         { return nil }
+func (cfg *IAPConfig) GetFacebookInstant() runtime.IAPFacebookInstantConfig { return nil }
 
 var _ runtime.GoogleAuthConfig = (*GoogleAuthConfig)(nil)
 

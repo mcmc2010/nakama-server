@@ -3214,330 +3214,6 @@ func (n *RuntimeGoNakamaModule) TournamentRecordsHaystack(ctx context.Context, i
 	return TournamentRecordsHaystack(ctx, n.logger, n.db, n.leaderboardCache, n.leaderboardRankCache, id, cursor, owner, limit, expiry)
 }
 
-// @group purchases
-// @summary Validates and stores the purchases present in an Apple App Store Receipt.
-// @param ctx(type=context.Context) The context object represents information about the server and requester.
-// @param userID(type=string) The user ID of the owner of the receipt.
-// @param receipt(type=string) Base-64 encoded receipt data returned by the purchase operation itself.
-// @param persist(type=bool) Persist the purchase so that seenBefore can be computed to protect against replay attacks.
-// @param passwordOverride(type=string, optional=true) Override the iap.apple.shared_password provided in your configuration.
-// @return validation(*api.ValidatePurchaseResponse) The resulting successfully validated purchases. Any previously validated purchases are returned with a seenBefore flag.
-// @return error(error) An optional error value if an error occurred.
-func (n *RuntimeGoNakamaModule) PurchaseValidateApple(ctx context.Context, userID, receipt string, persist bool, passwordOverride ...string) (*api.ValidatePurchaseResponse, error) {
-	if n.config.GetIAP().Apple.SharedPassword == "" && len(passwordOverride) == 0 {
-		return nil, errors.New("apple IAP is not configured")
-	}
-	password := n.config.GetIAP().Apple.SharedPassword
-	if len(passwordOverride) > 1 {
-		return nil, errors.New("expects a single password override parameter")
-	} else if len(passwordOverride) == 1 {
-		password = passwordOverride[0]
-	}
-
-	uid, err := uuid.FromString(userID)
-	if err != nil {
-		return nil, errors.New("user ID must be a valid id string")
-	}
-
-	if len(receipt) < 1 {
-		return nil, errors.New("receipt cannot be empty string")
-	}
-
-	validation, err := ValidatePurchasesApple(ctx, n.logger, n.db, uid, password, receipt, persist)
-	if err != nil {
-		return nil, err
-	}
-
-	return validation, nil
-}
-
-// @group purchases
-// @summary Validates and stores a purchase receipt from the Google Play Store.
-// @param ctx(type=context.Context) The context object represents information about the server and requester.
-// @param userID(type=string) The user ID of the owner of the receipt.
-// @param receipt(type=string) JSON encoded Google receipt.
-// @param persist(type=bool) Persist the purchase so that seenBefore can be computed to protect against replay attacks.
-// @param overrides(type=struct, optional=true) Override the iap.google.client_email and iap.google.private_key provided in your configuration.
-// @return validation(*api.ValidatePurchaseResponse) The resulting successfully validated purchases. Any previously validated purchases are returned with a seenBefore flag.
-// @return error(error) An optional error value if an error occurred.
-func (n *RuntimeGoNakamaModule) PurchaseValidateGoogle(ctx context.Context, userID, receipt string, persist bool, overrides ...struct {
-	ClientEmail string
-	PrivateKey  string
-}) (*api.ValidatePurchaseResponse, error) {
-	clientEmail := n.config.GetIAP().Google.ClientEmail
-	privateKey := n.config.GetIAP().Google.PrivateKey
-
-	if len(overrides) > 1 {
-		return nil, errors.New("expects a single override parameter")
-	} else if len(overrides) == 1 {
-		if overrides[0].ClientEmail != "" {
-			clientEmail = overrides[0].ClientEmail
-		}
-		if overrides[0].PrivateKey != "" {
-			privateKey = overrides[0].PrivateKey
-		}
-	}
-
-	if clientEmail == "" || privateKey == "" {
-		return nil, errors.New("google IAP is not configured")
-	}
-
-	uid, err := uuid.FromString(userID)
-	if err != nil {
-		return nil, errors.New("user ID must be a valid id string")
-	}
-
-	if len(receipt) < 1 {
-		return nil, errors.New("receipt cannot be empty string")
-	}
-
-	configOverride := &IAPGoogleConfig{
-		ClientEmail: clientEmail,
-		PrivateKey:  privateKey,
-	}
-
-	validation, err := ValidatePurchaseGoogle(ctx, n.logger, n.db, uid, configOverride, receipt, persist)
-	if err != nil {
-		return nil, err
-	}
-
-	return validation, nil
-}
-
-// @group purchases
-// @summary Validates and stores a purchase receipt from the Huawei App Gallery.
-// @param ctx(type=context.Context) The context object represents information about the server and requester.
-// @param userID(type=string) The user ID of the owner of the receipt.
-// @param signature(type=string) The receipt signature.
-// @param receipt(type=string) The Huawei receipt data.
-// @param persist(type=bool) Persist the purchase so that seenBefore can be computed to protect against replay attacks.
-// @return validation(*api.ValidatePurchaseResponse) The resulting successfully validated purchases. Any previously validated purchases are returned with a seenBefore flag.
-// @return error(error) An optional error value if an error occurred.
-func (n *RuntimeGoNakamaModule) PurchaseValidateHuawei(ctx context.Context, userID, signature, receipt string, persist bool) (*api.ValidatePurchaseResponse, error) {
-	if n.config.GetIAP().Huawei.ClientID == "" ||
-		n.config.GetIAP().Huawei.ClientSecret == "" ||
-		n.config.GetIAP().Huawei.PublicKey == "" {
-		return nil, errors.New("Huawei IAP is not configured.")
-	}
-
-	uid, err := uuid.FromString(userID)
-	if err != nil {
-		return nil, errors.New("user ID must be a valid id string")
-	}
-
-	if len(signature) < 1 {
-		return nil, errors.New("signature cannot be empty string")
-	}
-
-	if len(receipt) < 1 {
-		return nil, errors.New("receipt cannot be empty string")
-	}
-
-	validation, err := ValidatePurchaseHuawei(ctx, n.logger, n.db, uid, n.config.GetIAP().Huawei, receipt, signature, persist)
-	if err != nil {
-		return nil, err
-	}
-
-	return validation, nil
-}
-
-// @group purchases
-// @summary Validates and stores a purchase receipt from Facebook Instant Games.
-// @param ctx(type=context.Context) The context object represents information about the server and requester.
-// @param userID(type=string) The user ID of the owner of the receipt.
-// @param signedRequest(type=string) The Facebook Instant signedRequest receipt data.
-// @param persist(type=bool) Persist the purchase so that seenBefore can be computed to protect against replay attacks.
-// @return validation(*api.ValidatePurchaseResponse) The resulting successfully validated purchases. Any previously validated purchases are returned with a seenBefore flag.
-// @return error(error) An optional error value if an error occurred.
-func (n *RuntimeGoNakamaModule) PurchaseValidateFacebookInstant(ctx context.Context, userID, signedRequest string, persist bool) (*api.ValidatePurchaseResponse, error) {
-	if n.config.GetIAP().FacebookInstant.AppSecret == "" {
-		return nil, errors.New("facebook instant IAP is not configured")
-	}
-
-	uid, err := uuid.FromString(userID)
-	if err != nil {
-		return nil, errors.New("user ID must be a valid id string")
-	}
-
-	if len(signedRequest) < 1 {
-		return nil, errors.New("signedRequest cannot be empty string")
-	}
-
-	validation, err := ValidatePurchaseFacebookInstant(ctx, n.logger, n.db, uid, n.config.GetIAP().FacebookInstant, signedRequest, persist)
-	if err != nil {
-		return nil, err
-	}
-
-	return validation, nil
-}
-
-// @group purchases
-// @summary List stored validated purchase receipts.
-// @param ctx(type=context.Context) The context object represents information about the server and requester.
-// @param userID(type=string) Filter by user ID. Can be an empty string to list purchases for all users.
-// @param limit(type=int, optional=true, default=100) Limit number of records retrieved.
-// @param cursor(type=string, optional=true, default="") Pagination cursor from previous result. Don't set to start fetching from the beginning.
-// @return listPurchases(*api.PurchaseList) A page of stored validated purchases and possibly a cursor. If cursor is empty/nil there are no further results.
-// @return error(error) An optional error value if an error occurred.
-func (n *RuntimeGoNakamaModule) PurchasesList(ctx context.Context, userID string, limit int, cursor string) (*api.PurchaseList, error) {
-	if userID != "" {
-		if _, err := uuid.FromString(userID); err != nil {
-			return nil, errors.New("expects a valid user ID")
-		}
-	}
-
-	if limit <= 0 || limit > 100 {
-		return nil, errors.New("limit must be a positive value <= 100")
-	}
-
-	return ListPurchases(ctx, n.logger, n.db, userID, limit, cursor, time.Time{}, time.Time{})
-}
-
-// @group purchases
-// @summary Look up a purchase receipt by transaction ID.
-// @param ctx(type=context.Context) The context object represents information about the server and requester.
-// @param transactionID(type=string) Transaction ID of the purchase to look up.
-// @return purchase(*api.ValidatedPurchase) A validated purchase.
-// @return error(error) An optional error value if an error occurred.
-func (n *RuntimeGoNakamaModule) PurchaseGetByTransactionId(ctx context.Context, transactionID string) (*api.ValidatedPurchase, error) {
-	if transactionID == "" {
-		return nil, errors.New("expects a transaction id string.")
-	}
-
-	return GetPurchaseByTransactionId(ctx, n.logger, n.db, transactionID)
-}
-
-// @group subscriptions
-// @summary Validates and stores the subscription present in an Apple App Store Receipt.
-// @param ctx(type=context.Context) The context object represents information about the server and requester.
-// @param userID(type=string) The user ID of the owner of the receipt.
-// @param receipt(type=string) Base-64 encoded receipt data returned by the purchase operation itself.
-// @param persist(type=bool) Persist the subscription.
-// @param passwordOverride(type=string, optional=true) Override the iap.apple.shared_password provided in your configuration.
-// @return validation(*api.ValidateSubscriptionResponse) The resulting successfully validated subscription purchase.
-// @return error(error) An optional error value if an error occurred.
-func (n *RuntimeGoNakamaModule) SubscriptionValidateApple(ctx context.Context, userID, receipt string, persist bool, passwordOverride ...string) (*api.ValidateSubscriptionResponse, error) {
-	if n.config.GetIAP().Apple.SharedPassword == "" && len(passwordOverride) == 0 {
-		return nil, errors.New("apple IAP is not configured")
-	}
-	password := n.config.GetIAP().Apple.SharedPassword
-	if len(passwordOverride) > 1 {
-		return nil, errors.New("expects a single password override parameter")
-	} else if len(passwordOverride) == 1 {
-		password = passwordOverride[0]
-	}
-
-	uid, err := uuid.FromString(userID)
-	if err != nil {
-		return nil, errors.New("user ID must be a valid id string")
-	}
-
-	if len(receipt) < 1 {
-		return nil, errors.New("receipt cannot be empty string")
-	}
-
-	validation, err := ValidateSubscriptionApple(ctx, n.logger, n.db, uid, password, receipt, persist)
-	if err != nil {
-		return nil, err
-	}
-
-	return validation, nil
-}
-
-// @group subscriptions
-// @summary Validates and stores a subscription receipt from the Google Play Store.
-// @param ctx(type=context.Context) The context object represents information about the server and requester.
-// @param userID(type=string) The user ID of the owner of the receipt.
-// @param receipt(type=string) JSON encoded Google receipt.
-// @param persist(type=bool) Persist the subscription.
-// @param overrides(type=struct, optional=true) Override the iap.google.client_email and iap.google.private_key provided in your configuration.
-// @return validation(*api.ValidateSubscriptionResponse) The resulting successfully validated subscription.
-// @return error(error) An optional error value if an error occurred.
-func (n *RuntimeGoNakamaModule) SubscriptionValidateGoogle(ctx context.Context, userID, receipt string, persist bool, overrides ...struct {
-	ClientEmail string
-	PrivateKey  string
-}) (*api.ValidateSubscriptionResponse, error) {
-	clientEmail := n.config.GetIAP().Google.ClientEmail
-	privateKey := n.config.GetIAP().Google.PrivateKey
-
-	if len(overrides) > 1 {
-		return nil, errors.New("expects a single override parameter")
-	} else if len(overrides) == 1 {
-		if overrides[0].ClientEmail != "" {
-			clientEmail = overrides[0].ClientEmail
-		}
-		if overrides[0].PrivateKey != "" {
-			privateKey = overrides[0].PrivateKey
-		}
-	}
-
-	if clientEmail == "" || privateKey == "" {
-		return nil, errors.New("google IAP is not configured")
-	}
-
-	uid, err := uuid.FromString(userID)
-	if err != nil {
-		return nil, errors.New("user ID must be a valid id string")
-	}
-
-	if len(receipt) < 1 {
-		return nil, errors.New("receipt cannot be empty string")
-	}
-
-	configOverride := &IAPGoogleConfig{
-		ClientEmail: clientEmail,
-		PrivateKey:  privateKey,
-	}
-
-	validation, err := ValidateSubscriptionGoogle(ctx, n.logger, n.db, uid, configOverride, receipt, persist)
-	if err != nil {
-		return nil, err
-	}
-
-	return validation, nil
-}
-
-// @group subscriptions
-// @summary List stored validated subscriptions.
-// @param ctx(type=context.Context) The context object represents information about the server and requester.
-// @param userID(type=string) Filter by user ID. Can be an empty string to list purchases for all users.
-// @param limit(type=int, optional=true, default=100) Limit number of records retrieved.
-// @param cursor(type=string, optional=true, default="") Pagination cursor from previous result. Don't set to start fetching from the beginning.
-// @return listSubscriptions(*api.SubscriptionList) A page of stored validated subscriptions and possibly a cursor. If cursor is empty/nil there are no further results.
-// @return error(error) An optional error value if an error occurred.
-func (n *RuntimeGoNakamaModule) SubscriptionsList(ctx context.Context, userID string, limit int, cursor string) (*api.SubscriptionList, error) {
-	if userID != "" {
-		if _, err := uuid.FromString(userID); err != nil {
-			return nil, errors.New("expects a valid user ID")
-		}
-	}
-
-	if limit <= 0 || limit > 100 {
-		return nil, errors.New("limit must be a positive value <= 100")
-	}
-
-	return ListSubscriptions(ctx, n.logger, n.db, userID, limit, cursor, time.Time{}, time.Time{})
-}
-
-// @group subscriptions
-// @summary Look up a subscription receipt by productID.
-// @param ctx(type=context.Context) The context object represents information about the server and requester.
-// @param userID(type=string) User ID of the subscription owner.
-// @param productID(type=string) Product ID of the subscription to look up.
-// @return subscription(*api.ValidatedSubscription) A validated subscription.
-// @return error(error) An optional error value if an error occurred.
-func (n *RuntimeGoNakamaModule) SubscriptionGetByProductId(ctx context.Context, userID, productID string) (*api.ValidatedSubscription, error) {
-	if _, err := uuid.FromString(userID); err != nil {
-		return nil, errors.New("expects a valid user ID")
-	}
-
-	if productID == "" {
-		return nil, errors.New("expects a product id string.")
-	}
-
-	return GetSubscriptionByProductId(ctx, n.logger, n.db, userID, productID)
-}
-
 // @group groups
 // @summary Fetch one or more groups by their ID.
 // @param ctx(type=context.Context) The context object represents information about the server and requester.
@@ -4566,4 +4242,50 @@ func (n *RuntimeGoNakamaModule) GetSatori() runtime.Satori {
 // @return fleetManager(runtime.FleetManager) The Fleet Manager client.
 func (n *RuntimeGoNakamaModule) GetFleetManager() runtime.FleetManager {
 	return n.fleetManager
+}
+
+func (n *RuntimeGoNakamaModule) PurchaseValidateApple(ctx context.Context, userID, receipt string, persist bool, passwordOverride ...string) (*api.ValidatePurchaseResponse, error) {
+	return nil, errors.New("IAP functionality has been removed")
+}
+
+func (n *RuntimeGoNakamaModule) PurchaseValidateGoogle(ctx context.Context, userID, receipt string, persist bool, overrides ...struct {
+	ClientEmail string
+	PrivateKey  string
+}) (*api.ValidatePurchaseResponse, error) {
+	return nil, errors.New("IAP functionality has been removed")
+}
+
+func (n *RuntimeGoNakamaModule) PurchaseValidateHuawei(ctx context.Context, userID, signature, inAppPurchaseData string, persist bool) (*api.ValidatePurchaseResponse, error) {
+	return nil, errors.New("IAP functionality has been removed")
+}
+
+func (n *RuntimeGoNakamaModule) PurchaseValidateFacebookInstant(ctx context.Context, userID, signedRequest string, persist bool) (*api.ValidatePurchaseResponse, error) {
+	return nil, errors.New("IAP functionality has been removed")
+}
+
+func (n *RuntimeGoNakamaModule) PurchasesList(ctx context.Context, userID string, limit int, cursor string) (*api.PurchaseList, error) {
+	return nil, errors.New("IAP functionality has been removed")
+}
+
+func (n *RuntimeGoNakamaModule) PurchaseGetByTransactionId(ctx context.Context, transactionID string) (*api.ValidatedPurchase, error) {
+	return nil, errors.New("IAP functionality has been removed")
+}
+
+func (n *RuntimeGoNakamaModule) SubscriptionValidateApple(ctx context.Context, userID, receipt string, persist bool, passwordOverride ...string) (*api.ValidateSubscriptionResponse, error) {
+	return nil, errors.New("IAP functionality has been removed")
+}
+
+func (n *RuntimeGoNakamaModule) SubscriptionValidateGoogle(ctx context.Context, userID, receipt string, persist bool, overrides ...struct {
+	ClientEmail string
+	PrivateKey  string
+}) (*api.ValidateSubscriptionResponse, error) {
+	return nil, errors.New("IAP functionality has been removed")
+}
+
+func (n *RuntimeGoNakamaModule) SubscriptionsList(ctx context.Context, userID string, limit int, cursor string) (*api.SubscriptionList, error) {
+	return nil, errors.New("IAP functionality has been removed")
+}
+
+func (n *RuntimeGoNakamaModule) SubscriptionGetByProductId(ctx context.Context, userID, productID string) (*api.ValidatedSubscription, error) {
+	return nil, errors.New("IAP functionality has been removed")
 }

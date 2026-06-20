@@ -196,7 +196,7 @@ LIMIT $4`
 	if nextCursor != nil {
 		cursorBuf := new(bytes.Buffer)
 		if err := gob.NewEncoder(cursorBuf).Encode(nextCursor); err != nil {
-			logger.Error("Error creating purchases list cursor", zap.Error(err))
+			logger.Error("Error creating notifications list cursor", zap.Error(err))
 			return nil, err
 		}
 		nextCursorStr = base64.URLEncoding.EncodeToString(cursorBuf.Bytes())
@@ -206,7 +206,7 @@ LIMIT $4`
 	if prevCursor != nil {
 		cursorBuf := new(bytes.Buffer)
 		if err := gob.NewEncoder(cursorBuf).Encode(prevCursor); err != nil {
-			logger.Error("Error creating purchases list cursor", zap.Error(err))
+			logger.Error("Error creating notifications list cursor", zap.Error(err))
 			return nil, err
 		}
 		prevCursorStr = base64.URLEncoding.EncodeToString(cursorBuf.Bytes())

@@ -24,7 +24,6 @@ type RuntimeConfigClone struct {
 	Socket        runtime.SocketConfig
 	Social        runtime.SocialConfig
 	Runtime       runtime.RuntimeConfig
-	Iap           runtime.IAPConfig
 	GoogleAuth    runtime.GoogleAuthConfig
 }
 
@@ -57,7 +56,7 @@ func (c *RuntimeConfigClone) GetRuntime() runtime.RuntimeConfig {
 }
 
 func (c *RuntimeConfigClone) GetIAP() runtime.IAPConfig {
-	return c.Iap
+	return nil
 }
 
 func (c *RuntimeConfigClone) GetGoogleAuth() runtime.GoogleAuthConfig {

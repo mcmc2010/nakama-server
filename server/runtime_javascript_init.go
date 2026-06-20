@@ -109,10 +109,6 @@ func (im *RuntimeJavascriptInitModule) mappings(r *goja.Runtime) map[string]func
 		"registerTournamentReset":                         im.registerTournamentReset(r),
 		"registerLeaderboardReset":                        im.registerLeaderboardReset(r),
 		"registerShutdown":                                im.registerShutdown(r),
-		"registerPurchaseNotificationApple":               im.registerPurchaseNotificationApple(r),
-		"registerSubscriptionNotificationApple":           im.registerSubscriptionNotificationApple(r),
-		"registerPurchaseNotificationGoogle":              im.registerPurchaseNotificationGoogle(r),
-		"registerSubscriptionNotificationGoogle":          im.registerSubscriptionNotificationGoogle(r),
 		"registerMatch":                                   im.registerMatch(r),
 		"registerBeforeGetAccount":                        im.registerBeforeGetAccount(r),
 		"registerAfterGetAccount":                         im.registerAfterGetAccount(r),
@@ -256,22 +252,6 @@ func (im *RuntimeJavascriptInitModule) mappings(r *goja.Runtime) map[string]func
 		"registerAfterUnlinkSteam":                        im.registerAfterUnlinkSteam(r),
 		"registerBeforeGetUsers":                          im.registerBeforeGetUsers(r),
 		"registerAfterGetUsers":                           im.registerAfterGetUsers(r),
-		"registerBeforeValidatePurchaseApple":             im.registerBeforeValidatePurchaseApple(r),
-		"registerAfterValidatePurchaseApple":              im.registerAfterValidatePurchaseApple(r),
-		"registerBeforeValidateSubscriptionApple":         im.registerBeforeValidateSubscriptionApple(r),
-		"registerAfterValidateSubscriptionApple":          im.registerAfterValidateSubscriptionApple(r),
-		"registerBeforeValidatePurchaseGoogle":            im.registerBeforeValidatePurchaseGoogle(r),
-		"registerAfterValidatePurchaseGoogle":             im.registerAfterValidatePurchaseGoogle(r),
-		"registerBeforeValidateSubscriptionGoogle":        im.registerBeforeValidateSubscriptionGoogle(r),
-		"registerAfterValidateSubscriptionGoogle":         im.registerAfterValidateSubscriptionGoogle(r),
-		"registerBeforeValidatePurchaseHuawei":            im.registerBeforeValidatePurchaseHuawei(r),
-		"registerAfterValidatePurchaseHuawei":             im.registerAfterValidatePurchaseHuawei(r),
-		"registerBeforeValidatePurchaseFacebookInstant":   im.registerBeforeValidatePurchaseFacebookInstant(r),
-		"registerAfterValidatePurchaseFacebookInstant":    im.registerAfterValidatePurchaseFacebookInstant(r),
-		"registerBeforeListSubscriptions":                 im.registerBeforeListSubscriptions(r),
-		"registerAfterListSubscriptions":                  im.registerAfterListSubscriptions(r),
-		"registerBeforeGetSubscription":                   im.registerBeforeGetSubscription(r),
-		"registerAfterGetSubscription":                    im.registerAfterGetSubscription(r),
 		"registerBeforeListParties":                       im.registerBeforeListParties(r),
 		"registerAfterListParties":                        im.registerAfterListParties(r),
 		"registerBeforeEvent":                             im.registerBeforeEvent(r),
@@ -351,30 +331,6 @@ func (im *RuntimeJavascriptInitModule) getConfig(r *goja.Runtime) func(goja.Func
 		_ = runtimeCfg.Set("env", rnc.GetRuntime().GetEnv())
 		_ = runtimeCfg.Set("http_key", rnc.GetRuntime().GetHTTPKey())
 		_ = cfgObj.Set("runtime", runtimeCfg)
-
-		// IAP
-		iapAppleCfg := r.NewObject()
-		_ = iapAppleCfg.Set("shared_password", rnc.GetIAP().GetApple().GetSharedPassword())
-		_ = iapAppleCfg.Set("notifications_endpoint_id", rnc.GetIAP().GetApple().GetNotificationsEndpointId())
-
-		iapGoogleCfg := r.NewObject()
-		_ = iapGoogleCfg.Set("client_email", rnc.GetIAP().GetGoogle().GetClientEmail())
-		_ = iapGoogleCfg.Set("private_key", rnc.GetIAP().GetGoogle().GetPrivateKey())
-		_ = iapGoogleCfg.Set("notifications_endpoint_id", rnc.GetIAP().GetGoogle().GetNotificationsEndpointId())
-
-		iapHuaweiCfg := r.NewObject()
-		_ = iapHuaweiCfg.Set("public_key", rnc.GetIAP().GetHuawei().GetPublicKey())
-		_ = iapHuaweiCfg.Set("client_id", rnc.GetIAP().GetHuawei().GetClientID())
-		_ = iapHuaweiCfg.Set("client_secret", rnc.GetIAP().GetHuawei().GetClientSecret())
-
-		iapFacebookInstantCfg := r.NewObject()
-		_ = iapFacebookInstantCfg.Set("app_secret", rnc.GetIAP().GetFacebookInstant().GetAppSecret())
-		iapCfg := r.NewObject()
-		_ = iapCfg.Set("apple", iapAppleCfg)
-		_ = iapCfg.Set("google", iapGoogleCfg)
-		_ = iapCfg.Set("huawei", iapHuaweiCfg)
-		_ = iapCfg.Set("facebook_instant", iapFacebookInstantCfg)
-		_ = cfgObj.Set("iap", iapCfg)
 
 		googleAuthCfg := r.NewObject()
 		_ = googleAuthCfg.Set("credentials_json", rnc.GetGoogleAuth().GetCredentialsJSON())
@@ -1060,70 +1016,6 @@ func (im *RuntimeJavascriptInitModule) registerAfterGetUsers(r *goja.Runtime) fu
 	return im.registerHook(r, RuntimeExecutionModeAfter, "registerAfterGetUsers", "getusers")
 }
 
-func (im *RuntimeJavascriptInitModule) registerBeforeValidatePurchaseApple(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeBefore, "registerBeforeValidatePurchaseApple", "validatepurchaseapple")
-}
-
-func (im *RuntimeJavascriptInitModule) registerAfterValidatePurchaseApple(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeAfter, "registerAfterValidatePurchaseApple", "validatepurchaseapple")
-}
-
-func (im *RuntimeJavascriptInitModule) registerBeforeValidateSubscriptionApple(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeBefore, "registerBeforeValidateSubscriptionApple", "validatesubscriptionapple")
-}
-
-func (im *RuntimeJavascriptInitModule) registerAfterValidateSubscriptionApple(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeAfter, "registerAfterValidateSubscriptionApple", "validatesubscriptionapple")
-}
-
-func (im *RuntimeJavascriptInitModule) registerBeforeValidatePurchaseGoogle(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeBefore, "registerBeforeValidatePurchaseGoogle", "validatepurchasegoogle")
-}
-
-func (im *RuntimeJavascriptInitModule) registerAfterValidatePurchaseGoogle(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeAfter, "registerAfterValidatePurchaseGoogle", "validatepurchasegoogle")
-}
-
-func (im *RuntimeJavascriptInitModule) registerBeforeValidateSubscriptionGoogle(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeBefore, "registerBeforeValidateSubscriptionGoogle", "validatesubscriptiongoogle")
-}
-
-func (im *RuntimeJavascriptInitModule) registerAfterValidateSubscriptionGoogle(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeAfter, "registerAfterValidateSubscriptionGoogle", "validatesubscriptiongoogle")
-}
-
-func (im *RuntimeJavascriptInitModule) registerBeforeValidatePurchaseHuawei(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeBefore, "registerBeforeValidatePurchaseHuawei", "validatepurchasehuawei")
-}
-
-func (im *RuntimeJavascriptInitModule) registerAfterValidatePurchaseHuawei(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeAfter, "registerAfterValidatePurchaseHuawei", "validatepurchasehuawei")
-}
-
-func (im *RuntimeJavascriptInitModule) registerBeforeValidatePurchaseFacebookInstant(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeBefore, "registerBeforeValidatePurchaseFacebookInstant", "validatepurchasefacebookinstant")
-}
-
-func (im *RuntimeJavascriptInitModule) registerAfterValidatePurchaseFacebookInstant(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeAfter, "registerAfterValidatePurchaseFacebookInstant", "validatepurchasefacebookinstant")
-}
-
-func (im *RuntimeJavascriptInitModule) registerBeforeListSubscriptions(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeBefore, "registerBeforeListSubscriptions", "listsubscriptions")
-}
-
-func (im *RuntimeJavascriptInitModule) registerAfterListSubscriptions(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeAfter, "registerAfterListSubscriptions", "listsubscriptions")
-}
-
-func (im *RuntimeJavascriptInitModule) registerBeforeGetSubscription(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeBefore, "registerBeforeGetSubscription", "getsubscription")
-}
-
-func (im *RuntimeJavascriptInitModule) registerAfterGetSubscription(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
-	return im.registerHook(r, RuntimeExecutionModeAfter, "registerAfterGetSubscription", "getsubscription")
-}
-
 func (im *RuntimeJavascriptInitModule) registerBeforeListParties(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
 	return im.registerHook(r, RuntimeExecutionModeBefore, "registerBeforeListParties", "listparties")
 }
@@ -1552,97 +1444,7 @@ func (im *RuntimeJavascriptInitModule) registerShutdown(r *goja.Runtime) func(go
 	}
 }
 
-func (im *RuntimeJavascriptInitModule) registerPurchaseNotificationApple(r *goja.Runtime) func(call goja.FunctionCall) goja.Value {
-	return func(f goja.FunctionCall) goja.Value {
-		fn := f.Argument(0)
-		_, ok := goja.AssertFunction(fn)
-		if !ok {
-			panic(r.NewTypeError("expects a function"))
-		}
 
-		fnKey, err := im.extractHookFn("registerPurchaseNotificationApple")
-		if err != nil {
-			panic(r.NewGoError(err))
-		}
-		im.registerCallbackFn(RuntimeExecutionModePurchaseNotificationApple, "", fnKey)
-		im.announceCallbackFn(RuntimeExecutionModePurchaseNotificationApple, "")
-
-		if err = im.checkFnScope(r, fnKey); err != nil {
-			panic(r.NewGoError(err))
-		}
-
-		return goja.Undefined()
-	}
-}
-
-func (im *RuntimeJavascriptInitModule) registerSubscriptionNotificationApple(r *goja.Runtime) func(call goja.FunctionCall) goja.Value {
-	return func(f goja.FunctionCall) goja.Value {
-		fn := f.Argument(0)
-		_, ok := goja.AssertFunction(fn)
-		if !ok {
-			panic(r.NewTypeError("expects a function"))
-		}
-
-		fnKey, err := im.extractHookFn("registerSubscriptionNotificationApple")
-		if err != nil {
-			panic(r.NewGoError(err))
-		}
-		im.registerCallbackFn(RuntimeExecutionModeSubscriptionNotificationApple, "", fnKey)
-		im.announceCallbackFn(RuntimeExecutionModeSubscriptionNotificationApple, "")
-
-		if err = im.checkFnScope(r, fnKey); err != nil {
-			panic(r.NewGoError(err))
-		}
-
-		return goja.Undefined()
-	}
-}
-
-func (im *RuntimeJavascriptInitModule) registerPurchaseNotificationGoogle(r *goja.Runtime) func(call goja.FunctionCall) goja.Value {
-	return func(f goja.FunctionCall) goja.Value {
-		fn := f.Argument(0)
-		_, ok := goja.AssertFunction(fn)
-		if !ok {
-			panic(r.NewTypeError("expects a function"))
-		}
-
-		fnKey, err := im.extractHookFn("registerPurchaseNotificationGoogle")
-		if err != nil {
-			panic(r.NewGoError(err))
-		}
-		im.registerCallbackFn(RuntimeExecutionModePurchaseNotificationGoogle, "", fnKey)
-		im.announceCallbackFn(RuntimeExecutionModePurchaseNotificationGoogle, "")
-
-		if err = im.checkFnScope(r, fnKey); err != nil {
-			panic(r.NewGoError(err))
-		}
-
-		return goja.Undefined()
-	}
-}
-
-func (im *RuntimeJavascriptInitModule) registerSubscriptionNotificationGoogle(r *goja.Runtime) func(call goja.FunctionCall) goja.Value {
-	return func(f goja.FunctionCall) goja.Value {
-		fn := f.Argument(0)
-		_, ok := goja.AssertFunction(fn)
-		if !ok {
-			panic(r.NewTypeError("expects a function"))
-		}
-
-		fnKey, err := im.extractHookFn("registerSubscriptionNotificationGoogle")
-		if err != nil {
-			panic(r.NewGoError(err))
-		}
-		im.registerCallbackFn(RuntimeExecutionModeSubscriptionNotificationGoogle, "", fnKey)
-		im.announceCallbackFn(RuntimeExecutionModeSubscriptionNotificationGoogle, "")
-
-		if err = im.checkFnScope(r, fnKey); err != nil {
-			panic(r.NewGoError(err))
-		}
-
-		return goja.Undefined()
-	}
-}
 
 func (im *RuntimeJavascriptInitModule) registerMatch(r *goja.Runtime) func(goja.FunctionCall) goja.Value {
 	return func(f goja.FunctionCall) goja.Value {
@@ -1914,14 +1716,6 @@ func (im *RuntimeJavascriptInitModule) registerCallbackFn(mode RuntimeExecutionM
 		im.Callbacks.LeaderboardReset = fn
 	case RuntimeExecutionModeShutdown:
 		im.Callbacks.Shutdown = fn
-	case RuntimeExecutionModePurchaseNotificationApple:
-		im.Callbacks.PurchaseNotificationApple = fn
-	case RuntimeExecutionModeSubscriptionNotificationApple:
-		im.Callbacks.SubscriptionNotificationApple = fn
-	case RuntimeExecutionModePurchaseNotificationGoogle:
-		im.Callbacks.PurchaseNotificationGoogle = fn
-	case RuntimeExecutionModeSubscriptionNotificationGoogle:
-		im.Callbacks.SubscriptionNotificationGoogle = fn
 	case RuntimeExecutionModeStorageIndexFilter:
 		im.Callbacks.StorageIndexFilter[key] = fn
 	}

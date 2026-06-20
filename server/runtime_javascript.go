@@ -28,8 +28,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/heroiclabs/nakama-common/runtime"
-
 	"github.com/dop251/goja"
 	"github.com/dop251/goja/ast"
 	"github.com/gofrs/uuid/v5"
@@ -92,14 +90,6 @@ func (r *RuntimeJS) GetCallback(e RuntimeExecutionMode, key string) string {
 		return r.callbacks.LeaderboardReset
 	case RuntimeExecutionModeShutdown:
 		return r.callbacks.Shutdown
-	case RuntimeExecutionModePurchaseNotificationApple:
-		return r.callbacks.PurchaseNotificationApple
-	case RuntimeExecutionModeSubscriptionNotificationApple:
-		return r.callbacks.SubscriptionNotificationApple
-	case RuntimeExecutionModePurchaseNotificationGoogle:
-		return r.callbacks.PurchaseNotificationGoogle
-	case RuntimeExecutionModeSubscriptionNotificationGoogle:
-		return r.callbacks.SubscriptionNotificationGoogle
 	case RuntimeExecutionModeStorageIndexFilter:
 		fnId, ok := r.callbacks.StorageIndexFilter[key]
 		if !ok {
@@ -649,7 +639,7 @@ func (rp *RuntimeProviderJS) Put(r *RuntimeJS) {
 	}
 }
 
-func NewRuntimeProviderJS(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.DB, protojsonMarshaler *protojson.MarshalOptions, protojsonUnmarshaler *protojson.UnmarshalOptions, config Config, version string, socialClient *social.Client, leaderboardCache LeaderboardCache, leaderboardRankCache LeaderboardRankCache, leaderboardScheduler LeaderboardScheduler, sessionRegistry SessionRegistry, sessionCache SessionCache, statusRegistry StatusRegistry, matchRegistry MatchRegistry, partyRegistry PartyRegistry, tracker Tracker, metrics Metrics, streamManager StreamManager, router MessageRouter, eventFn RuntimeEventCustomFunction, path, entrypoint string, matchProvider *MatchProvider, storageIndex StorageIndex) ([]string, map[string]RuntimeRpcFunction, map[string]RuntimeBeforeRtFunction, map[string]RuntimeAfterRtFunction, *RuntimeBeforeReqFunctions, *RuntimeAfterReqFunctions, RuntimeMatchmakerMatchedFunction, RuntimeTournamentEndFunction, RuntimeTournamentResetFunction, RuntimeLeaderboardResetFunction, RuntimeShutdownFunction, RuntimePurchaseNotificationAppleFunction, RuntimeSubscriptionNotificationAppleFunction, RuntimePurchaseNotificationGoogleFunction, RuntimeSubscriptionNotificationGoogleFunction, map[string]RuntimeStorageIndexFilterFunction, error) {
+func NewRuntimeProviderJS(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.DB, protojsonMarshaler *protojson.MarshalOptions, protojsonUnmarshaler *protojson.UnmarshalOptions, config Config, version string, socialClient *social.Client, leaderboardCache LeaderboardCache, leaderboardRankCache LeaderboardRankCache, leaderboardScheduler LeaderboardScheduler, sessionRegistry SessionRegistry, sessionCache SessionCache, statusRegistry StatusRegistry, matchRegistry MatchRegistry, partyRegistry PartyRegistry, tracker Tracker, metrics Metrics, streamManager StreamManager, router MessageRouter, eventFn RuntimeEventCustomFunction, path, entrypoint string, matchProvider *MatchProvider, storageIndex StorageIndex) ([]string, map[string]RuntimeRpcFunction, map[string]RuntimeBeforeRtFunction, map[string]RuntimeAfterRtFunction, *RuntimeBeforeReqFunctions, *RuntimeAfterReqFunctions, RuntimeMatchmakerMatchedFunction, RuntimeTournamentEndFunction, RuntimeTournamentResetFunction, RuntimeLeaderboardResetFunction, RuntimeShutdownFunction, map[string]RuntimeStorageIndexFilterFunction, error) {
 	startupLogger.Info("Initialising JavaScript runtime provider", zap.String("path", path), zap.String("entrypoint", entrypoint))
 
 	modCache, err := cacheJavascriptModules(startupLogger, path, entrypoint)
@@ -703,10 +693,6 @@ func NewRuntimeProviderJS(ctx context.Context, logger, startupLogger *zap.Logger
 	var tournamentResetFunction RuntimeTournamentResetFunction
 	var leaderboardResetFunction RuntimeLeaderboardResetFunction
 	var shutdownFunction RuntimeShutdownFunction
-	var purchaseNotificationAppleFunction RuntimePurchaseNotificationAppleFunction
-	var subscriptionNotificationAppleFunction RuntimeSubscriptionNotificationAppleFunction
-	var purchaseNotificationGoogleFunction RuntimePurchaseNotificationGoogleFunction
-	var subscriptionNotificationGoogleFunction RuntimeSubscriptionNotificationGoogleFunction
 	storageIndexFilterFunctions := make(map[string]RuntimeStorageIndexFilterFunction, 0)
 
 	matchHandlers := &RuntimeJavascriptMatchHandlers{
@@ -1281,70 +1267,6 @@ func NewRuntimeProviderJS(ctx context.Context, logger, startupLogger *zap.Logger
 						}
 						return result.(*api.GetUsersRequest), nil, 0
 					}
-				case "validatepurchaseapple":
-					beforeReqFunctions.beforeValidatePurchaseAppleFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.ValidatePurchaseAppleRequest) (*api.ValidatePurchaseAppleRequest, error, codes.Code) {
-						result, err, code := runtimeProviderJS.BeforeReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, in)
-						if result == nil || err != nil {
-							return nil, err, code
-						}
-						return result.(*api.ValidatePurchaseAppleRequest), nil, 0
-					}
-				case "validatepurchasegoogle":
-					beforeReqFunctions.beforeValidatePurchaseGoogleFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.ValidatePurchaseGoogleRequest) (*api.ValidatePurchaseGoogleRequest, error, codes.Code) {
-						result, err, code := runtimeProviderJS.BeforeReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, in)
-						if result == nil || err != nil {
-							return nil, err, code
-						}
-						return result.(*api.ValidatePurchaseGoogleRequest), nil, 0
-					}
-				case "validatepurchasehuawei":
-					beforeReqFunctions.beforeValidatePurchaseHuaweiFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.ValidatePurchaseHuaweiRequest) (*api.ValidatePurchaseHuaweiRequest, error, codes.Code) {
-						result, err, code := runtimeProviderJS.BeforeReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, in)
-						if result == nil || err != nil {
-							return nil, err, code
-						}
-						return result.(*api.ValidatePurchaseHuaweiRequest), nil, 0
-					}
-				case "validatepurchasefacebookinstant":
-					beforeReqFunctions.beforeValidatePurchaseFacebookInstantFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.ValidatePurchaseFacebookInstantRequest) (*api.ValidatePurchaseFacebookInstantRequest, error, codes.Code) {
-						result, err, code := runtimeProviderJS.BeforeReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, in)
-						if result == nil || err != nil {
-							return nil, err, code
-						}
-						return result.(*api.ValidatePurchaseFacebookInstantRequest), nil, 0
-					}
-				case "validatesubscriptionapple":
-					beforeReqFunctions.beforeValidateSubscriptionAppleFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.ValidateSubscriptionAppleRequest) (*api.ValidateSubscriptionAppleRequest, error, codes.Code) {
-						result, err, code := runtimeProviderJS.BeforeReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, in)
-						if result == nil || err != nil {
-							return nil, err, code
-						}
-						return result.(*api.ValidateSubscriptionAppleRequest), nil, 0
-					}
-				case "validatesubscriptiongoogle":
-					beforeReqFunctions.beforeValidateSubscriptionGoogleFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.ValidateSubscriptionGoogleRequest) (*api.ValidateSubscriptionGoogleRequest, error, codes.Code) {
-						result, err, code := runtimeProviderJS.BeforeReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, in)
-						if result == nil || err != nil {
-							return nil, err, code
-						}
-						return result.(*api.ValidateSubscriptionGoogleRequest), nil, 0
-					}
-				case "getsubscription":
-					beforeReqFunctions.beforeGetSubscriptionFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.GetSubscriptionRequest) (*api.GetSubscriptionRequest, error, codes.Code) {
-						result, err, code := runtimeProviderJS.BeforeReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, in)
-						if result == nil || err != nil {
-							return nil, err, code
-						}
-						return result.(*api.GetSubscriptionRequest), nil, 0
-					}
-				case "listsubscriptions":
-					beforeReqFunctions.beforeListSubscriptionsFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.ListSubscriptionsRequest) (*api.ListSubscriptionsRequest, error, codes.Code) {
-						result, err, code := runtimeProviderJS.BeforeReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, in)
-						if result == nil || err != nil {
-							return nil, err, code
-						}
-						return result.(*api.ListSubscriptionsRequest), nil, 0
-					}
 				case "event":
 					beforeReqFunctions.beforeEventFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.Event) (*api.Event, error, codes.Code) {
 						result, err, code := runtimeProviderJS.BeforeReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, in)
@@ -1635,38 +1557,6 @@ func NewRuntimeProviderJS(ctx context.Context, logger, startupLogger *zap.Logger
 					afterReqFunctions.afterGetUsersFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, out *api.Users, in *api.GetUsersRequest) error {
 						return runtimeProviderJS.AfterReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, out, in)
 					}
-				case "validatepurchaseapple":
-					afterReqFunctions.afterValidatePurchaseAppleFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, out *api.ValidatePurchaseResponse, in *api.ValidatePurchaseAppleRequest) error {
-						return runtimeProviderJS.AfterReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, out, in)
-					}
-				case "validatepurchasegoogle":
-					afterReqFunctions.afterValidatePurchaseGoogleFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, out *api.ValidatePurchaseResponse, in *api.ValidatePurchaseGoogleRequest) error {
-						return runtimeProviderJS.AfterReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, out, in)
-					}
-				case "validatepurchasehuawei":
-					afterReqFunctions.afterValidatePurchaseHuaweiFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, out *api.ValidatePurchaseResponse, in *api.ValidatePurchaseHuaweiRequest) error {
-						return runtimeProviderJS.AfterReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, out, in)
-					}
-				case "validatepurchasefacebookinstant":
-					afterReqFunctions.afterValidatePurchaseFacebookInstantFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, out *api.ValidatePurchaseResponse, in *api.ValidatePurchaseFacebookInstantRequest) error {
-						return runtimeProviderJS.AfterReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, out, in)
-					}
-				case "validatesubscriptionapple":
-					afterReqFunctions.afterValidateSubscriptionAppleFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, out *api.ValidateSubscriptionResponse, in *api.ValidateSubscriptionAppleRequest) error {
-						return runtimeProviderJS.AfterReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, out, in)
-					}
-				case "validatesubscriptiongoogle":
-					afterReqFunctions.afterValidateSubscriptionAppleFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, out *api.ValidateSubscriptionResponse, in *api.ValidateSubscriptionAppleRequest) error {
-						return runtimeProviderJS.AfterReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, out, in)
-					}
-				case "getsubscription":
-					afterReqFunctions.afterGetSubscriptionFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, out *api.ValidatedSubscription, in *api.GetSubscriptionRequest) error {
-						return runtimeProviderJS.AfterReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, out, in)
-					}
-				case "listsubscriptions":
-					afterReqFunctions.afterListSubscriptionsFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, out *api.SubscriptionList, in *api.ListSubscriptionsRequest) error {
-						return runtimeProviderJS.AfterReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, out, in)
-					}
 				case "event":
 					afterReqFunctions.afterEventFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.Event) error {
 						return runtimeProviderJS.AfterReq(ctx, id, logger, traceID, userID, username, vars, expiry, clientIP, clientPort, nil, in)
@@ -1693,38 +1583,6 @@ func NewRuntimeProviderJS(ctx context.Context, logger, startupLogger *zap.Logger
 			shutdownFunction = func(ctx context.Context) {
 				runtimeProviderJS.Shutdown(ctx)
 			}
-		case RuntimeExecutionModePurchaseNotificationApple:
-			purchaseNotificationAppleFunction = func(ctx context.Context, notificationType runtime.NotificationType, purchase *api.ValidatedPurchase, providerPayload *runtime.AppleNotificationData) error {
-				providerJson, err := json.Marshal(providerPayload)
-				if err != nil {
-					return err
-				}
-				return runtimeProviderJS.PurchaseNotificationApple(ctx, purchase, string(providerJson), notificationType.String())
-			}
-		case RuntimeExecutionModeSubscriptionNotificationApple:
-			subscriptionNotificationAppleFunction = func(ctx context.Context, notificationType runtime.NotificationType, subscription *api.ValidatedSubscription, providerPayload *runtime.AppleNotificationData) error {
-				providerJson, err := json.Marshal(providerPayload)
-				if err != nil {
-					return err
-				}
-				return runtimeProviderJS.SubscriptionNotificationApple(ctx, subscription, string(providerJson), notificationType.String())
-			}
-		case RuntimeExecutionModePurchaseNotificationGoogle:
-			purchaseNotificationGoogleFunction = func(ctx context.Context, notificationType runtime.NotificationType, purchase *api.ValidatedPurchase, providerPayload *runtime.PurchaseV2GoogleResponse) error {
-				providerJson, err := json.Marshal(providerPayload)
-				if err != nil {
-					return err
-				}
-				return runtimeProviderJS.PurchaseNotificationGoogle(ctx, purchase, string(providerJson), notificationType.String())
-			}
-		case RuntimeExecutionModeSubscriptionNotificationGoogle:
-			subscriptionNotificationGoogleFunction = func(ctx context.Context, notificationType runtime.NotificationType, subscription *api.ValidatedSubscription, providerPayload *runtime.SubscriptionV2GoogleResponse) error {
-				providerJson, err := json.Marshal(providerPayload)
-				if err != nil {
-					return err
-				}
-				return runtimeProviderJS.SubscriptionNotificationGoogle(ctx, subscription, string(providerJson), notificationType.String())
-			}
 		case RuntimeExecutionModeStorageIndexFilter:
 			storageIndexFilterFunctions[id] = func(ctx context.Context, write *StorageOpWrite) (bool, error) {
 				return runtimeProviderJS.StorageIndexFilter(ctx, id, write)
@@ -1733,7 +1591,7 @@ func NewRuntimeProviderJS(ctx context.Context, logger, startupLogger *zap.Logger
 	}, false)
 	if err != nil {
 		logger.Error("Failed to eval JavaScript modules.", zap.Error(err))
-		return nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, err
+		return nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, err
 	}
 
 	runtimeProviderJS.newFn = func() *RuntimeJS {
@@ -1783,7 +1641,7 @@ func NewRuntimeProviderJS(ctx context.Context, logger, startupLogger *zap.Logger
 	}
 	startupLogger.Info("Allocated minimum JavaScript runtime pool")
 
-	return modCache.Names, rpcFunctions, beforeRtFunctions, afterRtFunctions, beforeReqFunctions, afterReqFunctions, matchmakerMatchedFunction, tournamentEndFunction, tournamentResetFunction, leaderboardResetFunction, shutdownFunction, purchaseNotificationAppleFunction, subscriptionNotificationAppleFunction, purchaseNotificationGoogleFunction, subscriptionNotificationGoogleFunction, storageIndexFilterFunctions, nil
+	return modCache.Names, rpcFunctions, beforeRtFunctions, afterRtFunctions, beforeReqFunctions, afterReqFunctions, matchmakerMatchedFunction, tournamentEndFunction, tournamentResetFunction, leaderboardResetFunction, shutdownFunction, storageIndexFilterFunctions, nil
 }
 
 func CheckRuntimeProviderJavascript(logger *zap.Logger, config Config, version string) error {
@@ -2189,178 +2047,6 @@ func (rp *RuntimeProviderJS) Shutdown(ctx context.Context) {
 		rp.logger.Error(fmt.Sprintf("Error running runtime Shutdown hook: %v", err.Error()))
 		return
 	}
-}
-
-func (rp *RuntimeProviderJS) PurchaseNotificationApple(ctx context.Context, purchase *api.ValidatedPurchase, providerPayload, notificationType string) error {
-	r, err := rp.Get(ctx)
-	if err != nil {
-		return err
-	}
-	jsFn := r.GetCallback(RuntimeExecutionModePurchaseNotificationApple, "")
-	if jsFn == "" {
-		rp.Put(r)
-		return errors.New("Runtime Purchase Notification Apple function not found.")
-	}
-
-	purchaseMap := validatedPurchaseToJsObject(purchase)
-
-	fn, ok := goja.AssertFunction(r.vm.Get(jsFn))
-	if !ok {
-		rp.Put(r)
-		rp.logger.Error("JavaScript runtime function invalid.", zap.String("key", jsFn), zap.Error(err))
-		return errors.New("Could not run Purchase Notification Apple hook.")
-	}
-
-	jsLogger, err := NewJsLogger(ctx, r.vm, r.logger, zap.String("mode", RuntimeExecutionModePurchaseNotificationApple.String()))
-	if err != nil {
-		rp.Put(r)
-		rp.logger.Error("Could not instantiate js logger.", zap.Error(err))
-		return errors.New("Could not run Purchase Notification Apple hook.")
-	}
-
-	ctx = NewRuntimeGoContext(ctx, r.node, r.version, r.envMap, RuntimeExecutionModePurchaseNotificationApple, nil, nil, "", 0, "", "", nil, "", "", "", "")
-	r.SetContext(ctx)
-	retValue, err, _ := r.InvokeFunction(RuntimeExecutionModePurchaseNotificationApple, "purchaseNotificationApple", fn, jsLogger, nil, nil, "", "", "", nil, 0, "", "", "", "", r.vm.ToValue(purchaseMap), r.vm.ToValue(providerPayload), r.vm.ToValue(notificationType))
-	r.SetContext(context.Background())
-	rp.Put(r)
-	if err != nil {
-		return fmt.Errorf("Error running runtime Purchase Notification Apple hook: %v", err.Error())
-	}
-
-	if retValue == nil {
-		return nil
-	}
-
-	return errors.New("Unexpected return type from runtime Purchase Notification Apple hook, must be nil.")
-}
-
-func (rp *RuntimeProviderJS) SubscriptionNotificationApple(ctx context.Context, subscription *api.ValidatedSubscription, providerPayload, notificationType string) error {
-	r, err := rp.Get(ctx)
-	if err != nil {
-		return err
-	}
-	jsFn := r.GetCallback(RuntimeExecutionModeSubscriptionNotificationApple, "")
-	if jsFn == "" {
-		rp.Put(r)
-		return errors.New("Runtime Subscription Notification Apple function not found.")
-	}
-
-	subscriptionMap := subscriptionToJsObject(subscription)
-
-	fn, ok := goja.AssertFunction(r.vm.Get(jsFn))
-	if !ok {
-		rp.Put(r)
-		rp.logger.Error("JavaScript runtime function invalid.", zap.String("key", jsFn), zap.Error(err))
-		return errors.New("Could not run Subscription Notification Apple hook.")
-	}
-
-	jsLogger, err := NewJsLogger(ctx, r.vm, r.logger, zap.String("mode", RuntimeExecutionModeSubscriptionNotificationApple.String()))
-	if err != nil {
-		rp.Put(r)
-		rp.logger.Error("Could not instantiate js logger.", zap.Error(err))
-		return errors.New("Could not run Subscription Notification Apple hook.")
-	}
-
-	ctx = NewRuntimeGoContext(ctx, r.node, r.version, r.envMap, RuntimeExecutionModeSubscriptionNotificationApple, nil, nil, "", 0, "", "", nil, "", "", "", "")
-	r.SetContext(ctx)
-	retValue, err, _ := r.InvokeFunction(RuntimeExecutionModeSubscriptionNotificationApple, "subscriptionNotificationApple", fn, jsLogger, nil, nil, "", "", "", nil, 0, "", "", "", "", r.vm.ToValue(subscriptionMap), r.vm.ToValue(providerPayload), r.vm.ToValue(notificationType))
-	r.SetContext(context.Background())
-	rp.Put(r)
-	if err != nil {
-		return fmt.Errorf("Error running runtime Subscription Notification Apple hook: %v", err.Error())
-	}
-
-	if retValue == nil {
-		return nil
-	}
-
-	return errors.New("Unexpected return type from runtime Subscription Notification Apple hook, must be nil.")
-}
-
-func (rp *RuntimeProviderJS) PurchaseNotificationGoogle(ctx context.Context, purchase *api.ValidatedPurchase, providerPayload, notificationType string) error {
-	r, err := rp.Get(ctx)
-	if err != nil {
-		return err
-	}
-	jsFn := r.GetCallback(RuntimeExecutionModePurchaseNotificationGoogle, "")
-	if jsFn == "" {
-		rp.Put(r)
-		return errors.New("Runtime Purchase Notification Google function not found.")
-	}
-
-	purchaseMap := validatedPurchaseToJsObject(purchase)
-
-	fn, ok := goja.AssertFunction(r.vm.Get(jsFn))
-	if !ok {
-		rp.Put(r)
-		rp.logger.Error("JavaScript runtime function invalid.", zap.String("key", jsFn), zap.Error(err))
-		return errors.New("Could not run Purchase Notification Google hook.")
-	}
-
-	jsLogger, err := NewJsLogger(ctx, r.vm, r.logger, zap.String("mode", RuntimeExecutionModePurchaseNotificationGoogle.String()))
-	if err != nil {
-		rp.Put(r)
-		rp.logger.Error("Could not instantiate js logger.", zap.Error(err))
-		return errors.New("Could not run Purchase Notification Google hook.")
-	}
-
-	ctx = NewRuntimeGoContext(ctx, r.node, r.version, r.envMap, RuntimeExecutionModePurchaseNotificationGoogle, nil, nil, "", 0, "", "", nil, "", "", "", "")
-	r.SetContext(ctx)
-	retValue, err, _ := r.InvokeFunction(RuntimeExecutionModePurchaseNotificationGoogle, "purchaseNotificationGoogle", fn, jsLogger, nil, nil, "", "", "", nil, 0, "", "", "", "", r.vm.ToValue(purchaseMap), r.vm.ToValue(providerPayload), r.vm.ToValue(notificationType))
-	r.SetContext(context.Background())
-	rp.Put(r)
-	if err != nil {
-		return fmt.Errorf("Error running runtime Purchase Notification Google hook: %v", err.Error())
-	}
-
-	if retValue == nil {
-		return nil
-	}
-
-	return errors.New("Unexpected return type from runtime Purchase Notification Google hook, must be nil.")
-}
-
-func (rp *RuntimeProviderJS) SubscriptionNotificationGoogle(ctx context.Context, subscription *api.ValidatedSubscription, providerPayload, notificationType string) error {
-	r, err := rp.Get(ctx)
-	if err != nil {
-		return err
-	}
-	jsFn := r.GetCallback(RuntimeExecutionModeSubscriptionNotificationGoogle, "")
-	if jsFn == "" {
-		rp.Put(r)
-		return errors.New("Runtime Subscription Notification Google function not found.")
-	}
-
-	subscriptionMap := subscriptionToJsObject(subscription)
-
-	fn, ok := goja.AssertFunction(r.vm.Get(jsFn))
-	if !ok {
-		rp.Put(r)
-		rp.logger.Error("JavaScript runtime function invalid.", zap.String("key", jsFn), zap.Error(err))
-		return errors.New("Could not run Subscription Notification Google hook.")
-	}
-
-	jsLogger, err := NewJsLogger(ctx, r.vm, r.logger, zap.String("mode", RuntimeExecutionModeSubscriptionNotificationGoogle.String()))
-	if err != nil {
-		rp.Put(r)
-		rp.logger.Error("Could not instantiate js logger.", zap.Error(err))
-		return errors.New("Could not run Subscription Notification Google hook.")
-	}
-
-	ctx = NewRuntimeGoContext(ctx, r.node, r.version, r.envMap, RuntimeExecutionModeSubscriptionNotificationGoogle, nil, nil, "", 0, "", "", nil, "", "", "", "")
-	r.SetContext(ctx)
-	retValue, err, _ := r.InvokeFunction(RuntimeExecutionModeSubscriptionNotificationGoogle, "subscriptionNotificationGoogle", fn, jsLogger, nil, nil, "", "", "", nil, 0, "", "", "", "", r.vm.ToValue(subscriptionMap), r.vm.ToValue(providerPayload), r.vm.ToValue(notificationType))
-	r.SetContext(context.Background())
-	rp.Put(r)
-	if err != nil {
-		return fmt.Errorf("Error running runtime Subscription Notification Google hook: %v", err.Error())
-	}
-
-	if retValue == nil {
-		return nil
-	}
-
-	return errors.New("Unexpected return type from runtime Subscription Notification Google hook, must be nil.")
 }
 
 func (rp *RuntimeProviderJS) StorageIndexFilter(ctx context.Context, indexName string, storageWrite *StorageOpWrite) (bool, error) {

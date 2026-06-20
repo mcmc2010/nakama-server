@@ -211,27 +211,6 @@ func StartConsoleServer(logger *zap.Logger, startupLogger *zap.Logger, db *sql.D
 	grpcGatewayRouter := mux.NewRouter()
 	grpcGatewayRouter.HandleFunc("/v2/console/storage/import", s.importStorage)
 
-	// Register public subscription callback endpoints
-	if config.GetIAP().Apple.NotificationsEndpointId != "" {
-		handler := appleNotificationHandler(logger, db, runtime.PurchaseNotificationApple(), runtime.SubscriptionNotificationApple())
-		endpoint := fmt.Sprintf("/v2/console/apple/subscriptions/%s", config.GetIAP().Apple.NotificationsEndpointId) // For backwards compatibility.
-		grpcGatewayRouter.HandleFunc(endpoint, handler)
-		logger.Info("Registered endpoint for Apple subscription notifications callback", zap.String("endpoint", endpoint))
-		endpoint = fmt.Sprintf("/v2/console/apple/notifications/%s", config.GetIAP().Apple.NotificationsEndpointId)
-		grpcGatewayRouter.HandleFunc(endpoint, handler)
-		logger.Info("Registered endpoint for Apple subscription notifications callback", zap.String("endpoint", endpoint))
-	}
-
-	if config.GetIAP().Google.NotificationsEndpointId != "" {
-		handler := googleNotificationHandler(logger, db, config.GetIAP().Google, runtime.PurchaseNotificationGoogle(), runtime.SubscriptionNotificationGoogle())
-		endpoint := fmt.Sprintf("/v2/console/google/subscriptions/%s", config.GetIAP().Google.NotificationsEndpointId) // For backwards compatibility.
-		grpcGatewayRouter.HandleFunc(endpoint, handler)
-		logger.Info("Registered endpoint for Google subscription notifications callback", zap.String("endpoint", endpoint))
-		endpoint = fmt.Sprintf("/v2/console/google/notifications/%s", config.GetIAP().Google.NotificationsEndpointId)
-		grpcGatewayRouter.HandleFunc(endpoint, handler)
-		logger.Info("Registered endpoint for Google subscription notifications callback", zap.String("endpoint", endpoint))
-	}
-
 	// pprof routes
 	grpcGatewayRouter.Handle("/debug/pprof/", adminBasicAuth(config.GetConsole())(http.HandlerFunc(pprof.Index)))
 	grpcGatewayRouter.Handle("/debug/pprof/cmdline", adminBasicAuth(config.GetConsole())(http.HandlerFunc(pprof.Cmdline)))

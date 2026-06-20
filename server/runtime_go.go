@@ -53,17 +53,13 @@ type RuntimeGoInitializer struct {
 	afterRt                        map[string]RuntimeAfterRtFunction
 	beforeReq                      *RuntimeBeforeReqFunctions
 	afterReq                       *RuntimeAfterReqFunctions
-	matchmakerMatched              RuntimeMatchmakerMatchedFunction
-	tournamentEnd                  RuntimeTournamentEndFunction
-	tournamentReset                RuntimeTournamentResetFunction
-	leaderboardReset               RuntimeLeaderboardResetFunction
-	shutdownFunction               RuntimeShutdownFunction
-	purchaseNotificationApple      RuntimePurchaseNotificationAppleFunction
-	subscriptionNotificationApple  RuntimeSubscriptionNotificationAppleFunction
-	purchaseNotificationGoogle     RuntimePurchaseNotificationGoogleFunction
-	subscriptionNotificationGoogle RuntimeSubscriptionNotificationGoogleFunction
-	matchmakerOverride             RuntimeMatchmakerOverrideFunction
-	matchmakerProcessor            RuntimeMatchmakerProcessorFunction
+	matchmakerMatched   RuntimeMatchmakerMatchedFunction
+	tournamentEnd       RuntimeTournamentEndFunction
+	tournamentReset     RuntimeTournamentResetFunction
+	leaderboardReset    RuntimeLeaderboardResetFunction
+	shutdownFunction    RuntimeShutdownFunction
+	matchmakerOverride  RuntimeMatchmakerOverrideFunction
+	matchmakerProcessor RuntimeMatchmakerProcessorFunction
 	storageIndexFunctions          map[string]RuntimeStorageIndexFilterFunction
 	httpHandlers                   []*RuntimeHttpHandler
 	consoleHttpHandlers            []*RuntimeHttpHandler
@@ -2371,254 +2367,6 @@ func (ri *RuntimeGoInitializer) RegisterAfterGetUsers(fn func(ctx context.Contex
 	return nil
 }
 
-func (ri *RuntimeGoInitializer) RegisterBeforeValidatePurchaseApple(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ValidatePurchaseAppleRequest) (*api.ValidatePurchaseAppleRequest, error)) error {
-	ri.beforeReq.beforeValidatePurchaseAppleFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.ValidatePurchaseAppleRequest) (*api.ValidatePurchaseAppleRequest, error, codes.Code) {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeBefore, nil, nil, traceID, expiry, userID, username, vars, "", clientIP, clientPort, "")
-		loggerFields := map[string]interface{}{"api_id": "validatepurchaseapple", "mode": RuntimeExecutionModeBefore.String()}
-		result, fnErr := fn(ctx, RuntimeLoggerWithTraceId(ctx, ri.logger.WithFields(loggerFields)), ri.db, ri.nk, in)
-		if fnErr != nil {
-			var runtimeErr *runtime.Error
-			if errors.As(fnErr, &runtimeErr) {
-				if runtimeErr.Code <= 0 || runtimeErr.Code >= 17 {
-					// If error is present but code is invalid then default to 13 (Internal) as the error code.
-					return result, runtimeErr, codes.Internal
-				}
-				return result, runtimeErr, codes.Code(runtimeErr.Code)
-			}
-			// Not a runtime error that contains a code.
-			return result, fnErr, codes.Internal
-		}
-		return result, nil, codes.OK
-	}
-	return nil
-}
-
-func (ri *RuntimeGoInitializer) RegisterAfterValidatePurchaseApple(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.ValidatePurchaseResponse, in *api.ValidatePurchaseAppleRequest) error) error {
-	ri.afterReq.afterValidatePurchaseAppleFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, out *api.ValidatePurchaseResponse, in *api.ValidatePurchaseAppleRequest) error {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeAfter, nil, nil, traceID, expiry, userID, username, vars, "", clientIP, clientPort, "")
-		loggerFields := map[string]interface{}{"api_id": "validatepurchaseapple", "mode": RuntimeExecutionModeAfter.String()}
-		return fn(ctx, RuntimeLoggerWithTraceId(ctx, ri.logger.WithFields(loggerFields)), ri.db, ri.nk, out, in)
-	}
-	return nil
-}
-
-func (ri *RuntimeGoInitializer) RegisterBeforeValidateSubscriptionApple(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ValidateSubscriptionAppleRequest) (*api.ValidateSubscriptionAppleRequest, error)) error {
-	ri.beforeReq.beforeValidateSubscriptionAppleFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.ValidateSubscriptionAppleRequest) (*api.ValidateSubscriptionAppleRequest, error, codes.Code) {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeBefore, nil, nil, traceID, expiry, userID, username, vars, "", clientIP, clientPort, "")
-		loggerFields := map[string]interface{}{"api_id": "validatesubscriptionapple", "mode": RuntimeExecutionModeBefore.String()}
-		result, fnErr := fn(ctx, RuntimeLoggerWithTraceId(ctx, ri.logger.WithFields(loggerFields)), ri.db, ri.nk, in)
-		if fnErr != nil {
-			var runtimeErr *runtime.Error
-			if errors.As(fnErr, &runtimeErr) {
-				if runtimeErr.Code <= 0 || runtimeErr.Code >= 17 {
-					// If error is present but code is invalid then default to 13 (Internal) as the error code.
-					return result, runtimeErr, codes.Internal
-				}
-				return result, runtimeErr, codes.Code(runtimeErr.Code)
-			}
-			// Not a runtime error that contains a code.
-			return result, fnErr, codes.Internal
-		}
-		return result, nil, codes.OK
-	}
-	return nil
-}
-
-func (ri *RuntimeGoInitializer) RegisterAfterValidateSubscriptionApple(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.ValidateSubscriptionResponse, in *api.ValidateSubscriptionAppleRequest) error) error {
-	ri.afterReq.afterValidateSubscriptionAppleFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, out *api.ValidateSubscriptionResponse, in *api.ValidateSubscriptionAppleRequest) error {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeAfter, nil, nil, traceID, expiry, userID, username, vars, "", clientIP, clientPort, "")
-		loggerFields := map[string]interface{}{"api_id": "validatesubscriptionapple", "mode": RuntimeExecutionModeAfter.String()}
-		return fn(ctx, RuntimeLoggerWithTraceId(ctx, ri.logger.WithFields(loggerFields)), ri.db, ri.nk, out, in)
-	}
-	return nil
-}
-
-func (ri *RuntimeGoInitializer) RegisterBeforeValidateSubscriptionGoogle(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ValidateSubscriptionGoogleRequest) (*api.ValidateSubscriptionGoogleRequest, error)) error {
-	ri.beforeReq.beforeValidateSubscriptionGoogleFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.ValidateSubscriptionGoogleRequest) (*api.ValidateSubscriptionGoogleRequest, error, codes.Code) {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeBefore, nil, nil, traceID, expiry, userID, username, vars, "", clientIP, clientPort, "")
-		loggerFields := map[string]interface{}{"api_id": "validatesubscriptiongoogle", "mode": RuntimeExecutionModeBefore.String()}
-		result, fnErr := fn(ctx, RuntimeLoggerWithTraceId(ctx, ri.logger.WithFields(loggerFields)), ri.db, ri.nk, in)
-		if fnErr != nil {
-			var runtimeErr *runtime.Error
-			if errors.As(fnErr, &runtimeErr) {
-				if runtimeErr.Code <= 0 || runtimeErr.Code >= 17 {
-					// If error is present but code is invalid then default to 13 (Internal) as the error code.
-					return result, runtimeErr, codes.Internal
-				}
-				return result, runtimeErr, codes.Code(runtimeErr.Code)
-			}
-			// Not a runtime error that contains a code.
-			return result, fnErr, codes.Internal
-		}
-		return result, nil, codes.OK
-	}
-	return nil
-}
-
-func (ri *RuntimeGoInitializer) RegisterAfterValidateSubscriptionGoogle(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.ValidateSubscriptionResponse, in *api.ValidateSubscriptionGoogleRequest) error) error {
-	ri.afterReq.afterValidateSubscriptionGoogleFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, out *api.ValidateSubscriptionResponse, in *api.ValidateSubscriptionGoogleRequest) error {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeAfter, nil, nil, traceID, expiry, userID, username, vars, "", clientIP, clientPort, "")
-		loggerFields := map[string]interface{}{"api_id": "validatesubscriptiongoogle", "mode": RuntimeExecutionModeAfter.String()}
-		return fn(ctx, RuntimeLoggerWithTraceId(ctx, ri.logger.WithFields(loggerFields)), ri.db, ri.nk, out, in)
-	}
-	return nil
-}
-
-func (ri *RuntimeGoInitializer) RegisterBeforeListSubscriptions(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ListSubscriptionsRequest) (*api.ListSubscriptionsRequest, error)) error {
-	ri.beforeReq.beforeListSubscriptionsFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.ListSubscriptionsRequest) (*api.ListSubscriptionsRequest, error, codes.Code) {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeBefore, nil, nil, traceID, expiry, userID, username, vars, "", clientIP, clientPort, "")
-		loggerFields := map[string]interface{}{"api_id": "listsubscriptions", "mode": RuntimeExecutionModeBefore.String()}
-		result, fnErr := fn(ctx, RuntimeLoggerWithTraceId(ctx, ri.logger.WithFields(loggerFields)), ri.db, ri.nk, in)
-		if fnErr != nil {
-			var runtimeErr *runtime.Error
-			if errors.As(fnErr, &runtimeErr) {
-				if runtimeErr.Code <= 0 || runtimeErr.Code >= 17 {
-					// If error is present but code is invalid then default to 13 (Internal) as the error code.
-					return result, runtimeErr, codes.Internal
-				}
-				return result, runtimeErr, codes.Code(runtimeErr.Code)
-			}
-			// Not a runtime error that contains a code.
-			return result, fnErr, codes.Internal
-		}
-		return result, nil, codes.OK
-	}
-	return nil
-}
-
-func (ri *RuntimeGoInitializer) RegisterAfterListSubscriptions(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.SubscriptionList, in *api.ListSubscriptionsRequest) error) error {
-	ri.afterReq.afterListSubscriptionsFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, out *api.SubscriptionList, in *api.ListSubscriptionsRequest) error {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeAfter, nil, nil, traceID, expiry, userID, username, vars, "", clientIP, clientPort, "")
-		loggerFields := map[string]interface{}{"api_id": "listsubscriptions", "mode": RuntimeExecutionModeAfter.String()}
-		return fn(ctx, RuntimeLoggerWithTraceId(ctx, ri.logger.WithFields(loggerFields)), ri.db, ri.nk, out, in)
-	}
-	return nil
-}
-
-func (ri *RuntimeGoInitializer) RegisterBeforeGetSubscription(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.GetSubscriptionRequest) (*api.GetSubscriptionRequest, error)) error {
-	ri.beforeReq.beforeGetSubscriptionFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.GetSubscriptionRequest) (*api.GetSubscriptionRequest, error, codes.Code) {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeBefore, nil, nil, traceID, expiry, userID, username, vars, "", clientIP, clientPort, "")
-		loggerFields := map[string]interface{}{"api_id": "getsubscription", "mode": RuntimeExecutionModeBefore.String()}
-		result, fnErr := fn(ctx, RuntimeLoggerWithTraceId(ctx, ri.logger.WithFields(loggerFields)), ri.db, ri.nk, in)
-		if fnErr != nil {
-			var runtimeErr *runtime.Error
-			if errors.As(fnErr, &runtimeErr) {
-				if runtimeErr.Code <= 0 || runtimeErr.Code >= 17 {
-					// If error is present but code is invalid then default to 13 (Internal) as the error code.
-					return result, runtimeErr, codes.Internal
-				}
-				return result, runtimeErr, codes.Code(runtimeErr.Code)
-			}
-			// Not a runtime error that contains a code.
-			return result, fnErr, codes.Internal
-		}
-		return result, nil, codes.OK
-	}
-	return nil
-}
-
-func (ri *RuntimeGoInitializer) RegisterAfterGetSubscription(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.ValidatedSubscription, in *api.GetSubscriptionRequest) error) error {
-	ri.afterReq.afterGetSubscriptionFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, out *api.ValidatedSubscription, in *api.GetSubscriptionRequest) error {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeAfter, nil, nil, traceID, expiry, userID, username, vars, "", clientIP, clientPort, "")
-		loggerFields := map[string]interface{}{"api_id": "getsubscription", "mode": RuntimeExecutionModeAfter.String()}
-		return fn(ctx, RuntimeLoggerWithTraceId(ctx, ri.logger.WithFields(loggerFields)), ri.db, ri.nk, out, in)
-	}
-	return nil
-}
-
-func (ri *RuntimeGoInitializer) RegisterBeforeValidatePurchaseGoogle(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ValidatePurchaseGoogleRequest) (*api.ValidatePurchaseGoogleRequest, error)) error {
-	ri.beforeReq.beforeValidatePurchaseGoogleFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.ValidatePurchaseGoogleRequest) (*api.ValidatePurchaseGoogleRequest, error, codes.Code) {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeBefore, nil, nil, traceID, expiry, userID, username, vars, "", clientIP, clientPort, "")
-		loggerFields := map[string]interface{}{"api_id": "validatepurchasegoogle", "mode": RuntimeExecutionModeBefore.String()}
-		result, fnErr := fn(ctx, RuntimeLoggerWithTraceId(ctx, ri.logger.WithFields(loggerFields)), ri.db, ri.nk, in)
-		if fnErr != nil {
-			var runtimeErr *runtime.Error
-			if errors.As(fnErr, &runtimeErr) {
-				if runtimeErr.Code <= 0 || runtimeErr.Code >= 17 {
-					// If error is present but code is invalid then default to 13 (Internal) as the error code.
-					return result, runtimeErr, codes.Internal
-				}
-				return result, runtimeErr, codes.Code(runtimeErr.Code)
-			}
-			// Not a runtime error that contains a code.
-			return result, fnErr, codes.Internal
-		}
-		return result, nil, codes.OK
-	}
-	return nil
-}
-
-func (ri *RuntimeGoInitializer) RegisterAfterValidatePurchaseGoogle(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.ValidatePurchaseResponse, in *api.ValidatePurchaseGoogleRequest) error) error {
-	ri.afterReq.afterValidatePurchaseGoogleFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, out *api.ValidatePurchaseResponse, in *api.ValidatePurchaseGoogleRequest) error {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeAfter, nil, nil, traceID, expiry, userID, username, vars, "", clientIP, clientPort, "")
-		loggerFields := map[string]interface{}{"api_id": "validatepurchasegoogle", "mode": RuntimeExecutionModeAfter.String()}
-		return fn(ctx, RuntimeLoggerWithTraceId(ctx, ri.logger.WithFields(loggerFields)), ri.db, ri.nk, out, in)
-	}
-	return nil
-}
-
-func (ri *RuntimeGoInitializer) RegisterBeforeValidatePurchaseHuawei(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ValidatePurchaseHuaweiRequest) (*api.ValidatePurchaseHuaweiRequest, error)) error {
-	ri.beforeReq.beforeValidatePurchaseHuaweiFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.ValidatePurchaseHuaweiRequest) (*api.ValidatePurchaseHuaweiRequest, error, codes.Code) {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeBefore, nil, nil, traceID, expiry, userID, username, vars, "", clientIP, clientPort, "")
-		loggerFields := map[string]interface{}{"api_id": "validatepurchasehuawei", "mode": RuntimeExecutionModeBefore.String()}
-		result, fnErr := fn(ctx, RuntimeLoggerWithTraceId(ctx, ri.logger.WithFields(loggerFields)), ri.db, ri.nk, in)
-		if fnErr != nil {
-			var runtimeErr *runtime.Error
-			if errors.As(fnErr, &runtimeErr) {
-				if runtimeErr.Code <= 0 || runtimeErr.Code >= 17 {
-					// If error is present but code is invalid then default to 13 (Internal) as the error code.
-					return result, runtimeErr, codes.Internal
-				}
-				return result, runtimeErr, codes.Code(runtimeErr.Code)
-			}
-			// Not a runtime error that contains a code.
-			return result, fnErr, codes.Internal
-		}
-		return result, nil, codes.OK
-	}
-	return nil
-}
-
-func (ri *RuntimeGoInitializer) RegisterAfterValidatePurchaseHuawei(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.ValidatePurchaseResponse, in *api.ValidatePurchaseHuaweiRequest) error) error {
-	ri.afterReq.afterValidatePurchaseHuaweiFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, out *api.ValidatePurchaseResponse, in *api.ValidatePurchaseHuaweiRequest) error {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeAfter, nil, nil, traceID, expiry, userID, username, vars, "", clientIP, clientPort, "")
-		loggerFields := map[string]interface{}{"api_id": "validatepurchasehuawei", "mode": RuntimeExecutionModeAfter.String()}
-		return fn(ctx, RuntimeLoggerWithTraceId(ctx, ri.logger.WithFields(loggerFields)), ri.db, ri.nk, out, in)
-	}
-	return nil
-}
-
-func (ri *RuntimeGoInitializer) RegisterBeforeValidatePurchaseFacebookInstant(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ValidatePurchaseFacebookInstantRequest) (*api.ValidatePurchaseFacebookInstantRequest, error)) error {
-	ri.beforeReq.beforeValidatePurchaseFacebookInstantFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.ValidatePurchaseFacebookInstantRequest) (*api.ValidatePurchaseFacebookInstantRequest, error, codes.Code) {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeBefore, nil, nil, traceID, expiry, userID, username, vars, "", clientIP, clientPort, "")
-		loggerFields := map[string]interface{}{"api_id": "validatepurchasefacebookinstant", "mode": RuntimeExecutionModeBefore.String()}
-		result, fnErr := fn(ctx, RuntimeLoggerWithTraceId(ctx, ri.logger.WithFields(loggerFields)), ri.db, ri.nk, in)
-		if fnErr != nil {
-			var runtimeErr *runtime.Error
-			if errors.As(fnErr, &runtimeErr) {
-				if runtimeErr.Code <= 0 || runtimeErr.Code >= 17 {
-					// If error is present but code is invalid then default to 13 (Internal) as the error code.
-					return result, runtimeErr, codes.Internal
-				}
-				return result, runtimeErr, codes.Code(runtimeErr.Code)
-			}
-			// Not a runtime error that contains a code.
-			return result, fnErr, codes.Internal
-		}
-		return result, nil, codes.OK
-	}
-	return nil
-}
-
-func (ri *RuntimeGoInitializer) RegisterAfterValidatePurchaseFacebookInstant(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.ValidatePurchaseResponse, in *api.ValidatePurchaseFacebookInstantRequest) error) error {
-	ri.afterReq.afterValidatePurchaseFacebookInstantFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, out *api.ValidatePurchaseResponse, in *api.ValidatePurchaseFacebookInstantRequest) error {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeAfter, nil, nil, traceID, expiry, userID, username, vars, "", clientIP, clientPort, "")
-		loggerFields := map[string]interface{}{"api_id": "validatepurchasefacebookinstant", "mode": RuntimeExecutionModeAfter.String()}
-		return fn(ctx, RuntimeLoggerWithTraceId(ctx, ri.logger.WithFields(loggerFields)), ri.db, ri.nk, out, in)
-	}
-	return nil
-}
-
 func (ri *RuntimeGoInitializer) RegisterBeforeEvent(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.Event) (*api.Event, error)) error {
 	ri.beforeReq.beforeEventFunction = func(ctx context.Context, logger *zap.Logger, traceID, userID, username string, vars map[string]string, expiry int64, clientIP, clientPort string, in *api.Event) (*api.Event, error, codes.Code) {
 		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeBefore, nil, nil, traceID, expiry, userID, username, vars, "", clientIP, clientPort, "")
@@ -2827,51 +2575,83 @@ func (ri *RuntimeGoInitializer) RegisterLeaderboardReset(fn func(ctx context.Con
 	return nil
 }
 
-// @group purchases
-// @summary Register a function to handle Apple App Store purchase notifications.
-// @param fn(type=function) The function to execute when an Apple purchase notification is received.
-// @return error(error) An optional error value if an error occurred.
 func (ri *RuntimeGoInitializer) RegisterPurchaseNotificationApple(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, notificationType runtime.NotificationType, purchase *api.ValidatedPurchase, providerPayload *runtime.AppleNotificationData) error) error {
-	ri.purchaseNotificationApple = func(ctx context.Context, notificationType runtime.NotificationType, purchase *api.ValidatedPurchase, providerPayload *runtime.AppleNotificationData) error {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModePurchaseNotificationApple, nil, nil, "", 0, "", "", nil, "", "", "", "")
-		return fn(ctx, ri.logger.WithField("mode", RuntimeExecutionModePurchaseNotificationApple.String()), ri.db, ri.nk, notificationType, purchase, providerPayload)
-	}
 	return nil
 }
 
-// @group subscriptions
-// @summary Register a function to handle Apple App Store subscription notifications.
-// @param fn(type=function) The function to execute when an Apple subscription notification is received.
-// @return error(error) An optional error value if an error occurred.
 func (ri *RuntimeGoInitializer) RegisterSubscriptionNotificationApple(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, notificationType runtime.NotificationType, subscription *api.ValidatedSubscription, providerPayload *runtime.AppleNotificationData) error) error {
-	ri.subscriptionNotificationApple = func(ctx context.Context, notificationType runtime.NotificationType, subscription *api.ValidatedSubscription, providerPayload *runtime.AppleNotificationData) error {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeSubscriptionNotificationApple, nil, nil, "", 0, "", "", nil, "", "", "", "")
-		return fn(ctx, ri.logger.WithField("mode", RuntimeExecutionModeSubscriptionNotificationApple.String()), ri.db, ri.nk, notificationType, subscription, providerPayload)
-	}
 	return nil
 }
 
-// @group purchases
-// @summary Register a function to handle Google Play purchase notifications.
-// @param fn(type=function) The function to execute when a Google Play purchase notification is received.
-// @return error(error) An optional error value if an error occurred.
 func (ri *RuntimeGoInitializer) RegisterPurchaseNotificationGoogle(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, notificationType runtime.NotificationType, purchase *api.ValidatedPurchase, providerPayload *runtime.PurchaseV2GoogleResponse) error) error {
-	ri.purchaseNotificationGoogle = func(ctx context.Context, notificationType runtime.NotificationType, purchase *api.ValidatedPurchase, providerPayload *runtime.PurchaseV2GoogleResponse) error {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModePurchaseNotificationGoogle, nil, nil, "", 0, "", "", nil, "", "", "", "")
-		return fn(ctx, ri.logger.WithField("mode", RuntimeExecutionModePurchaseNotificationGoogle.String()), ri.db, ri.nk, notificationType, purchase, providerPayload)
-	}
 	return nil
 }
 
-// @group subscriptions
-// @summary Register a function to handle Google Play subscription notifications.
-// @param fn(type=function) The function to execute when a Google Play subscription notification is received.
-// @return error(error) An optional error value if an error occurred.
 func (ri *RuntimeGoInitializer) RegisterSubscriptionNotificationGoogle(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, notificationType runtime.NotificationType, subscription *api.ValidatedSubscription, providerPayload *runtime.SubscriptionV2GoogleResponse) error) error {
-	ri.subscriptionNotificationGoogle = func(ctx context.Context, notificationType runtime.NotificationType, subscription *api.ValidatedSubscription, providerPayload *runtime.SubscriptionV2GoogleResponse) error {
-		ctx = NewRuntimeGoContext(ctx, ri.node, ri.version, ri.env, RuntimeExecutionModeSubscriptionNotificationGoogle, nil, nil, "", 0, "", "", nil, "", "", "", "")
-		return fn(ctx, ri.logger.WithField("mode", RuntimeExecutionModeSubscriptionNotificationGoogle.String()), ri.db, ri.nk, notificationType, subscription, providerPayload)
-	}
+	return nil
+}
+
+func (ri *RuntimeGoInitializer) RegisterBeforeValidatePurchaseApple(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ValidatePurchaseAppleRequest) (*api.ValidatePurchaseAppleRequest, error)) error {
+	return nil
+}
+
+func (ri *RuntimeGoInitializer) RegisterAfterValidatePurchaseApple(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.ValidatePurchaseResponse, in *api.ValidatePurchaseAppleRequest) error) error {
+	return nil
+}
+
+func (ri *RuntimeGoInitializer) RegisterBeforeValidateSubscriptionApple(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ValidateSubscriptionAppleRequest) (*api.ValidateSubscriptionAppleRequest, error)) error {
+	return nil
+}
+
+func (ri *RuntimeGoInitializer) RegisterAfterValidateSubscriptionApple(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.ValidateSubscriptionResponse, in *api.ValidateSubscriptionAppleRequest) error) error {
+	return nil
+}
+
+func (ri *RuntimeGoInitializer) RegisterBeforeValidatePurchaseGoogle(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ValidatePurchaseGoogleRequest) (*api.ValidatePurchaseGoogleRequest, error)) error {
+	return nil
+}
+
+func (ri *RuntimeGoInitializer) RegisterAfterValidatePurchaseGoogle(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.ValidatePurchaseResponse, in *api.ValidatePurchaseGoogleRequest) error) error {
+	return nil
+}
+
+func (ri *RuntimeGoInitializer) RegisterBeforeValidateSubscriptionGoogle(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ValidateSubscriptionGoogleRequest) (*api.ValidateSubscriptionGoogleRequest, error)) error {
+	return nil
+}
+
+func (ri *RuntimeGoInitializer) RegisterAfterValidateSubscriptionGoogle(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.ValidateSubscriptionResponse, in *api.ValidateSubscriptionGoogleRequest) error) error {
+	return nil
+}
+
+func (ri *RuntimeGoInitializer) RegisterBeforeValidatePurchaseHuawei(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ValidatePurchaseHuaweiRequest) (*api.ValidatePurchaseHuaweiRequest, error)) error {
+	return nil
+}
+
+func (ri *RuntimeGoInitializer) RegisterAfterValidatePurchaseHuawei(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.ValidatePurchaseResponse, in *api.ValidatePurchaseHuaweiRequest) error) error {
+	return nil
+}
+
+func (ri *RuntimeGoInitializer) RegisterBeforeValidatePurchaseFacebookInstant(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ValidatePurchaseFacebookInstantRequest) (*api.ValidatePurchaseFacebookInstantRequest, error)) error {
+	return nil
+}
+
+func (ri *RuntimeGoInitializer) RegisterAfterValidatePurchaseFacebookInstant(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.ValidatePurchaseResponse, in *api.ValidatePurchaseFacebookInstantRequest) error) error {
+	return nil
+}
+
+func (ri *RuntimeGoInitializer) RegisterBeforeListSubscriptions(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.ListSubscriptionsRequest) (*api.ListSubscriptionsRequest, error)) error {
+	return nil
+}
+
+func (ri *RuntimeGoInitializer) RegisterAfterListSubscriptions(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.SubscriptionList, in *api.ListSubscriptionsRequest) error) error {
+	return nil
+}
+
+func (ri *RuntimeGoInitializer) RegisterBeforeGetSubscription(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, in *api.GetSubscriptionRequest) (*api.GetSubscriptionRequest, error)) error {
+	return nil
+}
+
+func (ri *RuntimeGoInitializer) RegisterAfterGetSubscription(fn func(ctx context.Context, logger runtime.Logger, db *sql.DB, nk runtime.NakamaModule, out *api.ValidatedSubscription, in *api.GetSubscriptionRequest) error) error {
 	return nil
 }
 
@@ -2989,7 +2769,7 @@ func (ri *RuntimeGoInitializer) RegisterMatch(name string, fn func(ctx context.C
 	return nil
 }
 
-func NewRuntimeProviderGo(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.DB, protojsonMarshaler *protojson.MarshalOptions, config Config, version string, socialClient *social.Client, leaderboardCache LeaderboardCache, leaderboardRankCache LeaderboardRankCache, leaderboardScheduler LeaderboardScheduler, sessionRegistry SessionRegistry, sessionCache SessionCache, statusRegistry StatusRegistry, matchRegistry MatchRegistry, partyRegistry PartyRegistry, tracker Tracker, metrics Metrics, streamManager StreamManager, router MessageRouter, storageIndex StorageIndex, rootPath string, paths []string, eventQueue *RuntimeEventQueue, matchProvider *MatchProvider, fmCallbackHandler runtime.FmCallbackHandler) ([]string, map[string]RuntimeRpcFunction, map[string]RuntimeBeforeRtFunction, map[string]RuntimeAfterRtFunction, *RuntimeBeforeReqFunctions, *RuntimeAfterReqFunctions, RuntimeMatchmakerMatchedFunction, RuntimeMatchmakerOverrideFunction, RuntimeMatchmakerProcessorFunction, RuntimeTournamentEndFunction, RuntimeTournamentResetFunction, RuntimeLeaderboardResetFunction, RuntimeShutdownFunction, RuntimePurchaseNotificationAppleFunction, RuntimeSubscriptionNotificationAppleFunction, RuntimePurchaseNotificationGoogleFunction, RuntimeSubscriptionNotificationGoogleFunction, map[string]RuntimeStorageIndexFilterFunction, runtime.FleetManager, []*RuntimeHttpHandler, []*RuntimeHttpHandler, *RuntimeEventFunctions, func() []string, error) {
+func NewRuntimeProviderGo(ctx context.Context, logger, startupLogger *zap.Logger, db *sql.DB, protojsonMarshaler *protojson.MarshalOptions, config Config, version string, socialClient *social.Client, leaderboardCache LeaderboardCache, leaderboardRankCache LeaderboardRankCache, leaderboardScheduler LeaderboardScheduler, sessionRegistry SessionRegistry, sessionCache SessionCache, statusRegistry StatusRegistry, matchRegistry MatchRegistry, partyRegistry PartyRegistry, tracker Tracker, metrics Metrics, streamManager StreamManager, router MessageRouter, storageIndex StorageIndex, rootPath string, paths []string, eventQueue *RuntimeEventQueue, matchProvider *MatchProvider, fmCallbackHandler runtime.FmCallbackHandler) ([]string, map[string]RuntimeRpcFunction, map[string]RuntimeBeforeRtFunction, map[string]RuntimeAfterRtFunction, *RuntimeBeforeReqFunctions, *RuntimeAfterReqFunctions, RuntimeMatchmakerMatchedFunction, RuntimeMatchmakerOverrideFunction, RuntimeMatchmakerProcessorFunction, RuntimeTournamentEndFunction, RuntimeTournamentResetFunction, RuntimeLeaderboardResetFunction, RuntimeShutdownFunction, map[string]RuntimeStorageIndexFilterFunction, runtime.FleetManager, []*RuntimeHttpHandler, []*RuntimeHttpHandler, *RuntimeEventFunctions, func() []string, error) {
 	runtimeLogger := NewRuntimeGoLogger(logger)
 	node := config.GetName()
 	env := config.GetRuntime().Environment
@@ -3078,13 +2858,13 @@ func NewRuntimeProviderGo(ctx context.Context, logger, startupLogger *zap.Logger
 		relPath, name, fn, err := openGoModule(startupLogger, rootPath, path)
 		if err != nil {
 			// Errors are already logged in the function above.
-			return nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, err
+			return nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, err
 		}
 
 		// Run the initialisation.
 		if err = fn(ctx, runtimeLogger, db, nk, initializer); err != nil {
 			startupLogger.Fatal("Error returned by InitModule function in Go module", zap.String("name", name), zap.Error(err))
-			return nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, errors.New("error returned by InitModule function in Go module")
+			return nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, errors.New("error returned by InitModule function in Go module")
 		}
 		modulePaths = append(modulePaths, relPath)
 	}
@@ -3134,7 +2914,7 @@ func NewRuntimeProviderGo(ctx context.Context, logger, startupLogger *zap.Logger
 		}
 	}
 
-	return modulePaths, initializer.rpc, initializer.beforeRt, initializer.afterRt, initializer.beforeReq, initializer.afterReq, initializer.matchmakerMatched, initializer.matchmakerOverride, initializer.matchmakerProcessor, initializer.tournamentEnd, initializer.tournamentReset, initializer.leaderboardReset, initializer.shutdownFunction, initializer.purchaseNotificationApple, initializer.subscriptionNotificationApple, initializer.purchaseNotificationGoogle, initializer.subscriptionNotificationGoogle, initializer.storageIndexFunctions, initializer.fleetManager, initializer.httpHandlers, initializer.consoleHttpHandlers, events, matchNamesListFn, nil
+	return modulePaths, initializer.rpc, initializer.beforeRt, initializer.afterRt, initializer.beforeReq, initializer.afterReq, initializer.matchmakerMatched, initializer.matchmakerOverride, initializer.matchmakerProcessor, initializer.tournamentEnd, initializer.tournamentReset, initializer.leaderboardReset, initializer.shutdownFunction, initializer.storageIndexFunctions, initializer.fleetManager, initializer.httpHandlers, initializer.consoleHttpHandlers, events, matchNamesListFn, nil
 }
 
 func CheckRuntimeProviderGo(logger *zap.Logger, rootPath string, paths []string) error {
