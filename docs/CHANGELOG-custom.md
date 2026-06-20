@@ -9,3 +9,4 @@
 - 移除 sample_go_module 示例代码
 - 移除全部单元测试文件
 - 移除 docker-compose-tests.yml
+- 移除 Satori Analytics 集成（internal/satori/、server/console_satori.go 及所有运行时绑定）

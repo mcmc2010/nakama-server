@@ -26,7 +26,6 @@ type RuntimeConfigClone struct {
 	Runtime       runtime.RuntimeConfig
 	Iap           runtime.IAPConfig
 	GoogleAuth    runtime.GoogleAuthConfig
-	Satori        runtime.SatoriConfig
 }
 
 func (c *RuntimeConfigClone) GetName() string {
@@ -66,5 +65,5 @@ func (c *RuntimeConfigClone) GetGoogleAuth() runtime.GoogleAuthConfig {
 }
 
 func (c *RuntimeConfigClone) GetSatori() runtime.SatoriConfig {
-	return c.Satori
+	return nil
 }

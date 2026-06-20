@@ -38,7 +38,6 @@ import (
 	grpcgw "github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/heroiclabs/nakama/v3/console"
 	"github.com/heroiclabs/nakama/v3/console/acl"
-	"github.com/heroiclabs/nakama/v3/internal/satori"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -104,7 +103,6 @@ type ConsoleServer struct {
 	rpcMethodCache       *rpcReflectCache
 	cookie               string
 	httpClient           *http.Client
-	satori               *satori.SatoriClient
 }
 
 func StartConsoleServer(logger *zap.Logger, startupLogger *zap.Logger, db *sql.DB, config Config, tracker Tracker, router MessageRouter, streamManager StreamManager, metrics Metrics, sessionRegistry SessionRegistry, sessionCache SessionCache, consoleSessionCache SessionCache, loginAttemptCache LoginAttemptCache, statusRegistry StatusRegistry, statusHandler StatusHandler, runtimeInfo *RuntimeInfo, matchRegistry MatchRegistry, configWarnings map[string]string, serverVersion string, leaderboardCache LeaderboardCache, leaderboardRankCache LeaderboardRankCache, leaderboardScheduler LeaderboardScheduler, storageIndex StorageIndex, api *ApiServer, runtime *Runtime, cookie string, registerConsoleRouter func(*mux.Router)) *ConsoleServer {
@@ -131,11 +129,6 @@ func StartConsoleServer(logger *zap.Logger, startupLogger *zap.Logger, db *sql.D
 	grpcServer := grpc.NewServer(serverOpts...)
 
 	ctx, ctxCancelFn := context.WithCancel(context.Background())
-
-	var satoriClient *satori.SatoriClient
-	if config.GetSatori().ServerKey != "" {
-		satoriClient = satori.NewSatoriClient(ctx, logger, config.GetSatori().Url, config.GetSatori().ApiKeyName, config.GetSatori().ApiKey, config.GetSatori().ServerKey, config.GetSatori().SigningKey, config.GetSession().TokenExpirySec, int64(config.GetSatori().HttpTimeoutMs), int64(config.GetSatori().CacheTTLSec), false, config.GetSatori().CacheMode, config.GetSatori().RetryCount)
-	}
 
 	s := &ConsoleServer{
 		logger:               logger,
@@ -165,7 +158,6 @@ func StartConsoleServer(logger *zap.Logger, startupLogger *zap.Logger, db *sql.D
 		api:                  api,
 		cookie:               cookie,
 		httpClient:           &http.Client{Timeout: 5 * time.Second},
-		satori:               satoriClient,
 	}
 
 	if err := s.initRpcMethodCache(); err != nil {

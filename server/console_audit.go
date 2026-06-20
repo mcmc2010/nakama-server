@@ -418,7 +418,7 @@ func consoleAuditLogInterceptor(logger *zap.Logger, db *sql.DB) func(context.Con
 				action = console.AuditLogAction_CREATE
 				resource = console.AclResources_SATORI_MESSAGE
 				metadata, mErr = auditLogMarshaller.Marshal(msg)
-				log = "satori message sent"
+				log = "direct message sent"
 			}
 
 			if mErr != nil {

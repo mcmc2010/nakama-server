@@ -380,13 +380,6 @@ func (im *RuntimeJavascriptInitModule) getConfig(r *goja.Runtime) func(goja.Func
 		_ = googleAuthCfg.Set("credentials_json", rnc.GetGoogleAuth().GetCredentialsJSON())
 		_ = cfgObj.Set("google_auth", googleAuthCfg)
 
-		satoriCfg := r.NewObject()
-		_ = satoriCfg.Set("url", rnc.GetSatori().GetUrl())
-		_ = satoriCfg.Set("api_key_name", rnc.GetSatori().GetApiKeyName())
-		_ = satoriCfg.Set("api_key", rnc.GetSatori().GetApiKey())
-		_ = satoriCfg.Set("signing_key", rnc.GetSatori().GetSigningKey())
-		_ = cfgObj.Set("satori", satoriCfg)
-
 		return cfgObj
 	}
 }

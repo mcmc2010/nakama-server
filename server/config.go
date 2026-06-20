@@ -51,7 +51,6 @@ type Config interface {
 	GetMatchmaker() *MatchmakerConfig
 	GetIAP() *IAPConfig
 	GetGoogleAuth() *GoogleAuthConfig
-	GetSatori() *SatoriConfig
 	GetStorage() *StorageConfig
 	GetMFA() *MFAConfig
 	GetParty() *PartyConfig
@@ -381,8 +380,6 @@ func ValidateConfig(logger *zap.Logger, c Config) map[string]string {
 		c.GetSocket().TLSCert = []tls.Certificate{cert}
 	}
 
-	c.GetSatori().Validate(logger)
-
 	if k := c.GetMFA().StorageEncryptionKey; k != "" && len(k) != 32 {
 		logger.Fatal("MFA encryption key has to be 32 bits long")
 	}
@@ -445,7 +442,6 @@ type config struct {
 	Matchmaker       *MatchmakerConfig  `yaml:"matchmaker" json:"matchmaker" usage:"Matchmaker settings."`
 	IAP              *IAPConfig         `yaml:"iap" json:"iap" usage:"In-App Purchase settings."`
 	GoogleAuth       *GoogleAuthConfig  `yaml:"google_auth" json:"google_auth" usage:"Google's auth settings."`
-	Satori           *SatoriConfig      `yaml:"satori" json:"satori" usage:"Satori integration settings."`
 	Storage          *StorageConfig     `yaml:"storage" json:"storage" usage:"Storage settings."`
 	MFA              *MFAConfig         `yaml:"mfa" json:"mfa" usage:"MFA settings."`
 	Party            *PartyConfig       `yaml:"party" json:"party" usage:"Party settings."`
@@ -476,7 +472,6 @@ func NewConfig(logger *zap.Logger) *config {
 		Matchmaker:       NewMatchmakerConfig(),
 		IAP:              NewIAPConfig(),
 		GoogleAuth:       NewGoogleAuthConfig(),
-		Satori:           NewSatoriConfig(),
 		Storage:          NewStorageConfig(),
 		Party:            NewPartyConfig(),
 		MFA:              NewMFAConfig(),
@@ -508,7 +503,6 @@ func (c *config) Clone() (Config, error) {
 		Leaderboard:      c.Leaderboard.Clone(),
 		Matchmaker:       c.Matchmaker.Clone(),
 		IAP:              c.IAP.Clone(),
-		Satori:           c.Satori.Clone(),
 		GoogleAuth:       c.GoogleAuth.Clone(),
 		Storage:          c.Storage.Clone(),
 		MFA:              c.MFA.Clone(),
@@ -586,10 +580,6 @@ func (c *config) GetGoogleAuth() *GoogleAuthConfig {
 	return c.GoogleAuth
 }
 
-func (c *config) GetSatori() *SatoriConfig {
-	return c.Satori
-}
-
 func (c *config) GetStorage() *StorageConfig {
 	return c.Storage
 }
@@ -615,7 +605,6 @@ func (c *config) GetRuntimeConfig() (runtime.Config, error) {
 	var rc runtime.RuntimeConfig = clone.GetRuntime()
 	var iap runtime.IAPConfig = clone.GetIAP()
 	var gauth runtime.GoogleAuthConfig = clone.GetGoogleAuth()
-	var satori runtime.SatoriConfig = clone.GetSatori()
 
 	cn := &RuntimeConfigClone{
 		Name:          clone.GetName(),
@@ -627,7 +616,6 @@ func (c *config) GetRuntimeConfig() (runtime.Config, error) {
 		Runtime:       rc,
 		Iap:           iap,
 		GoogleAuth:    gauth,
-		Satori:        satori,
 	}
 
 	return cn, nil
@@ -1351,90 +1339,6 @@ func (iapg *IAPGoogleConfig) GetPrivateKey() string {
 
 func (iapg *IAPGoogleConfig) GetNotificationsEndpointId() string {
 	return iapg.NotificationsEndpointId
-}
-
-var _ runtime.SatoriConfig = (*SatoriConfig)(nil)
-
-type SatoriConfig struct {
-	Url        string `yaml:"url" json:"url" usage:"Satori URL."`
-	ApiKeyName string `yaml:"api_key_name" json:"api_key_name" usage:"Satori Api key name."`
-	ApiKey     string `yaml:"api_key" json:"api_key" usage:"Satori Api key."`
-	SigningKey string `yaml:"signing_key" json:"signing_key" usage:"Key used to sign Satori session tokens."`
-	// Deprecated: This is longer observed, use CacheDisabled instead.
-	CacheEnabled  bool   `yaml:"cache_enabled" json:"cache_enabled" usage:"Enable caching of responses throughout the lifetime of a request. Deprecated, use 'cache_disabled' instead."`
-	CacheDisabled bool   `yaml:"cache_disabled" json:"cache_disabled" usage:"Disable caching of responses throughout the lifetime of a request. Default is enabled."`
-	CacheMode     string `yaml:"cache_mode" json:"cache_mode" usage:"Cache mode to be used if caching is enabled, values: 'context', 'time'. Default is 'context'."`
-	CacheTTLSec   int    `yaml:"cache_ttl_sec" json:"cache_ttl_sec" usage:"Cache TTL in seconds. Only used if caching is enabled and cache mode is 'time'. Default is 300 (5 minutes)."`
-	HttpTimeoutMs int    `yaml:"http_timeout_ms" json:"http_timeout_ms" usage:"Timeout for HTTP requests to Satori in milliseconds. Default 10000 (10 seconds)."`
-	ServerKey     string `yaml:"server_key" json:"server_key" usage:"Satori server key."`
-	RetryCount    int    `yaml:"retry_count" json:"retry_count" usage:"Maximum number of retries after a request fails. Defaults to 0 (no retries)."`
-}
-
-func (sc *SatoriConfig) GetUrl() string {
-	return sc.Url
-}
-
-func (sc *SatoriConfig) GetApiKeyName() string {
-	return sc.ApiKeyName
-}
-
-func (sc *SatoriConfig) GetApiKey() string {
-	return sc.ApiKey
-}
-
-func (sc *SatoriConfig) GetSigningKey() string {
-	return sc.SigningKey
-}
-
-func (sc *SatoriConfig) Clone() *SatoriConfig {
-	if sc == nil {
-		return nil
-	}
-
-	cfgCopy := *sc
-	return &cfgCopy
-}
-
-func NewSatoriConfig() *SatoriConfig {
-	return &SatoriConfig{
-		HttpTimeoutMs: 10_000,
-		CacheMode:     "context",
-		CacheTTLSec:   300,
-	}
-}
-
-func (sc *SatoriConfig) Validate(logger *zap.Logger) {
-	satoriUrl, err := url.Parse(sc.Url) // Empty string is a valid URL
-	if err != nil {
-		logger.Fatal("Satori URL is invalid", zap.String("satori_url", sc.Url), zap.Error(err))
-	}
-
-	if satoriUrl.String() != "" {
-		if sc.ApiKeyName == "" {
-			logger.Fatal("Satori configuration incomplete: api_key_name not set")
-		}
-		if sc.ApiKey == "" {
-			logger.Fatal("Satori configuration incomplete: api_key not set")
-		}
-		if sc.SigningKey == "" {
-			logger.Fatal("Satori configuration incomplete: signing_key not set")
-		}
-	} else if sc.ApiKeyName != "" || sc.ApiKey != "" || sc.SigningKey != "" {
-		logger.Fatal("Satori configuration incomplete: url not set")
-	}
-
-	if sc.HttpTimeoutMs < 1 {
-		logger.Fatal("Satori configuration invalid: http_timeout_ms must be greater than 0")
-	}
-	if sc.CacheMode != "context" && sc.CacheMode != "time" {
-		logger.Fatal("Satori configuration invalid: cache_mode must be 'context' or 'time'")
-	}
-	if sc.CacheTTLSec < 1 {
-		logger.Fatal("Satori configuration invalid: cache_ttl_sec must be greater than 0")
-	}
-	if sc.RetryCount < 0 || sc.RetryCount > 3 {
-		logger.Fatal("Satori configuration invalid: retry_count must be a value between 0 and 3")
-	}
 }
 
 var _ runtime.IAPHuaweiConfig = (*IAPHuaweiConfig)(nil)
