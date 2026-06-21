@@ -28,10 +28,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/gofrs/uuid/v5"
 	"github.com/heroiclabs/nakama/v3/console"
 	"github.com/heroiclabs/nakama/v3/migrate"
-	"github.com/heroiclabs/nakama/v3/se"
 	"github.com/heroiclabs/nakama/v3/server"
 	"github.com/heroiclabs/nakama/v3/social"
 	"github.com/jackc/pgx/v5/stdlib"
@@ -46,8 +44,6 @@ import (
 	_ "github.com/prometheus/client_golang/prometheus"
 	_ "github.com/prometheus/common/model"
 )
-
-const cookieFilename = ".cookie"
 
 var (
 	version  string = "3.0.0"
@@ -221,20 +217,11 @@ func main() {
 	pipeline := server.NewPipeline(logger, config, db, jsonpbMarshaler, jsonpbUnmarshaler, sessionRegistry, statusRegistry, matchRegistry, partyRegistry, matchmaker, tracker, router, runtime, metrics)
 	statusHandler := server.NewLocalStatusHandler(logger, sessionRegistry, matchRegistry, partyRegistry, tracker, metrics, config.GetName(), createTime)
 
-	telemetryEnabled := os.Getenv("NAKAMA_TELEMETRY") != "0"
-	console.UIFS.Nt = !telemetryEnabled
-	cookie := newOrLoadCookie(telemetryEnabled, config)
+	console.UIFS.Nt = true
+	cookie := ""
 
 	apiServer := server.StartApiServer(logger, startupLogger, db, jsonpbMarshaler, jsonpbUnmarshaler, config, version, socialClient, storageIndex, leaderboardCache, leaderboardRankCache, sessionRegistry, sessionCache, statusRegistry, matchRegistry, partyRegistry, matchmaker, tracker, router, streamManager, metrics, pipeline, runtime)
 	consoleServer := server.StartConsoleServer(logger, startupLogger, db, config, tracker, router, streamManager, metrics, sessionRegistry, sessionCache, consoleSessionCache, loginAttemptCache, statusRegistry, statusHandler, runtimeInfo, matchRegistry, configWarnings, semver, leaderboardCache, leaderboardRankCache, leaderboardScheduler, storageIndex, apiServer, runtime, cookie, nil)
-
-	if telemetryEnabled {
-		const telemetryKey = "YU1bIKUhjQA9WC0O6ouIRIWTaPlJ5kFs"
-		_ = se.Start(telemetryKey, cookie, semver, "nakama")
-		defer func() {
-			_ = se.End(telemetryKey, cookie)
-		}()
-	}
 
 	// Respect OS stop signals.
 	c := make(chan os.Signal, 2)
@@ -265,28 +252,4 @@ func main() {
 	startupLogger.Info("Shutdown complete")
 }
 
-// Help improve Nakama by sending anonymous usage statistics.
-//
-// You can disable the telemetry completely before server start by setting the
-// environment variable "NAKAMA_TELEMETRY" - i.e. NAKAMA_TELEMETRY=0 nakama
-//
-// These properties are collected:
-// * A unique UUID v4 random identifier which is generated.
-// * Version of Nakama being used which includes build metadata.
-// * Amount of time the server ran for.
-//
-// This information is sent via Segment which allows the Nakama team to
-// analyze usage patterns and errors in order to help improve the server.
-func newOrLoadCookie(enabled bool, config server.Config) string {
-	if !enabled {
-		return ""
-	}
-	filePath := filepath.FromSlash(config.GetDataDir() + "/" + cookieFilename)
-	b, err := os.ReadFile(filePath)
-	cookie := uuid.FromBytesOrNil(b)
-	if err != nil || cookie == uuid.Nil {
-		cookie = uuid.Must(uuid.NewV4())
-		_ = os.WriteFile(filePath, cookie.Bytes(), 0o644)
-	}
-	return cookie.String()
-}
+

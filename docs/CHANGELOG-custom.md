@@ -13,3 +13,4 @@
 - 移除 PostgreSQL 兼容支持，仅保留 CockroachDB
 - 删除 docker-compose-postgres.yml
 - 移除 IAP 应用内购买和订阅功能（iap/、purchase/subscription API、运行时绑定、配置）
+- 移除 Segment.io 遥测模块（se/），禁用匿名数据上报
