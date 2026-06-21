@@ -17,3 +17,4 @@
 - 移除第三方登录（Apple、Google、Facebook、Game Center、Steam），仅保留 Email、Device、Custom
 - 精简 common/ 目录，移除 .git、文档、proto 源文件、vendor 等非必要文件
 - 将 nakama-common 内化到 common/，移除 vendor/github.com/heroiclabs/nakama-common/
+- 将 sql-migrate 内化到 internal/sql-migrate/，移除 vendor/github.com/heroiclabs/sql-migrate/

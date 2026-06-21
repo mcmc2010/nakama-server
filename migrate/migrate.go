@@ -20,7 +20,7 @@ import (
 	"time"
 
 	"github.com/heroiclabs/nakama/v3/server"
-	sqlmigrate "github.com/heroiclabs/sql-migrate"
+	sqlmigrate "github.com/heroiclabs/nakama/v3/internal/sql-migrate"
 	"github.com/jackc/pgx/v5"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"

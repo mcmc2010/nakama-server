@@ -16,7 +16,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/heroiclabs/sql-migrate/sqlparse"
+	"github.com/heroiclabs/nakama/v3/internal/sql-migrate/sqlparse"
 )
 
 type MigrationDirection int
