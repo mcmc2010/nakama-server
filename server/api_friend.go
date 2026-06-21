@@ -17,7 +17,6 @@ package server
 import (
 	"context"
 	"errors"
-	"strconv"
 
 	"github.com/gofrs/uuid/v5"
 	"github.com/heroiclabs/nakama-common/api"
@@ -421,7 +420,7 @@ func (s *ApiServer) ImportFacebookFriends(ctx context.Context, in *api.ImportFac
 		return nil, status.Error(codes.InvalidArgument, "Facebook token is required.")
 	}
 
-	err := importFacebookFriends(ctx, logger, s.db, s.tracker, s.router, s.socialClient, ctx.Value(ctxUserIDKey{}).(uuid.UUID), ctx.Value(ctxUsernameKey{}).(string), in.Account.Token, in.Reset_ != nil && in.Reset_.Value)
+	err := importFacebookFriends(ctx, logger, s.db, ctx.Value(ctxUserIDKey{}).(uuid.UUID), ctx.Value(ctxUsernameKey{}).(string), in.Account.Token, in.Reset_ != nil && in.Reset_.Value)
 	if err != nil {
 		// Already logged inside the core importFacebookFriends function.
 		return nil, err
@@ -480,15 +479,7 @@ func (s *ApiServer) ImportSteamFriends(ctx context.Context, in *api.ImportSteamF
 		return nil, status.Error(codes.InvalidArgument, "Steam token is required.")
 	}
 
-	steamProfile, err := s.socialClient.GetSteamProfile(ctx, publisherKey, appID, in.Account.Token)
-	if err != nil {
-		return nil, status.Error(codes.Unauthenticated, "Could not authenticate Steam profile.")
-	}
-	err = importSteamFriends(ctx, logger, s.db, s.tracker, s.router, s.socialClient, userID, username, publisherKey, strconv.Itoa(int(steamProfile.SteamID)), in.Reset_ != nil && in.Reset_.Value)
-	if err != nil {
-		// Already logged inside the core importSteamFriends function.
-		return nil, err
-	}
+	return nil, status.Error(codes.Unimplemented, "Steam friends import is not supported.")
 
 	// After hook.
 	if fn := s.runtime.AfterImportSteamFriends(); fn != nil {

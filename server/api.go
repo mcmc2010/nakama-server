@@ -40,7 +40,6 @@ import (
 	"github.com/heroiclabs/nakama-common/api"
 	"github.com/heroiclabs/nakama/v3/apigrpc"
 	"github.com/heroiclabs/nakama/v3/internal/ctxkeys"
-	"github.com/heroiclabs/nakama/v3/social"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -77,7 +76,6 @@ type ApiServer struct {
 	db                   *sql.DB
 	config               Config
 	version              string
-	socialClient         *social.Client
 	storageIndex         StorageIndex
 	leaderboardCache     LeaderboardCache
 	leaderboardRankCache LeaderboardRankCache
@@ -96,7 +94,7 @@ type ApiServer struct {
 	grpcGatewayServer    *http.Server
 }
 
-func StartApiServer(logger *zap.Logger, startupLogger *zap.Logger, db *sql.DB, protojsonMarshaler *protojson.MarshalOptions, protojsonUnmarshaler *protojson.UnmarshalOptions, config Config, version string, socialClient *social.Client, storageIndex StorageIndex, leaderboardCache LeaderboardCache, leaderboardRankCache LeaderboardRankCache, sessionRegistry SessionRegistry, sessionCache SessionCache, statusRegistry StatusRegistry, matchRegistry MatchRegistry, partyRegistry PartyRegistry, matchmaker Matchmaker, tracker Tracker, router MessageRouter, streamManager StreamManager, metrics Metrics, pipeline *Pipeline, runtime *Runtime) *ApiServer {
+func StartApiServer(logger *zap.Logger, startupLogger *zap.Logger, db *sql.DB, protojsonMarshaler *protojson.MarshalOptions, protojsonUnmarshaler *protojson.UnmarshalOptions, config Config, version string, storageIndex StorageIndex, leaderboardCache LeaderboardCache, leaderboardRankCache LeaderboardRankCache, sessionRegistry SessionRegistry, sessionCache SessionCache, statusRegistry StatusRegistry, matchRegistry MatchRegistry, partyRegistry PartyRegistry, matchmaker Matchmaker, tracker Tracker, router MessageRouter, streamManager StreamManager, metrics Metrics, pipeline *Pipeline, runtime *Runtime) *ApiServer {
 	var gatewayContextTimeoutMs string
 	if config.GetSocket().IdleTimeoutMs > 500 {
 		// Ensure the GRPC Gateway timeout is just under the idle timeout (if possible) to ensure it has priority.
@@ -136,7 +134,6 @@ func StartApiServer(logger *zap.Logger, startupLogger *zap.Logger, db *sql.DB, p
 		db:                   db,
 		config:               config,
 		version:              version,
-		socialClient:         socialClient,
 		leaderboardCache:     leaderboardCache,
 		leaderboardRankCache: leaderboardRankCache,
 		storageIndex:         storageIndex,
@@ -367,23 +364,11 @@ func securityInterceptorFunc(logger *zap.Logger, config Config, sessionCache Ses
 		return ctx, nil
 	case "/nakama.api.Nakama/SessionRefresh":
 		fallthrough
-	case "/nakama.api.Nakama/AuthenticateApple":
-		fallthrough
 	case "/nakama.api.Nakama/AuthenticateCustom":
 		fallthrough
 	case "/nakama.api.Nakama/AuthenticateDevice":
 		fallthrough
 	case "/nakama.api.Nakama/AuthenticateEmail":
-		fallthrough
-	case "/nakama.api.Nakama/AuthenticateFacebook":
-		fallthrough
-	case "/nakama.api.Nakama/AuthenticateFacebookInstantGame":
-		fallthrough
-	case "/nakama.api.Nakama/AuthenticateGameCenter":
-		fallthrough
-	case "/nakama.api.Nakama/AuthenticateGoogle":
-		fallthrough
-	case "/nakama.api.Nakama/AuthenticateSteam":
 		// Session refresh and authentication functions only require server key.
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {

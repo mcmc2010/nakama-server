@@ -119,7 +119,7 @@ func (n *RuntimeGoNakamaModule) AuthenticateApple(ctx context.Context, token, us
 		return "", "", false, errors.New("expects id to be valid, must be 1-128 bytes")
 	}
 
-	return AuthenticateApple(ctx, n.logger, n.db, n.socialClient, n.config.GetSocial().Apple.BundleId, token, username, create)
+	return AuthenticateApple(ctx, n.logger, n.db, token, username, create)
 }
 
 // @group authenticate
@@ -257,10 +257,10 @@ func (n *RuntimeGoNakamaModule) AuthenticateFacebook(ctx context.Context, token 
 		return "", "", false, errors.New("expects id to be valid, must be 1-128 bytes")
 	}
 
-	dbUserID, dbUsername, created, err := AuthenticateFacebook(ctx, n.logger, n.db, n.socialClient, n.config.GetSocial().FacebookLimitedLogin.AppId, token, username, create)
+	dbUserID, dbUsername, created, err := AuthenticateFacebook(ctx, n.logger, n.db, token, username, create)
 	if err == nil && importFriends {
 		// Errors are logged before this point and failure here does not invalidate the whole operation.
-		_ = importFacebookFriends(ctx, n.logger, n.db, n.tracker, n.router, n.socialClient, uuid.FromStringOrNil(dbUserID), dbUsername, token, false)
+		_ = importFacebookFriends(ctx, n.logger, n.db, uuid.FromStringOrNil(dbUserID), dbUsername, token, false)
 	}
 
 	return dbUserID, dbUsername, created, err
@@ -289,7 +289,7 @@ func (n *RuntimeGoNakamaModule) AuthenticateFacebookInstantGame(ctx context.Cont
 		return "", "", false, errors.New("expects id to be valid, must be 1-128 bytes")
 	}
 
-	return AuthenticateFacebookInstantGame(ctx, n.logger, n.db, n.socialClient, n.config.GetSocial().FacebookInstantGame.AppSecret, playerInfo, username, create)
+	return AuthenticateFacebookInstantGame(ctx, n.logger, n.db, playerInfo, username, create)
 }
 
 // @group authenticate
@@ -335,7 +335,7 @@ func (n *RuntimeGoNakamaModule) AuthenticateGameCenter(ctx context.Context, play
 		return "", "", false, errors.New("expects id to be valid, must be 1-128 bytes")
 	}
 
-	return AuthenticateGameCenter(ctx, n.logger, n.db, n.socialClient, playerID, bundleID, timestamp, salt, signature, publicKeyUrl, username, create)
+	return AuthenticateGameCenter(ctx, n.logger, n.db, playerID, bundleID, timestamp, salt, signature, publicKeyUrl, username, create)
 }
 
 // @group authenticate
@@ -361,7 +361,7 @@ func (n *RuntimeGoNakamaModule) AuthenticateGoogle(ctx context.Context, token, u
 		return "", "", false, errors.New("expects id to be valid, must be 1-128 bytes")
 	}
 
-	return AuthenticateGoogle(ctx, n.logger, n.db, n.socialClient, token, username, create)
+	return AuthenticateGoogle(ctx, n.logger, n.db, token, username, create)
 }
 
 // @group authenticate
@@ -391,7 +391,7 @@ func (n *RuntimeGoNakamaModule) AuthenticateSteam(ctx context.Context, token, us
 		return "", "", false, errors.New("expects id to be valid, must be 1-128 bytes")
 	}
 
-	userID, username, _, created, err := AuthenticateSteam(ctx, n.logger, n.db, n.socialClient, n.config.GetSocial().Steam.AppID, n.config.GetSocial().Steam.PublisherKey, token, username, create)
+	userID, username, _, created, err := AuthenticateSteam(ctx, n.logger, n.db, 0, "", token, username, create)
 
 	return userID, username, created, err
 }
@@ -758,7 +758,7 @@ func (n *RuntimeGoNakamaModule) LinkApple(ctx context.Context, userID, token str
 		return errors.New("user ID must be a valid identifier")
 	}
 
-	return LinkApple(ctx, n.logger, n.db, n.config, n.socialClient, id, token)
+	return LinkApple(ctx, n.logger, n.db, n.config, id, token)
 }
 
 // @group authenticate
@@ -821,7 +821,7 @@ func (n *RuntimeGoNakamaModule) LinkFacebook(ctx context.Context, userID, userna
 		return errors.New("user ID must be a valid identifier")
 	}
 
-	return LinkFacebook(ctx, n.logger, n.db, n.socialClient, n.tracker, n.router, id, username, n.config.GetSocial().FacebookLimitedLogin.AppId, token, importFriends)
+	return LinkFacebook(ctx, n.logger, n.db, id, username, token, importFriends)
 }
 
 // @group authenticate
@@ -836,7 +836,7 @@ func (n *RuntimeGoNakamaModule) LinkFacebookInstantGame(ctx context.Context, use
 		return errors.New("user ID must be a valid identifier")
 	}
 
-	return LinkFacebookInstantGame(ctx, n.logger, n.db, n.config, n.socialClient, id, playerInfo)
+	return LinkFacebookInstantGame(ctx, n.logger, n.db, n.config, id, playerInfo)
 }
 
 // @group authenticate
@@ -856,7 +856,7 @@ func (n *RuntimeGoNakamaModule) LinkGameCenter(ctx context.Context, userID, play
 		return errors.New("user ID must be a valid identifier")
 	}
 
-	return LinkGameCenter(ctx, n.logger, n.db, n.socialClient, id, playerID, bundleID, timestamp, salt, signature, publicKeyUrl)
+	return LinkGameCenter(ctx, n.logger, n.db, id, playerID, bundleID, timestamp, salt, signature, publicKeyUrl)
 }
 
 // @group authenticate
@@ -871,7 +871,7 @@ func (n *RuntimeGoNakamaModule) LinkGoogle(ctx context.Context, userID, token st
 		return errors.New("user ID must be a valid identifier")
 	}
 
-	return LinkGoogle(ctx, n.logger, n.db, n.socialClient, id, token)
+	return LinkGoogle(ctx, n.logger, n.db, id, token)
 }
 
 // @group authenticate
@@ -888,7 +888,7 @@ func (n *RuntimeGoNakamaModule) LinkSteam(ctx context.Context, userID, username,
 		return errors.New("user ID must be a valid identifier")
 	}
 
-	return LinkSteam(ctx, n.logger, n.db, n.config, n.socialClient, n.tracker, n.router, id, username, token, importFriends)
+	return LinkSteam(ctx, n.logger, n.db, n.config, id, username, token, importFriends)
 }
 
 // @group utils
@@ -950,7 +950,7 @@ func (n *RuntimeGoNakamaModule) UnlinkApple(ctx context.Context, userID, token s
 		return errors.New("user ID must be a valid identifier")
 	}
 
-	return UnlinkApple(ctx, n.logger, n.db, n.config, n.socialClient, id, token)
+	return UnlinkApple(ctx, n.logger, n.db, n.config, id, token)
 }
 
 // @group authenticate
@@ -1010,7 +1010,7 @@ func (n *RuntimeGoNakamaModule) UnlinkFacebook(ctx context.Context, userID, toke
 		return errors.New("user ID must be a valid identifier")
 	}
 
-	return UnlinkFacebook(ctx, n.logger, n.db, n.socialClient, n.config.GetSocial().FacebookLimitedLogin.AppId, id, token)
+	return UnlinkFacebook(ctx, n.logger, n.db, id, token)
 }
 
 // @group authenticate
@@ -1025,7 +1025,7 @@ func (n *RuntimeGoNakamaModule) UnlinkFacebookInstantGame(ctx context.Context, u
 		return errors.New("user ID must be a valid identifier")
 	}
 
-	return UnlinkFacebookInstantGame(ctx, n.logger, n.db, n.config, n.socialClient, id, playerInfo)
+	return UnlinkFacebookInstantGame(ctx, n.logger, n.db, n.config, id, playerInfo)
 }
 
 // @group authenticate
@@ -1045,7 +1045,7 @@ func (n *RuntimeGoNakamaModule) UnlinkGameCenter(ctx context.Context, userID, pl
 		return errors.New("user ID must be a valid identifier")
 	}
 
-	return UnlinkGameCenter(ctx, n.logger, n.db, n.socialClient, id, playerID, bundleID, timestamp, salt, signature, publicKeyUrl)
+	return UnlinkGameCenter(ctx, n.logger, n.db, id, playerID, bundleID, timestamp, salt, signature, publicKeyUrl)
 }
 
 // @group authenticate
@@ -1060,7 +1060,7 @@ func (n *RuntimeGoNakamaModule) UnlinkGoogle(ctx context.Context, userID, token 
 		return errors.New("user ID must be a valid identifier")
 	}
 
-	return UnlinkGoogle(ctx, n.logger, n.db, n.socialClient, id, token)
+	return UnlinkGoogle(ctx, n.logger, n.db, id, token)
 }
 
 // @group authenticate
@@ -1075,7 +1075,7 @@ func (n *RuntimeGoNakamaModule) UnlinkSteam(ctx context.Context, userID, token s
 		return errors.New("user ID must be a valid identifier")
 	}
 
-	return UnlinkSteam(ctx, n.logger, n.db, n.config, n.socialClient, id, token)
+	return UnlinkSteam(ctx, n.logger, n.db, n.config, id, token)
 }
 
 // @group streams

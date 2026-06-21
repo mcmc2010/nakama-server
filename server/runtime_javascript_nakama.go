@@ -1436,7 +1436,7 @@ func (n *RuntimeJavascriptNakamaModule) authenticateApple(r *goja.Runtime) func(
 			create = getJsBool(r, f.Argument(2))
 		}
 
-		dbUserID, dbUsername, created, err := AuthenticateApple(n.ctx, n.logger, n.db, n.socialClient, n.config.GetSocial().Apple.BundleId, token, username, create)
+		dbUserID, dbUsername, created, err := AuthenticateApple(n.ctx, n.logger, n.db, token, username, create)
 		if err != nil {
 			panic(r.NewGoError(fmt.Errorf("error authenticating: %v", err.Error())))
 		}
@@ -1669,14 +1669,14 @@ func (n *RuntimeJavascriptNakamaModule) authenticateFacebook(r *goja.Runtime) fu
 			create = getJsBool(r, f.Argument(3))
 		}
 
-		dbUserID, dbUsername, created, err := AuthenticateFacebook(n.ctx, n.logger, n.db, n.socialClient, n.config.GetSocial().FacebookLimitedLogin.AppId, token, username, create)
+		dbUserID, dbUsername, created, err := AuthenticateFacebook(n.ctx, n.logger, n.db, token, username, create)
 		if err != nil {
 			panic(r.NewGoError(fmt.Errorf("error authenticating: %v", err.Error())))
 		}
 
 		if importFriends {
 			// Errors are logged before this point and failure here does not invalidate the whole operation.
-			_ = importFacebookFriends(n.ctx, n.logger, n.db, n.tracker, n.router, n.socialClient, uuid.FromStringOrNil(dbUserID), dbUsername, token, false)
+			_ = importFacebookFriends(n.ctx, n.logger, n.db, uuid.FromStringOrNil(dbUserID), dbUsername, token, false)
 		}
 
 		return r.ToValue(map[string]interface{}{
@@ -1721,7 +1721,7 @@ func (n *RuntimeJavascriptNakamaModule) authenticateFacebookInstantGame(r *goja.
 			create = getJsBool(r, f.Argument(2))
 		}
 
-		dbUserID, dbUsername, created, err := AuthenticateFacebookInstantGame(n.ctx, n.logger, n.db, n.socialClient, n.config.GetSocial().FacebookInstantGame.AppSecret, signedPlayerInfo, username, create)
+		dbUserID, dbUsername, created, err := AuthenticateFacebookInstantGame(n.ctx, n.logger, n.db, signedPlayerInfo, username, create)
 		if err != nil {
 			panic(r.NewGoError(fmt.Errorf("error authenticating: %v", err.Error())))
 		}
@@ -1793,7 +1793,7 @@ func (n *RuntimeJavascriptNakamaModule) authenticateGameCenter(r *goja.Runtime) 
 			create = getJsBool(r, f.Argument(7))
 		}
 
-		dbUserID, dbUsername, created, err := AuthenticateGameCenter(n.ctx, n.logger, n.db, n.socialClient, playerID, bundleID, timestamp, salt, signature, publicKeyURL, username, create)
+		dbUserID, dbUsername, created, err := AuthenticateGameCenter(n.ctx, n.logger, n.db, playerID, bundleID, timestamp, salt, signature, publicKeyURL, username, create)
 		if err != nil {
 			panic(r.NewGoError(fmt.Errorf("error authenticating: %v", err.Error())))
 		}
@@ -1840,7 +1840,7 @@ func (n *RuntimeJavascriptNakamaModule) authenticateGoogle(r *goja.Runtime) func
 			create = getJsBool(r, f.Argument(2))
 		}
 
-		dbUserID, dbUsername, created, err := AuthenticateGoogle(n.ctx, n.logger, n.db, n.socialClient, token, username, create)
+		dbUserID, dbUsername, created, err := AuthenticateGoogle(n.ctx, n.logger, n.db, token, username, create)
 		if err != nil {
 			panic(r.NewGoError(fmt.Errorf("error authenticating: %v", err.Error())))
 		}
@@ -1897,7 +1897,7 @@ func (n *RuntimeJavascriptNakamaModule) authenticateSteam(r *goja.Runtime) func(
 			create = getJsBool(r, f.Argument(3))
 		}
 
-		dbUserID, dbUsername, steamID, created, err := AuthenticateSteam(n.ctx, n.logger, n.db, n.socialClient, n.config.GetSocial().Steam.AppID, n.config.GetSocial().Steam.PublisherKey, token, username, create)
+		dbUserID, dbUsername, steamID, created, err := AuthenticateSteam(n.ctx, n.logger, n.db, 0, "", token, username, create)
 		if err != nil {
 			panic(r.NewGoError(fmt.Errorf("error authenticating: %v", err.Error())))
 		}
@@ -1905,7 +1905,7 @@ func (n *RuntimeJavascriptNakamaModule) authenticateSteam(r *goja.Runtime) func(
 		// Import friends if requested.
 		if importFriends {
 			// Errors are logged before this point and failure here does not invalidate the whole operation.
-			_ = importSteamFriends(n.ctx, n.logger, n.db, n.tracker, n.router, n.socialClient, uuid.FromStringOrNil(dbUserID), dbUsername, n.config.GetSocial().Steam.PublisherKey, steamID, false)
+			_ = importSteamFriends(n.ctx, n.logger, n.db, uuid.FromStringOrNil(dbUserID), dbUsername, n.config.GetSocial().Steam.PublisherKey, steamID, false)
 		}
 
 		return r.ToValue(map[string]interface{}{
@@ -2495,7 +2495,7 @@ func (n *RuntimeJavascriptNakamaModule) linkApple(r *goja.Runtime) func(goja.Fun
 			panic(r.NewTypeError("expects token string"))
 		}
 
-		if err := LinkApple(n.ctx, n.logger, n.db, n.config, n.socialClient, id, token); err != nil {
+		if err := LinkApple(n.ctx, n.logger, n.db, n.config, id, token); err != nil {
 			panic(r.NewGoError(fmt.Errorf("error linking: %v", err.Error())))
 		}
 
@@ -2614,7 +2614,7 @@ func (n *RuntimeJavascriptNakamaModule) linkFacebook(r *goja.Runtime) func(goja.
 			importFriends = getJsBool(r, f.Argument(3))
 		}
 
-		if err := LinkFacebook(n.ctx, n.logger, n.db, n.socialClient, n.tracker, n.router, id, username, n.config.GetSocial().FacebookLimitedLogin.AppId, token, importFriends); err != nil {
+		if err := LinkFacebook(n.ctx, n.logger, n.db, id, username, token, importFriends); err != nil {
 			panic(r.NewGoError(fmt.Errorf("error linking: %v", err.Error())))
 		}
 
@@ -2640,7 +2640,7 @@ func (n *RuntimeJavascriptNakamaModule) linkFacebookInstantGame(r *goja.Runtime)
 			panic(r.NewTypeError("expects signed player info string"))
 		}
 
-		if err := LinkFacebookInstantGame(n.ctx, n.logger, n.db, n.config, n.socialClient, id, signedPlayerInfo); err != nil {
+		if err := LinkFacebookInstantGame(n.ctx, n.logger, n.db, n.config, id, signedPlayerInfo); err != nil {
 			panic(r.NewGoError(fmt.Errorf("error linking: %v", err.Error())))
 		}
 
@@ -2691,7 +2691,7 @@ func (n *RuntimeJavascriptNakamaModule) linkGameCenter(r *goja.Runtime) func(goj
 			panic(r.NewTypeError("expects public key URL string"))
 		}
 
-		if err := LinkGameCenter(n.ctx, n.logger, n.db, n.socialClient, id, playerID, bundleID, timestamp, salt, signature, publicKeyURL); err != nil {
+		if err := LinkGameCenter(n.ctx, n.logger, n.db, id, playerID, bundleID, timestamp, salt, signature, publicKeyURL); err != nil {
 			panic(r.NewGoError(fmt.Errorf("error linking: %v", err.Error())))
 		}
 
@@ -2717,7 +2717,7 @@ func (n *RuntimeJavascriptNakamaModule) linkGoogle(r *goja.Runtime) func(goja.Fu
 			panic(r.NewTypeError("expects token string"))
 		}
 
-		if err := LinkGoogle(n.ctx, n.logger, n.db, n.socialClient, id, token); err != nil {
+		if err := LinkGoogle(n.ctx, n.logger, n.db, id, token); err != nil {
 			panic(r.NewGoError(fmt.Errorf("error linking: %v", err.Error())))
 		}
 
@@ -2753,7 +2753,7 @@ func (n *RuntimeJavascriptNakamaModule) linkSteam(r *goja.Runtime) func(goja.Fun
 			importFriends = getJsBool(r, f.Argument(3))
 		}
 
-		if err := LinkSteam(n.ctx, n.logger, n.db, n.config, n.socialClient, n.tracker, n.router, id, username, token, importFriends); err != nil {
+		if err := LinkSteam(n.ctx, n.logger, n.db, n.config, id, username, token, importFriends); err != nil {
 			panic(r.NewGoError(fmt.Errorf("error linking: %v", err.Error())))
 		}
 
@@ -2779,7 +2779,7 @@ func (n *RuntimeJavascriptNakamaModule) unlinkApple(r *goja.Runtime) func(goja.F
 			token = getJsString(r, f.Argument(1))
 		}
 
-		if err := UnlinkApple(n.ctx, n.logger, n.db, n.config, n.socialClient, id, token); err != nil {
+		if err := UnlinkApple(n.ctx, n.logger, n.db, n.config, id, token); err != nil {
 			panic(r.NewGoError(fmt.Errorf("error unlinking: %v", err.Error())))
 		}
 
@@ -2883,7 +2883,7 @@ func (n *RuntimeJavascriptNakamaModule) unlinkFacebook(r *goja.Runtime) func(goj
 			token = getJsString(r, f.Argument(1))
 		}
 
-		if err := UnlinkFacebook(n.ctx, n.logger, n.db, n.socialClient, n.config.GetSocial().FacebookLimitedLogin.AppId, id, token); err != nil {
+		if err := UnlinkFacebook(n.ctx, n.logger, n.db, id, token); err != nil {
 			panic(r.NewGoError(fmt.Errorf("error unlinking: %v", err.Error())))
 		}
 
@@ -2909,7 +2909,7 @@ func (n *RuntimeJavascriptNakamaModule) unlinkFacebookInstantGame(r *goja.Runtim
 			signedPlayerInfo = getJsString(r, f.Argument(1))
 		}
 
-		if err := UnlinkFacebookInstantGame(n.ctx, n.logger, n.db, n.config, n.socialClient, id, signedPlayerInfo); err != nil {
+		if err := UnlinkFacebookInstantGame(n.ctx, n.logger, n.db, n.config, id, signedPlayerInfo); err != nil {
 			panic(r.NewGoError(fmt.Errorf("error unlinking: %v", err.Error())))
 		}
 
@@ -2960,7 +2960,7 @@ func (n *RuntimeJavascriptNakamaModule) unlinkGameCenter(r *goja.Runtime) func(g
 			publicKeyURL = getJsString(r, f.Argument(6))
 		}
 
-		if err := UnlinkGameCenter(n.ctx, n.logger, n.db, n.socialClient, id, playerID, bundleID, timestamp, salt, signature, publicKeyURL); err != nil {
+		if err := UnlinkGameCenter(n.ctx, n.logger, n.db, id, playerID, bundleID, timestamp, salt, signature, publicKeyURL); err != nil {
 			panic(r.NewGoError(fmt.Errorf("error unlinking: %v", err.Error())))
 		}
 
@@ -2986,7 +2986,7 @@ func (n *RuntimeJavascriptNakamaModule) unlinkGoogle(r *goja.Runtime) func(goja.
 			token = getJsString(r, f.Argument(1))
 		}
 
-		if err := UnlinkGoogle(n.ctx, n.logger, n.db, n.socialClient, id, token); err != nil {
+		if err := UnlinkGoogle(n.ctx, n.logger, n.db, id, token); err != nil {
 			panic(r.NewGoError(fmt.Errorf("error unlinking: %v", err.Error())))
 		}
 
@@ -3012,7 +3012,7 @@ func (n *RuntimeJavascriptNakamaModule) unlinkSteam(r *goja.Runtime) func(goja.F
 			token = getJsString(r, f.Argument(1))
 		}
 
-		if err := UnlinkSteam(n.ctx, n.logger, n.db, n.config, n.socialClient, id, token); err != nil {
+		if err := UnlinkSteam(n.ctx, n.logger, n.db, n.config, id, token); err != nil {
 			panic(r.NewGoError(fmt.Errorf("error unlinking: %v", err.Error())))
 		}
 

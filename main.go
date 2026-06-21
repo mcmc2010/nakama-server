@@ -31,7 +31,6 @@ import (
 	"github.com/heroiclabs/nakama/v3/console"
 	"github.com/heroiclabs/nakama/v3/migrate"
 	"github.com/heroiclabs/nakama/v3/server"
-	"github.com/heroiclabs/nakama/v3/social"
 	"github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/jackc/pgx/v5/stdlib" // Blank import to register SQL driver
 	"go.uber.org/zap"
@@ -170,9 +169,6 @@ func main() {
 	}
 	conn.Close()
 
-	// Access to social provider integrations.
-	socialClient := social.NewClient(logger, 5*time.Second, config.GetGoogleAuth().OAuthConfig)
-
 	// Start up server components.
 	metrics := server.NewLocalMetrics(logger, startupLogger, db, config)
 	sessionRegistry := server.NewLocalSessionRegistry(metrics)
@@ -196,7 +192,7 @@ func main() {
 		logger.Fatal("Failed to initialize storage index", zap.Error(err))
 	}
 	partyRegistry := server.NewLocalPartyRegistry(ctx, logger, startupLogger, config, config.GetName(), metrics)
-	runtime, runtimeInfo, err := server.NewRuntime(ctx, logger, startupLogger, db, jsonpbMarshaler, jsonpbUnmarshaler, config, version, socialClient, leaderboardCache, leaderboardRankCache, leaderboardScheduler, sessionRegistry, sessionCache, statusRegistry, matchRegistry, partyRegistry, tracker, metrics, streamManager, router, storageIndex, fmCallbackHandler)
+	runtime, runtimeInfo, err := server.NewRuntime(ctx, logger, startupLogger, db, jsonpbMarshaler, jsonpbUnmarshaler, config, version, nil, leaderboardCache, leaderboardRankCache, leaderboardScheduler, sessionRegistry, sessionCache, statusRegistry, matchRegistry, partyRegistry, tracker, metrics, streamManager, router, storageIndex, fmCallbackHandler)
 	if err != nil {
 		startupLogger.Fatal("Failed initializing runtime modules", zap.Error(err))
 	}
@@ -220,7 +216,7 @@ func main() {
 	console.UIFS.Nt = true
 	cookie := ""
 
-	apiServer := server.StartApiServer(logger, startupLogger, db, jsonpbMarshaler, jsonpbUnmarshaler, config, version, socialClient, storageIndex, leaderboardCache, leaderboardRankCache, sessionRegistry, sessionCache, statusRegistry, matchRegistry, partyRegistry, matchmaker, tracker, router, streamManager, metrics, pipeline, runtime)
+	apiServer := server.StartApiServer(logger, startupLogger, db, jsonpbMarshaler, jsonpbUnmarshaler, config, version, storageIndex, leaderboardCache, leaderboardRankCache, sessionRegistry, sessionCache, statusRegistry, matchRegistry, partyRegistry, matchmaker, tracker, router, streamManager, metrics, pipeline, runtime)
 	consoleServer := server.StartConsoleServer(logger, startupLogger, db, config, tracker, router, streamManager, metrics, sessionRegistry, sessionCache, consoleSessionCache, loginAttemptCache, statusRegistry, statusHandler, runtimeInfo, matchRegistry, configWarnings, semver, leaderboardCache, leaderboardRankCache, leaderboardScheduler, storageIndex, apiServer, runtime, cookie, nil)
 
 	// Respect OS stop signals.
