@@ -19,8 +19,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/heroiclabs/nakama-common/api"
-	"github.com/heroiclabs/nakama-common/rtapi"
+	"github.com/heroiclabs/nakama/v3/common/api"
+	"github.com/heroiclabs/nakama/v3/common/rtapi"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 )

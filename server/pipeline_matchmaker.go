@@ -17,8 +17,8 @@ package server
 import (
 	"context"
 
-	"github.com/heroiclabs/nakama-common/rtapi"
-	"github.com/heroiclabs/nakama-common/runtime"
+	"github.com/heroiclabs/nakama/v3/common/rtapi"
+	"github.com/heroiclabs/nakama/v3/common/runtime"
 	"go.uber.org/zap"
 )
 

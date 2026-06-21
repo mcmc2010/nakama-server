@@ -18,8 +18,8 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/heroiclabs/nakama-common/api"
-	"github.com/heroiclabs/nakama-common/runtime"
+	"github.com/heroiclabs/nakama/v3/common/api"
+	"github.com/heroiclabs/nakama/v3/common/runtime"
 	"github.com/jackc/pgx/v5"
 	"go.uber.org/zap"
 )

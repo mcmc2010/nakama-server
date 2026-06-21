@@ -31,7 +31,7 @@ Here's the smallest example of a Go module written with the server runtime.
 		"database/sql"
 		"log"
 
-		"github.com/heroiclabs/nakama-common/runtime"
+		"github.com/heroiclabs/nakama/v3/common/runtime"
 	)
 
 	func InitModule(ctx context.Context, logger Logger, db *sql.DB, nk runtime.NakamaModule, initializer runtime.Initializer) error {
@@ -94,8 +94,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/heroiclabs/nakama-common/api"
-	"github.com/heroiclabs/nakama-common/rtapi"
+	"github.com/heroiclabs/nakama/v3/common/api"
+	"github.com/heroiclabs/nakama/v3/common/rtapi"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
