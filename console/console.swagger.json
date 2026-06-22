@@ -28,18 +28,18 @@
     "/v2/console/account": {
       "get": {
         "summary": "List (and optionally filter) accounts.",
-        "operationId": "ListAccounts",
+        "operationId": "Console_ListAccounts",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/AccountList"
+              "$ref": "#/definitions/consoleAccountList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -72,7 +72,7 @@
       },
       "delete": {
         "summary": "Delete (non-recorded) all user accounts.",
-        "operationId": "DeleteAccounts",
+        "operationId": "Console_DeleteAccounts",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -84,7 +84,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -94,18 +94,18 @@
       },
       "post": {
         "summary": "Import given account export data, creating a new account that fully matches the data.",
-        "operationId": "ImportAccountFull",
+        "operationId": "Console_ImportAccountFull",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/console.Account"
+              "$ref": "#/definitions/nakamaconsoleAccount"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -116,7 +116,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/AccountImport"
+              "$ref": "#/definitions/consoleAccountImport"
             }
           }
         ],
@@ -127,18 +127,18 @@
     },
     "/v2/console/account/{account_id}/note": {
       "get": {
-        "operationId": "ListAccountNotes",
+        "operationId": "Console_ListAccountNotes",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/ListAccountNotesResponse"
+              "$ref": "#/definitions/consoleListAccountNotesResponse"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -171,18 +171,18 @@
         ]
       },
       "post": {
-        "operationId": "AddAccountNote",
+        "operationId": "Console_AddAccountNote",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/AccountNote"
+              "$ref": "#/definitions/consoleAccountNote"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -199,7 +199,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/AddAccountNoteBody"
+              "$ref": "#/definitions/ConsoleAddAccountNoteBody"
             }
           }
         ],
@@ -210,7 +210,7 @@
     },
     "/v2/console/account/{account_id}/note/{note_id}": {
       "delete": {
-        "operationId": "DeleteAccountNote",
+        "operationId": "Console_DeleteAccountNote",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -222,7 +222,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -250,18 +250,18 @@
     "/v2/console/account/{account_id}/wallet": {
       "get": {
         "summary": "Get a list of the user's wallet transactions.",
-        "operationId": "GetWalletLedger",
+        "operationId": "Console_GetWalletLedger",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/WalletLedgerList"
+              "$ref": "#/definitions/consoleWalletLedgerList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -313,18 +313,18 @@
     "/v2/console/account/{id}": {
       "get": {
         "summary": "Get detailed account information for a single user.",
-        "operationId": "GetAccount",
+        "operationId": "Console_GetAccount",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/console.Account"
+              "$ref": "#/definitions/nakamaconsoleAccount"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -343,7 +343,7 @@
       },
       "delete": {
         "summary": "Delete all information stored for a user account.",
-        "operationId": "DeleteAccount",
+        "operationId": "Console_DeleteAccount",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -355,7 +355,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -381,7 +381,7 @@
       },
       "post": {
         "summary": "Update one or more fields on a user account.",
-        "operationId": "UpdateAccount",
+        "operationId": "Console_UpdateAccount",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -393,7 +393,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -410,7 +410,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/UpdateAccountBody"
+              "$ref": "#/definitions/ConsoleUpdateAccountBody"
             }
           }
         ],
@@ -422,7 +422,7 @@
     "/v2/console/account/{id}/ban": {
       "post": {
         "summary": "Ban a user.",
-        "operationId": "BanAccount",
+        "operationId": "Console_BanAccount",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -434,7 +434,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -455,18 +455,18 @@
     "/v2/console/account/{id}/export": {
       "get": {
         "summary": "Export all information stored about a user account.",
-        "operationId": "ExportAccount",
+        "operationId": "Console_ExportAccount",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/AccountExport"
+              "$ref": "#/definitions/consoleAccountExport"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -487,18 +487,18 @@
     "/v2/console/account/{id}/friend": {
       "get": {
         "summary": "Get a user's list of friend relationships.",
-        "operationId": "GetFriends",
+        "operationId": "Console_GetFriends",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/FriendList"
+              "$ref": "#/definitions/apiFriendList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -519,7 +519,7 @@
     "/v2/console/account/{id}/friend/{friend_id}": {
       "delete": {
         "summary": "Delete the friend relationship between two users.",
-        "operationId": "DeleteFriend",
+        "operationId": "Console_DeleteFriend",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -531,7 +531,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -559,18 +559,18 @@
     "/v2/console/account/{id}/group": {
       "get": {
         "summary": "Get a list of groups the user is a member of.",
-        "operationId": "GetGroups",
+        "operationId": "Console_GetGroups",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/UserGroupList"
+              "$ref": "#/definitions/apiUserGroupList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -591,7 +591,7 @@
     "/v2/console/account/{id}/group/{group_id}": {
       "delete": {
         "summary": "Remove a user from a group.",
-        "operationId": "DeleteGroupUser",
+        "operationId": "Console_DeleteGroupUser",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -603,7 +603,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -631,7 +631,7 @@
     "/v2/console/account/{id}/import": {
       "put": {
         "summary": "Import given account export data, overwriting the user account's current state.",
-        "operationId": "ImportAccount",
+        "operationId": "Console_ImportAccount",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -643,7 +643,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -660,7 +660,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ImportAccountBody"
+              "$ref": "#/definitions/ConsoleImportAccountBody"
             }
           }
         ],
@@ -672,7 +672,7 @@
     "/v2/console/account/{id}/unban": {
       "post": {
         "summary": "Unban a user.",
-        "operationId": "UnbanAccount",
+        "operationId": "Console_UnbanAccount",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -684,7 +684,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -705,7 +705,7 @@
     "/v2/console/account/{id}/unlink/apple": {
       "post": {
         "summary": "Unlink the Apple ID from a user account.",
-        "operationId": "UnlinkApple",
+        "operationId": "Console_UnlinkApple",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -717,7 +717,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -738,7 +738,7 @@
     "/v2/console/account/{id}/unlink/custom": {
       "post": {
         "summary": "Unlink the custom ID from a user account.",
-        "operationId": "UnlinkCustom",
+        "operationId": "Console_UnlinkCustom",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -750,7 +750,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -771,7 +771,7 @@
     "/v2/console/account/{id}/unlink/device": {
       "post": {
         "summary": "Unlink the device ID from a user account.",
-        "operationId": "UnlinkDevice",
+        "operationId": "Console_UnlinkDevice",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -783,7 +783,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -800,7 +800,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/UnlinkDeviceBody"
+              "$ref": "#/definitions/ConsoleUnlinkDeviceBody"
             }
           }
         ],
@@ -812,7 +812,7 @@
     "/v2/console/account/{id}/unlink/email": {
       "post": {
         "summary": "Unlink the email from a user account.",
-        "operationId": "UnlinkEmail",
+        "operationId": "Console_UnlinkEmail",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -824,7 +824,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -845,7 +845,7 @@
     "/v2/console/account/{id}/unlink/facebook": {
       "post": {
         "summary": "Unlink the Facebook ID from a user account.",
-        "operationId": "UnlinkFacebook",
+        "operationId": "Console_UnlinkFacebook",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -857,7 +857,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -878,7 +878,7 @@
     "/v2/console/account/{id}/unlink/facebookinstantgame": {
       "post": {
         "summary": "Unlink the Facebook Instant Game ID from a user account.",
-        "operationId": "UnlinkFacebookInstantGame",
+        "operationId": "Console_UnlinkFacebookInstantGame",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -890,7 +890,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -911,7 +911,7 @@
     "/v2/console/account/{id}/unlink/gamecenter": {
       "post": {
         "summary": "Unlink the Game Center ID from a user account.",
-        "operationId": "UnlinkGameCenter",
+        "operationId": "Console_UnlinkGameCenter",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -923,7 +923,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -944,7 +944,7 @@
     "/v2/console/account/{id}/unlink/google": {
       "post": {
         "summary": "Unlink the Google ID from a user account.",
-        "operationId": "UnlinkGoogle",
+        "operationId": "Console_UnlinkGoogle",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -956,7 +956,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -977,7 +977,7 @@
     "/v2/console/account/{id}/unlink/steam": {
       "post": {
         "summary": "Unlink the Steam ID from a user account.",
-        "operationId": "UnlinkSteam",
+        "operationId": "Console_UnlinkSteam",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -989,7 +989,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1010,7 +1010,7 @@
     "/v2/console/account/{id}/wallet/{wallet_id}": {
       "delete": {
         "summary": "Delete a wallet ledger item.",
-        "operationId": "DeleteWalletLedger",
+        "operationId": "Console_DeleteWalletLedger",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1022,7 +1022,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1049,18 +1049,18 @@
     },
     "/v2/console/acl/template": {
       "get": {
-        "operationId": "ListAclTemplates",
+        "operationId": "Console_ListAclTemplates",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/AclTemplateList"
+              "$ref": "#/definitions/consoleAclTemplateList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1069,18 +1069,18 @@
         ]
       },
       "post": {
-        "operationId": "AddAclTemplate",
+        "operationId": "Console_AddAclTemplate",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/AclTemplate"
+              "$ref": "#/definitions/consoleAclTemplate"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1091,7 +1091,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/AddAclTemplateRequest"
+              "$ref": "#/definitions/consoleAddAclTemplateRequest"
             }
           }
         ],
@@ -1102,7 +1102,7 @@
     },
     "/v2/console/acl/template/{id}": {
       "delete": {
-        "operationId": "DeleteAclTemplate",
+        "operationId": "Console_DeleteAclTemplate",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1114,7 +1114,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1132,18 +1132,18 @@
         ]
       },
       "put": {
-        "operationId": "UpdateAclTemplate",
+        "operationId": "Console_UpdateAclTemplate",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/AclTemplate"
+              "$ref": "#/definitions/consoleAclTemplate"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1160,7 +1160,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/UpdateAclTemplateBody"
+              "$ref": "#/definitions/ConsoleUpdateAclTemplateBody"
             }
           }
         ],
@@ -1172,7 +1172,7 @@
     "/v2/console/all": {
       "delete": {
         "summary": "Deletes all data",
-        "operationId": "DeleteAllData",
+        "operationId": "Console_DeleteAllData",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1184,7 +1184,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1196,18 +1196,18 @@
     "/v2/console/api/endpoints": {
       "get": {
         "summary": "API Explorer - list all endpoints",
-        "operationId": "ListApiEndpoints",
+        "operationId": "Console_ListApiEndpoints",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/ApiEndpointList"
+              "$ref": "#/definitions/consoleApiEndpointList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1219,18 +1219,18 @@
     "/v2/console/api/endpoints/rpc/{method}": {
       "post": {
         "summary": "API Explorer - call a custom RPC endpoint",
-        "operationId": "CallRpcEndpoint",
+        "operationId": "Console_CallRpcEndpoint",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/CallApiEndpointResponse"
+              "$ref": "#/definitions/consoleCallApiEndpointResponse"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1246,7 +1246,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/CallRpcEndpointBody"
+              "$ref": "#/definitions/ConsoleCallRpcEndpointBody"
             }
           }
         ],
@@ -1258,18 +1258,18 @@
     "/v2/console/api/endpoints/{method}": {
       "post": {
         "summary": "API Explorer - call an endpoint",
-        "operationId": "CallApiEndpoint",
+        "operationId": "Console_CallApiEndpoint",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/CallApiEndpointResponse"
+              "$ref": "#/definitions/consoleCallApiEndpointResponse"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1285,7 +1285,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/CallApiEndpointBody"
+              "$ref": "#/definitions/ConsoleCallApiEndpointBody"
             }
           }
         ],
@@ -1297,18 +1297,18 @@
     "/v2/console/audit/log": {
       "get": {
         "summary": "List audit log entries with the selected filter",
-        "operationId": "ListAuditLogs",
+        "operationId": "Console_ListAuditLogs",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/AuditLogList"
+              "$ref": "#/definitions/consoleAuditLogList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1385,18 +1385,18 @@
     "/v2/console/audit/log/users": {
       "get": {
         "summary": "List console usernames that can be used to filter the audit logs",
-        "operationId": "ListAuditLogsUsers",
+        "operationId": "Console_ListAuditLogsUsers",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/AuditLogUsersList"
+              "$ref": "#/definitions/consoleAuditLogUsersList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1408,18 +1408,18 @@
     "/v2/console/authenticate": {
       "post": {
         "summary": "Authenticate a console user with username and password.",
-        "operationId": "Authenticate",
+        "operationId": "Console_Authenticate",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/ConsoleSession"
+              "$ref": "#/definitions/consoleConsoleSession"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1430,7 +1430,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/AuthenticateRequest"
+              "$ref": "#/definitions/consoleAuthenticateRequest"
             }
           }
         ],
@@ -1447,7 +1447,7 @@
     "/v2/console/authenticate/logout": {
       "post": {
         "summary": "Log out a session and invalidate the session token.",
-        "operationId": "AuthenticateLogout",
+        "operationId": "Console_AuthenticateLogout",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1459,7 +1459,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1470,7 +1470,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/AuthenticateLogoutRequest"
+              "$ref": "#/definitions/consoleAuthenticateLogoutRequest"
             }
           }
         ],
@@ -1482,18 +1482,18 @@
     "/v2/console/authenticate/mfa": {
       "post": {
         "summary": "Change an account's MFA using a code, usually delivered over email.",
-        "operationId": "AuthenticateMFASetup",
+        "operationId": "Console_AuthenticateMFASetup",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/AuthenticateMFASetupResponse"
+              "$ref": "#/definitions/consoleAuthenticateMFASetupResponse"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1504,7 +1504,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/AuthenticateMFASetupRequest"
+              "$ref": "#/definitions/consoleAuthenticateMFASetupRequest"
             }
           }
         ],
@@ -1516,7 +1516,7 @@
     "/v2/console/authenticate/password_change": {
       "post": {
         "summary": "Change an account's password using a code, usually delivered over email.",
-        "operationId": "AuthenticatePasswordChange",
+        "operationId": "Console_AuthenticatePasswordChange",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1528,7 +1528,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1539,7 +1539,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/AuthenticatePasswordChangeRequest"
+              "$ref": "#/definitions/consoleAuthenticatePasswordChangeRequest"
             }
           }
         ],
@@ -1551,18 +1551,18 @@
     "/v2/console/channel": {
       "get": {
         "summary": "List channel messages with the selected filter",
-        "operationId": "ListChannelMessages",
+        "operationId": "Console_ListChannelMessages",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/ChannelMessageList"
+              "$ref": "#/definitions/apiChannelMessageList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1624,18 +1624,18 @@
     "/v2/console/config": {
       "get": {
         "summary": "Get server config and configuration warnings.",
-        "operationId": "GetConfig",
+        "operationId": "Console_GetConfig",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/Config"
+              "$ref": "#/definitions/consoleConfig"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1646,18 +1646,18 @@
     },
     "/v2/console/extensions": {
       "get": {
-        "operationId": "RegisteredExtensions",
+        "operationId": "Console_RegisteredExtensions",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/Extensions"
+              "$ref": "#/definitions/consoleExtensions"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1669,18 +1669,18 @@
     "/v2/console/group": {
       "get": {
         "summary": "List (and optionally filter) groups.",
-        "operationId": "ListGroups",
+        "operationId": "Console_ListGroups",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/console.GroupList"
+              "$ref": "#/definitions/nakamaconsoleGroupList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1708,7 +1708,7 @@
     "/v2/console/group/{group_id}/account/{id}/demote": {
       "post": {
         "summary": "Demote a user from a group.",
-        "operationId": "DemoteGroupMember",
+        "operationId": "Console_DemoteGroupMember",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1720,7 +1720,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1748,7 +1748,7 @@
     "/v2/console/group/{group_id}/account/{id}/promote": {
       "post": {
         "summary": "Promote a user from a group.",
-        "operationId": "PromoteGroupMember",
+        "operationId": "Console_PromoteGroupMember",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1760,7 +1760,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1788,7 +1788,7 @@
     "/v2/console/group/{group_id}/add": {
       "post": {
         "summary": "Add/join members to a group.",
-        "operationId": "AddGroupUsers",
+        "operationId": "Console_AddGroupUsers",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1800,7 +1800,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1817,7 +1817,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/AddGroupUsersBody"
+              "$ref": "#/definitions/ConsoleAddGroupUsersBody"
             }
           }
         ],
@@ -1829,18 +1829,18 @@
     "/v2/console/group/{id}": {
       "get": {
         "summary": "Get detailed group information.",
-        "operationId": "GetGroup",
+        "operationId": "Console_GetGroup",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/Group"
+              "$ref": "#/definitions/apiGroup"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1859,7 +1859,7 @@
       },
       "delete": {
         "summary": "Remove a group.",
-        "operationId": "DeleteGroup",
+        "operationId": "Console_DeleteGroup",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1871,7 +1871,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1890,7 +1890,7 @@
       },
       "post": {
         "summary": "Update one or more fields on a group.",
-        "operationId": "UpdateGroup",
+        "operationId": "Console_UpdateGroup",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1902,7 +1902,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1919,7 +1919,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/UpdateGroupBody"
+              "$ref": "#/definitions/ConsoleUpdateGroupBody"
             }
           }
         ],
@@ -1931,18 +1931,18 @@
     "/v2/console/group/{id}/export": {
       "get": {
         "summary": "Export all information stored about a group.",
-        "operationId": "ExportGroup",
+        "operationId": "Console_ExportGroup",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/GroupExport"
+              "$ref": "#/definitions/consoleGroupExport"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1963,18 +1963,18 @@
     "/v2/console/group/{id}/member": {
       "get": {
         "summary": "Get a list of members of the group.",
-        "operationId": "GetMembers",
+        "operationId": "Console_GetMembers",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/GroupUserList"
+              "$ref": "#/definitions/apiGroupUserList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -1995,18 +1995,18 @@
     "/v2/console/iap/purchase/{transaction_id}": {
       "get": {
         "summary": "Get purchase by transaction_id",
-        "operationId": "GetPurchase",
+        "operationId": "Console_GetPurchase",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/ValidatedPurchase"
+              "$ref": "#/definitions/apiValidatedPurchase"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2027,18 +2027,18 @@
     "/v2/console/iap/subscription/{original_transaction_id}": {
       "get": {
         "summary": "Get subscription by original_transaction_id",
-        "operationId": "GetSubscription",
+        "operationId": "Console_GetSubscription",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/ValidatedSubscription"
+              "$ref": "#/definitions/apiValidatedSubscription"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2059,18 +2059,18 @@
     "/v2/console/leaderboard": {
       "get": {
         "summary": "List leaderboards",
-        "operationId": "ListLeaderboards",
+        "operationId": "Console_ListLeaderboards",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/console.LeaderboardList"
+              "$ref": "#/definitions/nakamaconsoleLeaderboardList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2091,18 +2091,18 @@
     "/v2/console/leaderboard/{id}": {
       "get": {
         "summary": "Get leaderboard.",
-        "operationId": "GetLeaderboard",
+        "operationId": "Console_GetLeaderboard",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/console.Leaderboard"
+              "$ref": "#/definitions/nakamaconsoleLeaderboard"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2121,7 +2121,7 @@
       },
       "delete": {
         "summary": "Delete leaderboard",
-        "operationId": "DeleteLeaderboard",
+        "operationId": "Console_DeleteLeaderboard",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -2133,7 +2133,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2154,7 +2154,7 @@
     "/v2/console/leaderboard/{id}/owner/{owner_id}": {
       "delete": {
         "summary": "Delete leaderboard record",
-        "operationId": "DeleteLeaderboardRecord",
+        "operationId": "Console_DeleteLeaderboardRecord",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -2166,7 +2166,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2194,18 +2194,18 @@
     "/v2/console/leaderboard/{leaderboard_id}/records": {
       "get": {
         "summary": "List leaderboard records.",
-        "operationId": "ListLeaderboardRecords",
+        "operationId": "Console_ListLeaderboardRecords",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/LeaderboardRecordList"
+              "$ref": "#/definitions/apiLeaderboardRecordList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2260,18 +2260,18 @@
     "/v2/console/match": {
       "get": {
         "summary": "List ongoing matches",
-        "operationId": "ListMatches",
+        "operationId": "Console_ListMatches",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/console.MatchList"
+              "$ref": "#/definitions/nakamaconsoleMatchList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2344,18 +2344,18 @@
     "/v2/console/match/{id}/state": {
       "get": {
         "summary": "Get current state of a running match",
-        "operationId": "GetMatchState",
+        "operationId": "Console_GetMatchState",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/MatchState"
+              "$ref": "#/definitions/consoleMatchState"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2376,18 +2376,18 @@
     "/v2/console/message": {
       "delete": {
         "summary": "Delete messages.",
-        "operationId": "DeleteChannelMessages",
+        "operationId": "Console_DeleteChannelMessages",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/DeleteChannelMessagesResponse"
+              "$ref": "#/definitions/consoleDeleteChannelMessagesResponse"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2420,18 +2420,18 @@
     "/v2/console/notification": {
       "get": {
         "summary": "List notifications.",
-        "operationId": "ListNotifications",
+        "operationId": "Console_ListNotifications",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/console.NotificationList"
+              "$ref": "#/definitions/nakamaconsoleNotificationList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2465,7 +2465,7 @@
       },
       "post": {
         "summary": "Send a notification.",
-        "operationId": "SendNotification",
+        "operationId": "Console_SendNotification",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -2477,7 +2477,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2488,7 +2488,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/SendNotificationRequest"
+              "$ref": "#/definitions/consoleSendNotificationRequest"
             }
           }
         ],
@@ -2500,18 +2500,18 @@
     "/v2/console/notification/{id}": {
       "get": {
         "summary": "Get a notification by id.",
-        "operationId": "GetNotification",
+        "operationId": "Console_GetNotification",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/console.Notification"
+              "$ref": "#/definitions/nakamaconsoleNotification"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2530,7 +2530,7 @@
       },
       "delete": {
         "summary": "Delete notification",
-        "operationId": "DeleteNotification",
+        "operationId": "Console_DeleteNotification",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -2542,7 +2542,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2563,18 +2563,18 @@
     "/v2/console/purchase": {
       "get": {
         "summary": "List validated purchases",
-        "operationId": "ListPurchases",
+        "operationId": "Console_ListPurchases",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/PurchaseList"
+              "$ref": "#/definitions/apiPurchaseList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2633,140 +2633,21 @@
     "/v2/console/runtime": {
       "get": {
         "summary": "Get runtime info",
-        "operationId": "GetRuntime",
+        "operationId": "Console_GetRuntime",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/RuntimeInfo"
+              "$ref": "#/definitions/consoleRuntimeInfo"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
-        "tags": [
-          "Console"
-        ]
-      }
-    },
-    "/v2/console/satori/direct-message": {
-      "post": {
-        "operationId": "SatoriSendDirectMessage",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/SendDirectMessageResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpc.Status"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "description": "The request to send direct messages.",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/SendDirectMessageRequest"
-            }
-          }
-        ],
-        "tags": [
-          "Console"
-        ]
-      }
-    },
-    "/v2/console/satori/template": {
-      "get": {
-        "operationId": "SatoriListTemplates",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/ListResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpc.Status"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "search.name.or",
-            "description": "Filter by elements matching one of the parameters.",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "search.name.exact",
-            "description": "Filter by elements matching exactly the value.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "search.name.like",
-            "description": "Filter by elements matching the pattern.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "search.label_name.or",
-            "description": "Filter by elements matching one of the parameters.",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "search.label_name.and",
-            "description": "Filter by elements matching all parameters.",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "pagination.limit",
-            "description": "Limit of results to return.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "pagination.cursor",
-            "description": "Cursor to the next page.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
         "tags": [
           "Console"
         ]
@@ -2775,18 +2656,18 @@
     "/v2/console/setting": {
       "get": {
         "summary": "List settings",
-        "operationId": "ListSettings",
+        "operationId": "Console_ListSettings",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/SettingList"
+              "$ref": "#/definitions/consoleSettingList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2811,18 +2692,18 @@
     "/v2/console/setting/{name}": {
       "get": {
         "summary": "Get console settings.",
-        "operationId": "GetSetting",
+        "operationId": "Console_GetSetting",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/Setting"
+              "$ref": "#/definitions/consoleSetting"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2841,18 +2722,18 @@
       },
       "post": {
         "summary": "Update an existing setting.",
-        "operationId": "UpdateSetting",
+        "operationId": "Console_UpdateSetting",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/Setting"
+              "$ref": "#/definitions/consoleSetting"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2869,7 +2750,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/UpdateSettingBody"
+              "$ref": "#/definitions/ConsoleUpdateSettingBody"
             }
           }
         ],
@@ -2881,18 +2762,18 @@
     "/v2/console/status": {
       "get": {
         "summary": "Get current status data for all nodes.",
-        "operationId": "GetStatus",
+        "operationId": "Console_GetStatus",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/StatusList"
+              "$ref": "#/definitions/consoleStatusList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2904,18 +2785,18 @@
     "/v2/console/storage": {
       "get": {
         "summary": "List (and optionally filter) storage data.",
-        "operationId": "ListStorage",
+        "operationId": "Console_ListStorage",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/StorageList"
+              "$ref": "#/definitions/consoleStorageList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2955,7 +2836,7 @@
       },
       "delete": {
         "summary": "Delete all storage data.",
-        "operationId": "DeleteStorage",
+        "operationId": "Console_DeleteStorage",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -2967,7 +2848,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -2979,18 +2860,18 @@
     "/v2/console/storage/collections": {
       "get": {
         "summary": "List storage collections",
-        "operationId": "ListStorageCollections",
+        "operationId": "Console_ListStorageCollections",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/StorageCollectionsList"
+              "$ref": "#/definitions/consoleStorageCollectionsList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -3002,18 +2883,18 @@
     "/v2/console/storage/{collection}/{key}/{user_id}": {
       "get": {
         "summary": "Get a storage object.",
-        "operationId": "GetStorage",
+        "operationId": "Console_GetStorage",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/StorageObject"
+              "$ref": "#/definitions/apiStorageObject"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -3046,7 +2927,7 @@
       },
       "delete": {
         "summary": "Delete a storage object.",
-        "operationId": "DeleteStorageObject",
+        "operationId": "Console_DeleteStorageObject",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -3058,7 +2939,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -3098,18 +2979,18 @@
       },
       "put": {
         "summary": "Write a new storage object or replace an existing one.",
-        "operationId": "WriteStorageObject",
+        "operationId": "Console_WriteStorageObject",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/StorageObjectAck"
+              "$ref": "#/definitions/apiStorageObjectAck"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -3140,7 +3021,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Console.WriteStorageObjectBody"
+              "$ref": "#/definitions/consoleConsoleWriteStorageObjectBody"
             }
           }
         ],
@@ -3152,7 +3033,7 @@
     "/v2/console/storage/{collection}/{key}/{user_id}/{version}": {
       "delete": {
         "summary": "Delete a storage object.",
-        "operationId": "DeleteStorageObject2",
+        "operationId": "Console_DeleteStorageObject2",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -3164,7 +3045,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -3206,18 +3087,18 @@
     "/v2/console/subscription": {
       "get": {
         "summary": "List validated subscriptions",
-        "operationId": "ListSubscriptions",
+        "operationId": "Console_ListSubscriptions",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/SubscriptionList"
+              "$ref": "#/definitions/apiSubscriptionList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -3276,18 +3157,18 @@
     "/v2/console/user": {
       "get": {
         "summary": "List (and optionally filter) users.",
-        "operationId": "ListUsers",
+        "operationId": "Console_ListUsers",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/UserList"
+              "$ref": "#/definitions/consoleUserList"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -3297,7 +3178,7 @@
       },
       "delete": {
         "summary": "Delete console user.",
-        "operationId": "DeleteUser",
+        "operationId": "Console_DeleteUser",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -3309,7 +3190,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -3328,18 +3209,18 @@
       },
       "post": {
         "summary": "Add a new console user.",
-        "operationId": "AddUser",
+        "operationId": "Console_AddUser",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/AddUserResponse"
+              "$ref": "#/definitions/consoleAddUserResponse"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -3349,7 +3230,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/AddUserRequest"
+              "$ref": "#/definitions/consoleAddUserRequest"
             }
           }
         ],
@@ -3360,18 +3241,18 @@
     },
     "/v2/console/user/{username}": {
       "get": {
-        "operationId": "GetUser",
+        "operationId": "Console_GetUser",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/console.User"
+              "$ref": "#/definitions/nakamaconsoleUser"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -3390,18 +3271,18 @@
       },
       "put": {
         "summary": "Update a console user.",
-        "operationId": "UpdateUser",
+        "operationId": "Console_UpdateUser",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/console.User"
+              "$ref": "#/definitions/nakamaconsoleUser"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -3418,7 +3299,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/UpdateUserBody"
+              "$ref": "#/definitions/ConsoleUpdateUserBody"
             }
           }
         ],
@@ -3430,7 +3311,7 @@
     "/v2/console/user/{username}/mfa/require": {
       "post": {
         "summary": "Sets the user's MFA as required or not required.",
-        "operationId": "RequireUserMfa",
+        "operationId": "Console_RequireUserMfa",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -3442,7 +3323,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -3459,7 +3340,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/RequireUserMfaBody"
+              "$ref": "#/definitions/ConsoleRequireUserMfaBody"
             }
           }
         ],
@@ -3471,7 +3352,7 @@
     "/v2/console/user/{username}/mfa/reset": {
       "post": {
         "summary": "Reset a user's multi-factor authentication credentials.",
-        "operationId": "ResetUserMfa",
+        "operationId": "Console_ResetUserMfa",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -3483,7 +3364,7 @@
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -3504,18 +3385,18 @@
     "/v2/console/user/{username}/reset/password": {
       "post": {
         "summary": "Reset a user's password.",
-        "operationId": "ResetUserPassword",
+        "operationId": "Console_ResetUserPassword",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/ResetUserResponse"
+              "$ref": "#/definitions/consoleResetUserResponse"
             }
           },
           "default": {
             "description": "An unexpected error response.",
             "schema": {
-              "$ref": "#/definitions/rpc.Status"
+              "$ref": "#/definitions/googlerpcStatus"
             }
           }
         },
@@ -3535,388 +3416,7 @@
     }
   },
   "definitions": {
-    "AccountDevice": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "A device identifier. Should be obtained by a platform-specific device API."
-        },
-        "vars": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "Extra information that will be bundled in the session token."
-        }
-      },
-      "description": "Send a device to the server. Used with authenticate/link/unlink and user."
-    },
-    "AccountExport": {
-      "type": "object",
-      "properties": {
-        "account": {
-          "$ref": "#/definitions/api.Account",
-          "description": "The user's account details."
-        },
-        "objects": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/StorageObject"
-          },
-          "description": "The user's storage."
-        },
-        "friends": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/Friend"
-          },
-          "description": "The user's friends."
-        },
-        "groups": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/Group"
-          },
-          "description": "The user's groups."
-        },
-        "messages": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/ChannelMessage"
-          },
-          "description": "The user's chat messages."
-        },
-        "leaderboard_records": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/LeaderboardRecord"
-          },
-          "description": "The user's leaderboard records."
-        },
-        "notifications": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/api.Notification"
-          },
-          "description": "The user's notifications."
-        },
-        "wallet_ledgers": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/WalletLedger"
-          },
-          "description": "The user's wallet ledger items."
-        }
-      },
-      "description": "An export of all information stored for a user account."
-    },
-    "AccountImport": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "The user ID to overwrite data for, or blank if the account should be freshly created."
-        },
-        "data": {
-          "$ref": "#/definitions/AccountExport",
-          "description": "The export data snapshot to import."
-        }
-      },
-      "description": "Request to import user account data."
-    },
-    "AccountList": {
-      "type": "object",
-      "properties": {
-        "users": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/api.User"
-          },
-          "description": "A list of users."
-        },
-        "total_count": {
-          "type": "integer",
-          "format": "int32",
-          "description": "Approximate total number of users."
-        },
-        "next_cursor": {
-          "type": "string",
-          "description": "Next cursor."
-        }
-      },
-      "description": "A list of users."
-    },
-    "AccountNote": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Identifier of the note."
-        },
-        "user_id": {
-          "type": "string",
-          "description": "Owner of this note."
-        },
-        "note": {
-          "type": "string",
-          "description": "The content of the note."
-        },
-        "create_time": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Timestamp of note creation."
-        },
-        "update_time": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Timestamp of note update."
-        },
-        "create_id": {
-          "type": "string",
-          "description": "Console user identifier that created this note."
-        },
-        "create_username": {
-          "type": "string",
-          "description": "Console username that created this note."
-        },
-        "update_id": {
-          "type": "string",
-          "description": "Console user identifier that last updated this note."
-        },
-        "update_username": {
-          "type": "string",
-          "description": "Console username that last updated this note."
-        }
-      },
-      "description": "A user note."
-    },
-    "AclResources": {
-      "type": "string",
-      "enum": [
-        "ACCOUNT",
-        "ACCOUNT_WALLET",
-        "ACCOUNT_EXPORT",
-        "ACCOUNT_FRIENDS",
-        "ACCOUNT_GROUPS",
-        "ACCOUNT_NOTES",
-        "ACL_TEMPLATE",
-        "ALL_ACCOUNTS",
-        "ALL_DATA",
-        "ALL_STORAGE",
-        "API_EXPLORER",
-        "AUDIT_LOG",
-        "CONFIGURATION",
-        "CHANNEL_MESSAGE",
-        "USER",
-        "GROUP",
-        "IN_APP_PURCHASE",
-        "LEADERBOARD",
-        "LEADERBOARD_RECORD",
-        "MATCH",
-        "NOTIFICATION",
-        "SATORI_MESSAGE",
-        "SETTINGS",
-        "STORAGE_DATA",
-        "STORAGE_DATA_IMPORT",
-        "HIRO_INVENTORY",
-        "HIRO_PROGRESSION",
-        "HIRO_ECONOMY",
-        "HIRO_STATS",
-        "HIRO_ENERGY"
-      ],
-      "default": "ACCOUNT",
-      "description": "ATTENTION: Do not modify the order of this enum.\nNew resources should always be appended."
-    },
-    "AclTemplate": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "The identifier of the ACL template."
-        },
-        "name": {
-          "type": "string",
-          "description": "The name of the ACL template."
-        },
-        "description": {
-          "type": "string",
-          "description": "The ACL template description."
-        },
-        "acl": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/Permissions"
-          },
-          "description": "The ACL template permissions."
-        },
-        "create_time": {
-          "type": "string",
-          "format": "date-time",
-          "description": "The template Create time."
-        },
-        "update_time": {
-          "type": "string",
-          "format": "date-time",
-          "description": "The template Update time."
-        }
-      }
-    },
-    "AclTemplateList": {
-      "type": "object",
-      "properties": {
-        "templates": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/AclTemplate"
-          },
-          "description": "A list of ACL templates."
-        }
-      }
-    },
-    "AddAccountNoteBody": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Identifier of the note. Empty to update existing note."
-        },
-        "note": {
-          "type": "string",
-          "description": "The content of the note."
-        }
-      },
-      "description": "Add a new note for the user."
-    },
-    "AddAclTemplateRequest": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "The name of the ACL template."
-        },
-        "description": {
-          "type": "string",
-          "description": "The ACL template description."
-        },
-        "acl": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/Permissions"
-          },
-          "description": "The ACL template permissions."
-        }
-      },
-      "description": "Add a new ACL template."
-    },
-    "AddGroupUsersBody": {
-      "type": "object",
-      "properties": {
-        "ids": {
-          "type": "string",
-          "description": "Users to add/join."
-        },
-        "join_request": {
-          "type": "boolean",
-          "description": "Whether it is a join request."
-        }
-      },
-      "description": "Add/join users to a group."
-    },
-    "AddUserRequest": {
-      "type": "object",
-      "properties": {
-        "username": {
-          "type": "string",
-          "description": "The username of the user."
-        },
-        "email": {
-          "type": "string",
-          "description": "Email address of the user."
-        },
-        "acl": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/Permissions"
-          },
-          "description": "ACL."
-        },
-        "mfa_required": {
-          "type": "boolean",
-          "title": "Require MFA"
-        },
-        "newsletter_subscription": {
-          "type": "boolean",
-          "title": "Subscribe to newsletters"
-        }
-      },
-      "title": "Add a new console user"
-    },
-    "AddUserResponse": {
-      "type": "object",
-      "properties": {
-        "user": {
-          "$ref": "#/definitions/console.User",
-          "description": "The user recently created."
-        },
-        "token": {
-          "type": "string",
-          "title": "A one-time token required to update the user for the first time"
-        }
-      },
-      "description": "Response to create/invite a new user."
-    },
-    "Any": {
-      "type": "object",
-      "properties": {
-        "@type": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": {}
-    },
-    "ApiEndpointDescriptor": {
-      "type": "object",
-      "properties": {
-        "method": {
-          "type": "string"
-        },
-        "body_template": {
-          "type": "string"
-        }
-      },
-      "title": "API Explorer List of Endpoints response message"
-    },
-    "ApiEndpointList": {
-      "type": "object",
-      "properties": {
-        "endpoints": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/ApiEndpointDescriptor"
-          }
-        },
-        "rpc_endpoints": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/ApiEndpointDescriptor"
-          }
-        }
-      },
-      "title": "API Explorer List of Endpoints"
-    },
-    "AuditLog": {
+    "AuditLogListAuditLog": {
       "type": "object",
       "properties": {
         "id": {
@@ -3941,11 +3441,11 @@
           "description": "The console user email that performed the action."
         },
         "resource": {
-          "$ref": "#/definitions/AclResources",
+          "$ref": "#/definitions/consoleAclResources",
           "description": "The resource the action was performed on."
         },
         "action": {
-          "$ref": "#/definitions/AuditLogAction",
+          "$ref": "#/definitions/consoleAuditLogAction",
           "description": "The action that was performed."
         },
         "message": {
@@ -3958,189 +3458,338 @@
         }
       }
     },
-    "AuditLogAction": {
-      "type": "string",
-      "enum": [
-        "UNKNOWN",
-        "CREATE",
-        "UPDATE",
-        "DELETE",
-        "INVOKE",
-        "IMPORT",
-        "EXPORT"
-      ],
-      "default": "UNKNOWN"
-    },
-    "AuditLogList": {
+    "ConfigWarning": {
       "type": "object",
       "properties": {
-        "entries": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/AuditLog"
-          },
-          "description": "A list of audit log entries."
-        },
-        "next_cursor": {
+        "field": {
           "type": "string",
-          "description": "Cursor to fetch next page of results."
+          "description": "The config field this warning is for in a JSON pointer format."
         },
-        "prev_cursor": {
+        "message": {
           "type": "string",
-          "description": "Cursor to fetch prev page of results."
+          "description": "Warning message text."
         }
       },
-      "description": "Audit log entries."
+      "description": "A warning for a configuration field."
     },
-    "AuditLogUsersList": {
-      "type": "object",
-      "properties": {
-        "usernames": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "description": "List of users that can be filtered in the audit logs."
-    },
-    "AuthenticateLogoutRequest": {
-      "type": "object",
-      "properties": {
-        "token": {
-          "type": "string",
-          "description": "Session token to log out."
-        }
-      },
-      "description": "Log out a session and invalidate a session token."
-    },
-    "AuthenticateMFASetupRequest": {
-      "type": "object",
-      "properties": {
-        "mfa": {
-          "type": "string",
-          "description": "MFA token."
-        },
-        "code": {
-          "type": "string",
-          "description": "MFA code."
-        }
-      },
-      "description": "Request to change MFA."
-    },
-    "AuthenticateMFASetupResponse": {
-      "type": "object",
-      "properties": {
-        "recovery_codes": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "title": "An one-time code to configure the MFA mechanism"
-        }
-      },
-      "description": "Response to change MFA."
-    },
-    "AuthenticatePasswordChangeRequest": {
-      "type": "object",
-      "properties": {
-        "code": {
-          "type": "string",
-          "description": "Code."
-        },
-        "password": {
-          "type": "string",
-          "description": "New password."
-        }
-      },
-      "description": "Request to change a password."
-    },
-    "AuthenticateRequest": {
-      "type": "object",
-      "properties": {
-        "username": {
-          "type": "string",
-          "description": "The username of the user."
-        },
-        "password": {
-          "type": "string",
-          "description": "The password of the user."
-        },
-        "mfa": {
-          "type": "string",
-          "description": "Multi-factor authentication code."
-        }
-      },
-      "description": "Authenticate a console user with username and password."
-    },
-    "CallApiEndpointBody": {
-      "type": "object",
-      "properties": {
-        "body": {
-          "type": "string"
-        },
-        "user_id": {
-          "type": "string"
-        },
-        "session_vars": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        }
-      },
-      "title": "API Explorer request definition for CallApiEndpoint"
-    },
-    "CallApiEndpointResponse": {
-      "type": "object",
-      "properties": {
-        "body": {
-          "type": "string"
-        },
-        "error_message": {
-          "type": "string"
-        }
-      },
-      "title": "API Explorer response definition for CallApiEndpoint"
-    },
-    "CallRpcEndpointBody": {
-      "type": "object",
-      "properties": {
-        "body": {
-          "type": "string"
-        },
-        "user_id": {
-          "type": "string"
-        },
-        "session_vars": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        }
-      },
-      "title": "API Explorer request definition for CallApiEndpoint"
-    },
-    "Category.View": {
+    "ConsoleAddAccountNoteBody": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Identifier."
+          "description": "Identifier of the note. Empty to update existing note."
         },
+        "note": {
+          "type": "string",
+          "description": "The content of the note."
+        }
+      },
+      "description": "Add a new note for the user."
+    },
+    "ConsoleAddGroupUsersBody": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "string",
+          "description": "Users to add/join."
+        },
+        "join_request": {
+          "type": "boolean",
+          "description": "Whether it is a join request."
+        }
+      },
+      "description": "Add/join users to a group."
+    },
+    "ConsoleCallApiEndpointBody": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "session_vars": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "API Explorer request definition for CallApiEndpoint"
+    },
+    "ConsoleCallRpcEndpointBody": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "session_vars": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "title": "API Explorer request definition for CallApiEndpoint"
+    },
+    "ConsoleImportAccountBody": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/consoleAccountExport",
+          "description": "The export data snapshot to import."
+        }
+      },
+      "description": "Request to import user account data."
+    },
+    "ConsoleRequireUserMfaBody": {
+      "type": "object",
+      "properties": {
+        "required": {
+          "type": "boolean",
+          "description": "Required."
+        }
+      },
+      "description": "Make a user's mfa required or not."
+    },
+    "ConsoleUnlinkDeviceBody": {
+      "type": "object",
+      "properties": {
+        "device_id": {
+          "type": "string",
+          "description": "Device ID to unlink."
+        }
+      },
+      "description": "Unlink a particular device ID from a user's account."
+    },
+    "ConsoleUpdateAccountBody": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Username."
+        },
+        "display_name": {
+          "type": "string",
+          "description": "Display name."
+        },
+        "metadata": {
+          "type": "string",
+          "description": "Metadata."
+        },
+        "avatar_url": {
+          "type": "string",
+          "description": "Avatar URL."
+        },
+        "lang_tag": {
+          "type": "string",
+          "description": "Langtag."
+        },
+        "location": {
+          "type": "string",
+          "description": "Location."
+        },
+        "timezone": {
+          "type": "string",
+          "description": "Timezone."
+        },
+        "custom_id": {
+          "type": "string",
+          "description": "Custom ID."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email."
+        },
+        "password": {
+          "type": "string",
+          "description": "Password."
+        },
+        "device_ids": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Device ID modifications."
+        },
+        "wallet": {
+          "type": "string",
+          "description": "Wallet."
+        }
+      },
+      "description": "Update user account information."
+    },
+    "ConsoleUpdateAclTemplateBody": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the ACL template."
+        },
+        "description": {
+          "type": "string",
+          "description": "The ACL template description."
+        },
+        "acl": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/consolePermissions"
+          },
+          "description": "The ACL template permissions."
+        }
+      }
+    },
+    "ConsoleUpdateGroupBody": {
+      "type": "object",
+      "properties": {
         "name": {
           "type": "string",
           "description": "Name."
         },
-        "color": {
+        "description": {
           "type": "string",
-          "description": "Color hex for the label."
+          "description": "Description."
+        },
+        "lang_tag": {
+          "type": "string",
+          "description": "Langtag."
+        },
+        "metadata": {
+          "type": "string",
+          "description": "Metadata."
+        },
+        "avatar_url": {
+          "type": "string",
+          "description": "Avatar URL."
+        },
+        "open": {
+          "type": "boolean",
+          "description": "Anyone can join open groups, otherwise only admins can accept members."
+        },
+        "max_count": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The maximum number of members allowed."
         }
       },
-      "description": "A summary of a Category."
+      "description": "Update group information."
     },
-    "ChannelMessage": {
+    "ConsoleUpdateSettingBody": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "Setting value."
+        }
+      },
+      "description": "Request to update an existing setting."
+    },
+    "ConsoleUpdateUserBody": {
+      "type": "object",
+      "properties": {
+        "acl": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/consolePermissions"
+          },
+          "description": "ACL."
+        }
+      },
+      "description": "Request to update an existing user."
+    },
+    "ExtensionsHiroSystems": {
+      "type": "object",
+      "properties": {
+        "economy_system": {
+          "type": "boolean",
+          "description": "Is Economy system registered."
+        },
+        "inventory_system": {
+          "type": "boolean",
+          "description": "Is Inventory system registered."
+        },
+        "progression_system": {
+          "type": "boolean",
+          "description": "Is Progression system registered."
+        },
+        "stats_system": {
+          "type": "boolean",
+          "description": "Is Stats system registered."
+        },
+        "energy_system": {
+          "type": "boolean",
+          "description": "Is Energy system registered."
+        }
+      },
+      "description": "Hiro available systems."
+    },
+    "GroupUserListGroupUser": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/nakamaapiUser",
+          "description": "User."
+        },
+        "state": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Their relationship to the group."
+        }
+      },
+      "description": "A single user-role pair."
+    },
+    "RuntimeInfoModuleInfo": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "title": "Module path"
+        },
+        "mod_time": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Module last modified date"
+        }
+      },
+      "title": "Module information"
+    },
+    "UserGroupListUserGroup": {
+      "type": "object",
+      "properties": {
+        "group": {
+          "$ref": "#/definitions/apiGroup",
+          "description": "Group."
+        },
+        "state": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The user's relationship to the group."
+        }
+      },
+      "description": "A single group-role pair."
+    },
+    "apiAccountDevice": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "A device identifier. Should be obtained by a platform-specific device API."
+        },
+        "vars": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Extra information that will be bundled in the session token."
+        }
+      },
+      "description": "Send a device to the server. Used with authenticate/link/unlink and user."
+    },
+    "apiChannelMessage": {
       "type": "object",
       "properties": {
         "channel_id": {
@@ -4201,14 +3850,14 @@
       },
       "description": "A message sent on a channel."
     },
-    "ChannelMessageList": {
+    "apiChannelMessageList": {
       "type": "object",
       "properties": {
         "messages": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/ChannelMessage"
+            "$ref": "#/definitions/apiChannelMessage"
           },
           "description": "A list of messages."
         },
@@ -4227,117 +3876,11 @@
       },
       "description": "A list of channel messages, usually a result of a list operation."
     },
-    "Config": {
-      "type": "object",
-      "properties": {
-        "config": {
-          "type": "string",
-          "description": "JSON-encoded active server configuration."
-        },
-        "warnings": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/Warning"
-          },
-          "description": "Any warnings about the current config."
-        },
-        "server_version": {
-          "type": "string",
-          "title": "Server version"
-        }
-      },
-      "description": "The current server configuration and any associated warnings."
-    },
-    "Console.WriteStorageObjectBody": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "string",
-          "description": "Value."
-        },
-        "version": {
-          "type": "string",
-          "description": "Version for OCC."
-        },
-        "permission_read": {
-          "type": "integer",
-          "format": "int32",
-          "description": "Read permission value."
-        },
-        "permission_write": {
-          "type": "integer",
-          "format": "int32",
-          "description": "Write permission value."
-        }
-      },
-      "description": "Write a new storage object or update an existing one."
-    },
-    "ConsoleSession": {
-      "type": "object",
-      "properties": {
-        "token": {
-          "type": "string",
-          "description": "A session token (JWT) for the console user."
-        },
-        "mfa_code": {
-          "type": "string",
-          "description": "MFA code required to setup the MFA mechanism."
-        }
-      },
-      "description": "A console user session."
-    },
-    "DeleteChannelMessagesResponse": {
-      "type": "object",
-      "properties": {
-        "total": {
-          "type": "string",
-          "format": "int64",
-          "description": "Total number of messages deleted."
-        }
-      }
-    },
-    "DeliveryResult": {
-      "type": "object",
-      "properties": {
-        "recipient_id": {
-          "type": "string",
-          "description": "The identity ID of the recipient."
-        },
-        "integration_results": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/IntegrationResult"
-          },
-          "description": "Results for each valid integration used in the delivery."
-        }
-      },
-      "description": "Details of each delivery attempt."
-    },
-    "Extensions": {
-      "type": "object",
-      "properties": {
-        "hiro": {
-          "type": "boolean",
-          "description": "Is Hiro registered."
-        },
-        "hiro_systems": {
-          "$ref": "#/definitions/HiroSystems",
-          "description": "Hiro registered systems, if hiro is available."
-        },
-        "satori": {
-          "type": "boolean",
-          "description": "Is Satori registered."
-        }
-      },
-      "description": "Which Console extensions are registered and available."
-    },
-    "Friend": {
+    "apiFriend": {
       "type": "object",
       "properties": {
         "user": {
-          "$ref": "#/definitions/api.User",
+          "$ref": "#/definitions/nakamaapiUser",
           "description": "The user object."
         },
         "state": {
@@ -4357,14 +3900,14 @@
       },
       "description": "A friend of a user."
     },
-    "FriendList": {
+    "apiFriendList": {
       "type": "object",
       "properties": {
         "friends": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/Friend"
+            "$ref": "#/definitions/apiFriend"
           },
           "description": "The Friend objects."
         },
@@ -4375,7 +3918,7 @@
       },
       "description": "A collection of zero or more friends of the user."
     },
-    "Group": {
+    "apiGroup": {
       "type": "object",
       "properties": {
         "id": {
@@ -4433,47 +3976,14 @@
       },
       "description": "A group in the server."
     },
-    "GroupExport": {
-      "type": "object",
-      "properties": {
-        "group": {
-          "$ref": "#/definitions/Group",
-          "description": "The group details."
-        },
-        "members": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/GroupUser"
-          },
-          "description": "The group's list of members."
-        }
-      },
-      "description": "An export of all information stored for a group."
-    },
-    "GroupUser": {
-      "type": "object",
-      "properties": {
-        "user": {
-          "$ref": "#/definitions/api.User",
-          "description": "User."
-        },
-        "state": {
-          "type": "integer",
-          "format": "int32",
-          "description": "Their relationship to the group."
-        }
-      },
-      "description": "A single user-role pair."
-    },
-    "GroupUserList": {
+    "apiGroupUserList": {
       "type": "object",
       "properties": {
         "group_users": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/GroupUser"
+            "$ref": "#/definitions/GroupUserListGroupUser"
           },
           "description": "User-role pairs for a group."
         },
@@ -4484,65 +3994,7 @@
       },
       "description": "A list of users belonging to a group, along with their role."
     },
-    "HiroSystems": {
-      "type": "object",
-      "properties": {
-        "economy_system": {
-          "type": "boolean",
-          "description": "Is Economy system registered."
-        },
-        "inventory_system": {
-          "type": "boolean",
-          "description": "Is Inventory system registered."
-        },
-        "progression_system": {
-          "type": "boolean",
-          "description": "Is Progression system registered."
-        },
-        "stats_system": {
-          "type": "boolean",
-          "description": "Is Stats system registered."
-        },
-        "energy_system": {
-          "type": "boolean",
-          "description": "Is Energy system registered."
-        }
-      },
-      "description": "Hiro available systems."
-    },
-    "ImportAccountBody": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/AccountExport",
-          "description": "The export data snapshot to import."
-        }
-      },
-      "description": "Request to import user account data."
-    },
-    "IntegrationResult": {
-      "type": "object",
-      "properties": {
-        "integration_type": {
-          "$ref": "#/definitions/MessageIntegrationType",
-          "description": "The integration type used for the message delivery."
-        },
-        "success": {
-          "type": "boolean",
-          "description": "Whether the message was successfully delivered using this integration."
-        },
-        "error_message": {
-          "type": "string",
-          "description": "An error message, if the delivery failed."
-        },
-        "channel_type": {
-          "$ref": "#/definitions/MessageChannelType",
-          "description": "The channel type used for the message delivery."
-        }
-      },
-      "description": "The outcome of using a specific integration."
-    },
-    "LeaderboardRecord": {
+    "apiLeaderboardRecord": {
       "type": "object",
       "properties": {
         "leaderboard_id": {
@@ -4604,14 +4056,14 @@
       },
       "description": "Represents a complete leaderboard record with all scores and associated metadata."
     },
-    "LeaderboardRecordList": {
+    "apiLeaderboardRecordList": {
       "type": "object",
       "properties": {
         "records": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/LeaderboardRecord"
+            "$ref": "#/definitions/apiLeaderboardRecord"
           },
           "description": "A list of leaderboard records."
         },
@@ -4619,7 +4071,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/LeaderboardRecord"
+            "$ref": "#/definitions/apiLeaderboardRecord"
           },
           "description": "A batched set of leaderboard records belonging to specified owners."
         },
@@ -4639,14 +4091,849 @@
       },
       "description": "A set of leaderboard records, may be part of a leaderboard records page or a batch of individual records."
     },
-    "ListAccountNotesResponse": {
+    "apiPurchaseList": {
+      "type": "object",
+      "properties": {
+        "validated_purchases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/apiValidatedPurchase"
+          },
+          "description": "Stored validated purchases."
+        },
+        "cursor": {
+          "type": "string",
+          "description": "The cursor to send when retrieving the next page, if any."
+        },
+        "prev_cursor": {
+          "type": "string",
+          "description": "The cursor to send when retrieving the previous page, if any."
+        }
+      },
+      "description": "A list of validated purchases stored by Nakama."
+    },
+    "apiStorageObject": {
+      "type": "object",
+      "properties": {
+        "collection": {
+          "type": "string",
+          "description": "The collection which stores the object."
+        },
+        "key": {
+          "type": "string",
+          "description": "The key of the object within the collection."
+        },
+        "user_id": {
+          "type": "string",
+          "description": "The user owner of the object."
+        },
+        "value": {
+          "type": "string",
+          "description": "The value of the object."
+        },
+        "version": {
+          "type": "string",
+          "description": "The version hash of the object."
+        },
+        "permission_read": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The read access permissions for the object."
+        },
+        "permission_write": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The write access permissions for the object."
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The UNIX time (for gRPC clients) or ISO string (for REST clients) when the object was created."
+        },
+        "update_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The UNIX time (for gRPC clients) or ISO string (for REST clients) when the object was last updated."
+        }
+      },
+      "description": "An object within the storage engine."
+    },
+    "apiStorageObjectAck": {
+      "type": "object",
+      "properties": {
+        "collection": {
+          "type": "string",
+          "description": "The collection which stores the object."
+        },
+        "key": {
+          "type": "string",
+          "description": "The key of the object within the collection."
+        },
+        "version": {
+          "type": "string",
+          "description": "The version hash of the object."
+        },
+        "user_id": {
+          "type": "string",
+          "description": "The owner of the object."
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The UNIX time (for gRPC clients) or ISO string (for REST clients) when the object was created."
+        },
+        "update_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The UNIX time (for gRPC clients) or ISO string (for REST clients) when the object was last updated."
+        }
+      },
+      "description": "A storage acknowledgement."
+    },
+    "apiStoreEnvironment": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "SANDBOX",
+        "PRODUCTION"
+      ],
+      "default": "UNKNOWN",
+      "description": "- UNKNOWN: Unknown environment.\n - SANDBOX: Sandbox/test environment.\n - PRODUCTION: Production environment.",
+      "title": "Environment where a purchase/subscription took place,"
+    },
+    "apiStoreProvider": {
+      "type": "string",
+      "enum": [
+        "APPLE_APP_STORE",
+        "GOOGLE_PLAY_STORE",
+        "HUAWEI_APP_GALLERY",
+        "FACEBOOK_INSTANT_STORE"
+      ],
+      "default": "APPLE_APP_STORE",
+      "description": "- APPLE_APP_STORE: Apple App Store\n - GOOGLE_PLAY_STORE: Google Play Store\n - HUAWEI_APP_GALLERY: Huawei App Gallery\n - FACEBOOK_INSTANT_STORE: Facebook Instant Store",
+      "title": "Validation Provider,"
+    },
+    "apiSubscriptionList": {
+      "type": "object",
+      "properties": {
+        "validated_subscriptions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/apiValidatedSubscription"
+          },
+          "description": "Stored validated subscriptions."
+        },
+        "cursor": {
+          "type": "string",
+          "description": "The cursor to send when retrieving the next page, if any."
+        },
+        "prev_cursor": {
+          "type": "string",
+          "description": "The cursor to send when retrieving the previous page, if any."
+        }
+      },
+      "description": "A list of validated subscriptions stored by Nakama."
+    },
+    "apiUserGroupList": {
+      "type": "object",
+      "properties": {
+        "user_groups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/UserGroupListUserGroup"
+          },
+          "description": "Group-role pairs for a user."
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Cursor for the next page of results, if any."
+        }
+      },
+      "description": "A list of groups belonging to a user, along with the user's role in each group."
+    },
+    "apiValidatedPurchase": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "description": "Purchase User ID."
+        },
+        "product_id": {
+          "type": "string",
+          "description": "Purchase Product ID."
+        },
+        "transaction_id": {
+          "type": "string",
+          "description": "Purchase Transaction ID."
+        },
+        "store": {
+          "$ref": "#/definitions/apiStoreProvider",
+          "title": "Store identifier"
+        },
+        "purchase_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the purchase was done."
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the receipt validation was stored in DB."
+        },
+        "update_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the receipt validation was updated in DB."
+        },
+        "refund_time": {
+          "type": "string",
+          "format": "date-time",
+          "title": "Timestamp when the purchase was refunded. Set to UNIX"
+        },
+        "provider_response": {
+          "type": "string",
+          "description": "Raw provider validation response."
+        },
+        "environment": {
+          "$ref": "#/definitions/apiStoreEnvironment",
+          "description": "Whether the purchase was done in production or sandbox environment."
+        },
+        "seen_before": {
+          "type": "boolean",
+          "description": "Whether the purchase had already been validated by Nakama before."
+        }
+      },
+      "description": "Validated Purchase stored by Nakama."
+    },
+    "apiValidatedSubscription": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "description": "Subscription User ID."
+        },
+        "product_id": {
+          "type": "string",
+          "description": "Purchase Product ID."
+        },
+        "original_transaction_id": {
+          "type": "string",
+          "description": "Purchase Original transaction ID (we only keep track of the original subscription, not subsequent renewals)."
+        },
+        "store": {
+          "$ref": "#/definitions/apiStoreProvider",
+          "title": "Store identifier"
+        },
+        "purchase_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "UNIX Timestamp when the purchase was done."
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "UNIX Timestamp when the receipt validation was stored in DB."
+        },
+        "update_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "UNIX Timestamp when the receipt validation was updated in DB."
+        },
+        "environment": {
+          "$ref": "#/definitions/apiStoreEnvironment",
+          "description": "Whether the purchase was done in production or sandbox environment."
+        },
+        "expiry_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Subscription expiration time. The subscription can still be auto-renewed to extend the expiration time further."
+        },
+        "refund_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Subscription refund time. If this time is set, the subscription was refunded."
+        },
+        "provider_response": {
+          "type": "string",
+          "description": "Raw provider validation response body."
+        },
+        "provider_notification": {
+          "type": "string",
+          "description": "Raw provider notification body."
+        },
+        "active": {
+          "type": "boolean",
+          "description": "Whether the subscription is currently active or not."
+        }
+      }
+    },
+    "consoleAccountExport": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "$ref": "#/definitions/nakamaapiAccount",
+          "description": "The user's account details."
+        },
+        "objects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/apiStorageObject"
+          },
+          "description": "The user's storage."
+        },
+        "friends": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/apiFriend"
+          },
+          "description": "The user's friends."
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/apiGroup"
+          },
+          "description": "The user's groups."
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/apiChannelMessage"
+          },
+          "description": "The user's chat messages."
+        },
+        "leaderboard_records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/apiLeaderboardRecord"
+          },
+          "description": "The user's leaderboard records."
+        },
+        "notifications": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/nakamaapiNotification"
+          },
+          "description": "The user's notifications."
+        },
+        "wallet_ledgers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/consoleWalletLedger"
+          },
+          "description": "The user's wallet ledger items."
+        }
+      },
+      "description": "An export of all information stored for a user account."
+    },
+    "consoleAccountImport": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The user ID to overwrite data for, or blank if the account should be freshly created."
+        },
+        "data": {
+          "$ref": "#/definitions/consoleAccountExport",
+          "description": "The export data snapshot to import."
+        }
+      },
+      "description": "Request to import user account data."
+    },
+    "consoleAccountList": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/nakamaapiUser"
+          },
+          "description": "A list of users."
+        },
+        "total_count": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Approximate total number of users."
+        },
+        "next_cursor": {
+          "type": "string",
+          "description": "Next cursor."
+        }
+      },
+      "description": "A list of users."
+    },
+    "consoleAccountNote": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Identifier of the note."
+        },
+        "user_id": {
+          "type": "string",
+          "description": "Owner of this note."
+        },
+        "note": {
+          "type": "string",
+          "description": "The content of the note."
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of note creation."
+        },
+        "update_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of note update."
+        },
+        "create_id": {
+          "type": "string",
+          "description": "Console user identifier that created this note."
+        },
+        "create_username": {
+          "type": "string",
+          "description": "Console username that created this note."
+        },
+        "update_id": {
+          "type": "string",
+          "description": "Console user identifier that last updated this note."
+        },
+        "update_username": {
+          "type": "string",
+          "description": "Console username that last updated this note."
+        }
+      },
+      "description": "A user note."
+    },
+    "consoleAclResources": {
+      "type": "string",
+      "enum": [
+        "ACCOUNT",
+        "ACCOUNT_WALLET",
+        "ACCOUNT_EXPORT",
+        "ACCOUNT_FRIENDS",
+        "ACCOUNT_GROUPS",
+        "ACCOUNT_NOTES",
+        "ACL_TEMPLATE",
+        "ALL_ACCOUNTS",
+        "ALL_DATA",
+        "ALL_STORAGE",
+        "API_EXPLORER",
+        "AUDIT_LOG",
+        "CONFIGURATION",
+        "CHANNEL_MESSAGE",
+        "USER",
+        "GROUP",
+        "IN_APP_PURCHASE",
+        "LEADERBOARD",
+        "LEADERBOARD_RECORD",
+        "MATCH",
+        "NOTIFICATION",
+        "SETTINGS",
+        "STORAGE_DATA",
+        "STORAGE_DATA_IMPORT",
+        "HIRO_INVENTORY",
+        "HIRO_PROGRESSION",
+        "HIRO_ECONOMY",
+        "HIRO_STATS",
+        "HIRO_ENERGY"
+      ],
+      "default": "ACCOUNT",
+      "description": "ATTENTION: Do not modify the order of this enum.\nNew resources should always be appended."
+    },
+    "consoleAclTemplate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The identifier of the ACL template."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the ACL template."
+        },
+        "description": {
+          "type": "string",
+          "description": "The ACL template description."
+        },
+        "acl": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/consolePermissions"
+          },
+          "description": "The ACL template permissions."
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The template Create time."
+        },
+        "update_time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The template Update time."
+        }
+      }
+    },
+    "consoleAclTemplateList": {
+      "type": "object",
+      "properties": {
+        "templates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/consoleAclTemplate"
+          },
+          "description": "A list of ACL templates."
+        }
+      }
+    },
+    "consoleAddAclTemplateRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the ACL template."
+        },
+        "description": {
+          "type": "string",
+          "description": "The ACL template description."
+        },
+        "acl": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/consolePermissions"
+          },
+          "description": "The ACL template permissions."
+        }
+      },
+      "description": "Add a new ACL template."
+    },
+    "consoleAddUserRequest": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "The username of the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the user."
+        },
+        "acl": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/consolePermissions"
+          },
+          "description": "ACL."
+        },
+        "mfa_required": {
+          "type": "boolean",
+          "title": "Require MFA"
+        },
+        "newsletter_subscription": {
+          "type": "boolean",
+          "title": "Subscribe to newsletters"
+        }
+      },
+      "title": "Add a new console user"
+    },
+    "consoleAddUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/nakamaconsoleUser",
+          "description": "The user recently created."
+        },
+        "token": {
+          "type": "string",
+          "title": "A one-time token required to update the user for the first time"
+        }
+      },
+      "description": "Response to create/invite a new user."
+    },
+    "consoleApiEndpointDescriptor": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string"
+        },
+        "body_template": {
+          "type": "string"
+        }
+      },
+      "title": "API Explorer List of Endpoints response message"
+    },
+    "consoleApiEndpointList": {
+      "type": "object",
+      "properties": {
+        "endpoints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/consoleApiEndpointDescriptor"
+          }
+        },
+        "rpc_endpoints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/consoleApiEndpointDescriptor"
+          }
+        }
+      },
+      "title": "API Explorer List of Endpoints"
+    },
+    "consoleAuditLogAction": {
+      "type": "string",
+      "enum": [
+        "UNKNOWN",
+        "CREATE",
+        "UPDATE",
+        "DELETE",
+        "INVOKE",
+        "IMPORT",
+        "EXPORT"
+      ],
+      "default": "UNKNOWN"
+    },
+    "consoleAuditLogList": {
+      "type": "object",
+      "properties": {
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/AuditLogListAuditLog"
+          },
+          "description": "A list of audit log entries."
+        },
+        "next_cursor": {
+          "type": "string",
+          "description": "Cursor to fetch next page of results."
+        },
+        "prev_cursor": {
+          "type": "string",
+          "description": "Cursor to fetch prev page of results."
+        }
+      },
+      "description": "Audit log entries."
+    },
+    "consoleAuditLogUsersList": {
+      "type": "object",
+      "properties": {
+        "usernames": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "List of users that can be filtered in the audit logs."
+    },
+    "consoleAuthenticateLogoutRequest": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "Session token to log out."
+        }
+      },
+      "description": "Log out a session and invalidate a session token."
+    },
+    "consoleAuthenticateMFASetupRequest": {
+      "type": "object",
+      "properties": {
+        "mfa": {
+          "type": "string",
+          "description": "MFA token."
+        },
+        "code": {
+          "type": "string",
+          "description": "MFA code."
+        }
+      },
+      "description": "Request to change MFA."
+    },
+    "consoleAuthenticateMFASetupResponse": {
+      "type": "object",
+      "properties": {
+        "recovery_codes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "An one-time code to configure the MFA mechanism"
+        }
+      },
+      "description": "Response to change MFA."
+    },
+    "consoleAuthenticatePasswordChangeRequest": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Code."
+        },
+        "password": {
+          "type": "string",
+          "description": "New password."
+        }
+      },
+      "description": "Request to change a password."
+    },
+    "consoleAuthenticateRequest": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "The username of the user."
+        },
+        "password": {
+          "type": "string",
+          "description": "The password of the user."
+        },
+        "mfa": {
+          "type": "string",
+          "description": "Multi-factor authentication code."
+        }
+      },
+      "description": "Authenticate a console user with username and password."
+    },
+    "consoleCallApiEndpointResponse": {
+      "type": "object",
+      "properties": {
+        "body": {
+          "type": "string"
+        },
+        "error_message": {
+          "type": "string"
+        }
+      },
+      "title": "API Explorer response definition for CallApiEndpoint"
+    },
+    "consoleConfig": {
+      "type": "object",
+      "properties": {
+        "config": {
+          "type": "string",
+          "description": "JSON-encoded active server configuration."
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/ConfigWarning"
+          },
+          "description": "Any warnings about the current config."
+        },
+        "server_version": {
+          "type": "string",
+          "title": "Server version"
+        }
+      },
+      "description": "The current server configuration and any associated warnings."
+    },
+    "consoleConsoleSession": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string",
+          "description": "A session token (JWT) for the console user."
+        },
+        "mfa_code": {
+          "type": "string",
+          "description": "MFA code required to setup the MFA mechanism."
+        }
+      },
+      "description": "A console user session."
+    },
+    "consoleConsoleWriteStorageObjectBody": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "Value."
+        },
+        "version": {
+          "type": "string",
+          "description": "Version for OCC."
+        },
+        "permission_read": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Read permission value."
+        },
+        "permission_write": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Write permission value."
+        }
+      },
+      "description": "Write a new storage object or update an existing one."
+    },
+    "consoleDeleteChannelMessagesResponse": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "string",
+          "format": "int64",
+          "description": "Total number of messages deleted."
+        }
+      }
+    },
+    "consoleExtensions": {
+      "type": "object",
+      "properties": {
+        "hiro": {
+          "type": "boolean",
+          "description": "Is Hiro registered."
+        },
+        "hiro_systems": {
+          "$ref": "#/definitions/ExtensionsHiroSystems",
+          "description": "Hiro registered systems, if hiro is available."
+        }
+      },
+      "description": "Which Console extensions are registered and available."
+    },
+    "consoleGroupExport": {
+      "type": "object",
+      "properties": {
+        "group": {
+          "$ref": "#/definitions/apiGroup",
+          "description": "The group details."
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/GroupUserListGroupUser"
+          },
+          "description": "The group's list of members."
+        }
+      },
+      "description": "An export of all information stored for a group."
+    },
+    "consoleListAccountNotesResponse": {
       "type": "object",
       "properties": {
         "notes": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/AccountNote"
+            "$ref": "#/definitions/consoleAccountNote"
           },
           "description": "The list of notes."
         },
@@ -4657,7 +4944,7 @@
       },
       "description": "Response to list user notes."
     },
-    "ListChannelMessagesRequest.Type": {
+    "consoleListChannelMessagesRequestType": {
       "type": "string",
       "enum": [
         "UNKNOWN",
@@ -4667,29 +4954,11 @@
       ],
       "default": "UNKNOWN"
     },
-    "ListResponse": {
-      "type": "object",
-      "properties": {
-        "templates": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/Template.View"
-          },
-          "description": "A list of templates."
-        },
-        "page_options": {
-          "$ref": "#/definitions/PageOptions",
-          "description": "The pagination options, if there are more pages."
-        }
-      },
-      "description": "A list of templates."
-    },
-    "MatchList.Match": {
+    "consoleMatchListMatch": {
       "type": "object",
       "properties": {
         "api_match": {
-          "$ref": "#/definitions/api.Match",
+          "$ref": "#/definitions/nakamaapiMatch",
           "title": "The API match"
         },
         "node": {
@@ -4698,14 +4967,14 @@
         }
       }
     },
-    "MatchState": {
+    "consoleMatchState": {
       "type": "object",
       "properties": {
         "presences": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/UserPresence"
+            "$ref": "#/definitions/realtimeUserPresence"
           },
           "description": "Presence list."
         },
@@ -4721,111 +4990,7 @@
       },
       "title": "Match state"
     },
-    "MessageChannelType": {
-      "type": "string",
-      "enum": [
-        "DEFAULT",
-        "PUSH",
-        "EMAIL"
-      ],
-      "default": "DEFAULT",
-      "description": "Message channel types.\n\n - PUSH: Push notification.\n - EMAIL: Email."
-    },
-    "MessageChannels": {
-      "type": "object",
-      "properties": {
-        "channels": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/MessageChannelType"
-          }
-        }
-      }
-    },
-    "MessageIntegrationType": {
-      "type": "string",
-      "enum": [
-        "UNKNOWN_MESSAGE_TYPE",
-        "FCM",
-        "APNS",
-        "FACEBOOK_NOTIFICATION",
-        "ONESIGNAL_NOTIFICATION",
-        "WEBHOOK_NOTIFICATION"
-      ],
-      "default": "UNKNOWN_MESSAGE_TYPE",
-      "description": "Message integration's names.\n\n - FCM: The variant for Google's Firebase Cloud Messaging.\n - APNS: The variant for Apple's Message system.\n - FACEBOOK_NOTIFICATION: The variant for Facebook App-to-User Notifications.\n - ONESIGNAL_NOTIFICATION: The variant for OneSignal Notifications.\n - WEBHOOK_NOTIFICATION: The variant for Webhook Notifications."
-    },
-    "ModuleInfo": {
-      "type": "object",
-      "properties": {
-        "path": {
-          "type": "string",
-          "title": "Module path"
-        },
-        "mod_time": {
-          "type": "string",
-          "format": "date-time",
-          "title": "Module last modified date"
-        }
-      },
-      "title": "Module information"
-    },
-    "MultiTextValueFilterOption": {
-      "type": "object",
-      "properties": {
-        "or": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Filter by elements matching one of the parameters."
-        },
-        "and": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Filter by elements matching all parameters."
-        }
-      },
-      "description": "The MultiTextValueFilterOption specifies the operation to apply to multi-value text fields.\nOnly a single operation can be used at one time."
-    },
-    "NullValue": {
-      "type": "string",
-      "enum": [
-        "NULL_VALUE"
-      ],
-      "default": "NULL_VALUE",
-      "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\nThe JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
-    },
-    "PageOptions": {
-      "type": "object",
-      "properties": {
-        "prev_cursor": {
-          "type": "string",
-          "description": "Cursor, if there are prev pages."
-        },
-        "next_cursor": {
-          "type": "string",
-          "description": "Cursor, if there are next pages."
-        }
-      }
-    },
-    "PaginationOptions": {
-      "type": "object",
-      "properties": {
-        "limit": {
-          "type": "integer",
-          "format": "int32",
-          "description": "Limit of results to return."
-        },
-        "cursor": {
-          "type": "string",
-          "description": "Cursor to the next page."
-        }
-      }
-    },
-    "Permissions": {
+    "consolePermissions": {
       "type": "object",
       "properties": {
         "read": {
@@ -4843,39 +5008,7 @@
       },
       "description": "The possible actions that can done over a resource."
     },
-    "PurchaseList": {
-      "type": "object",
-      "properties": {
-        "validated_purchases": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/ValidatedPurchase"
-          },
-          "description": "Stored validated purchases."
-        },
-        "cursor": {
-          "type": "string",
-          "description": "The cursor to send when retrieving the next page, if any."
-        },
-        "prev_cursor": {
-          "type": "string",
-          "description": "The cursor to send when retrieving the previous page, if any."
-        }
-      },
-      "description": "A list of validated purchases stored by Nakama."
-    },
-    "RequireUserMfaBody": {
-      "type": "object",
-      "properties": {
-        "required": {
-          "type": "boolean",
-          "description": "Required."
-        }
-      },
-      "description": "Make a user's mfa required or not."
-    },
-    "ResetUserResponse": {
+    "consoleResetUserResponse": {
       "type": "object",
       "properties": {
         "code": {
@@ -4885,16 +5018,9 @@
       },
       "description": "Request to reset a user's credentials, password or MFA."
     },
-    "RuntimeInfo": {
+    "consoleRuntimeInfo": {
       "type": "object",
       "properties": {
-        "lua_rpc_functions": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "title": "Lua registered RPC functions"
-        },
         "go_rpc_functions": {
           "type": "array",
           "items": {
@@ -4913,96 +5039,22 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/ModuleInfo"
+            "$ref": "#/definitions/RuntimeInfoModuleInfo"
           },
           "title": "Go loaded modules"
-        },
-        "lua_modules": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/ModuleInfo"
-          },
-          "title": "Lua loaded modules"
         },
         "js_modules": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/ModuleInfo"
+            "$ref": "#/definitions/RuntimeInfoModuleInfo"
           },
           "title": "JavaScript loaded modules"
         }
       },
       "title": "Runtime information"
     },
-    "SearchOptions": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "$ref": "#/definitions/SingleTextValueFilterOption",
-          "description": "Filter by Name."
-        },
-        "label_name": {
-          "$ref": "#/definitions/MultiTextValueFilterOption",
-          "description": "Filter by Label name."
-        }
-      }
-    },
-    "SendDirectMessageRequest": {
-      "type": "object",
-      "properties": {
-        "template_id": {
-          "type": "string",
-          "description": "The identifier of the template used to render the message content."
-        },
-        "identity_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "A list of recipient identity IDs."
-        },
-        "integrations": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/MessageIntegrationType"
-          },
-          "description": "A list of integrations to use for sending the message."
-        },
-        "persist": {
-          "type": "boolean",
-          "description": "Whether the message should be stored in the recipient's inbox."
-        },
-        "channels": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/MessageChannels"
-          },
-          "description": "If applicable, channels to send this message through, per integration."
-        },
-        "template_override": {
-          "$ref": "#/definitions/TemplateOverride",
-          "description": "A template for the message. If this value is provided then the 'template_id' will be ignored."
-        }
-      },
-      "description": "The request to send direct messages."
-    },
-    "SendDirectMessageResponse": {
-      "type": "object",
-      "properties": {
-        "delivery_results": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/DeliveryResult"
-          },
-          "description": "Results for each attempted message delivery."
-        }
-      },
-      "description": "The response for the SendDirectMessageRequest."
-    },
-    "SendNotificationRequest": {
+    "consoleSendNotificationRequest": {
       "type": "object",
       "properties": {
         "user_ids": {
@@ -5036,7 +5088,7 @@
       },
       "description": "Request to send a notification."
     },
-    "Setting": {
+    "consoleSetting": {
       "type": "object",
       "properties": {
         "name": {
@@ -5055,49 +5107,28 @@
       },
       "description": "A single setting."
     },
-    "SettingList": {
+    "consoleSettingList": {
       "type": "object",
       "properties": {
         "settings": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/Setting"
+            "$ref": "#/definitions/consoleSetting"
           },
           "description": "A list of settings."
         },
         "acl_resources": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/AclResources"
+            "$ref": "#/definitions/consoleAclResources"
           },
           "description": "This field is only used to allow the swagger generator to output the enum values."
         }
       },
       "description": "A list of settings."
     },
-    "SingleTextValueFilterOption": {
-      "type": "object",
-      "properties": {
-        "or": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Filter by elements matching one of the parameters."
-        },
-        "exact": {
-          "type": "string",
-          "description": "Filter by elements matching exactly the value."
-        },
-        "like": {
-          "type": "string",
-          "description": "Filter by elements matching the pattern."
-        }
-      },
-      "description": "The SingleTextValueFilterOption specifies the operation to apply to single value text fields.\nOnly a single operation can be used at one time."
-    },
-    "StatusHealth": {
+    "consoleStatusHealth": {
       "type": "string",
       "enum": [
         "STATUS_HEALTH_OK",
@@ -5107,14 +5138,14 @@
       ],
       "default": "STATUS_HEALTH_OK"
     },
-    "StatusList": {
+    "consoleStatusList": {
       "type": "object",
       "properties": {
         "nodes": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/StatusList.Status"
+            "$ref": "#/definitions/consoleStatusListStatus"
           },
           "description": "List of nodes and their stats."
         },
@@ -5126,7 +5157,7 @@
       },
       "description": "List of nodes and their stats."
     },
-    "StatusList.Status": {
+    "consoleStatusListStatus": {
       "type": "object",
       "properties": {
         "name": {
@@ -5134,7 +5165,7 @@
           "description": "Node name."
         },
         "health": {
-          "$ref": "#/definitions/StatusHealth",
+          "$ref": "#/definitions/consoleStatusHealth",
           "description": "Health score."
         },
         "session_count": {
@@ -5190,7 +5221,7 @@
       },
       "description": "The status of a Nakama node."
     },
-    "StorageCollectionsList": {
+    "consoleStorageCollectionsList": {
       "type": "object",
       "properties": {
         "collections": {
@@ -5202,14 +5233,14 @@
         }
       }
     },
-    "StorageList": {
+    "consoleStorageList": {
       "type": "object",
       "properties": {
         "objects": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/StorageListObject"
+            "$ref": "#/definitions/consoleStorageListObject"
           },
           "description": "List of storage objects matching list/filter operation."
         },
@@ -5225,7 +5256,7 @@
       },
       "description": "List of storage objects."
     },
-    "StorageListObject": {
+    "consoleStorageListObject": {
       "type": "object",
       "properties": {
         "collection": {
@@ -5267,545 +5298,21 @@
       },
       "description": "An object within the storage engine."
     },
-    "StorageObject": {
-      "type": "object",
-      "properties": {
-        "collection": {
-          "type": "string",
-          "description": "The collection which stores the object."
-        },
-        "key": {
-          "type": "string",
-          "description": "The key of the object within the collection."
-        },
-        "user_id": {
-          "type": "string",
-          "description": "The user owner of the object."
-        },
-        "value": {
-          "type": "string",
-          "description": "The value of the object."
-        },
-        "version": {
-          "type": "string",
-          "description": "The version hash of the object."
-        },
-        "permission_read": {
-          "type": "integer",
-          "format": "int32",
-          "description": "The read access permissions for the object."
-        },
-        "permission_write": {
-          "type": "integer",
-          "format": "int32",
-          "description": "The write access permissions for the object."
-        },
-        "create_time": {
-          "type": "string",
-          "format": "date-time",
-          "description": "The UNIX time (for gRPC clients) or ISO string (for REST clients) when the object was created."
-        },
-        "update_time": {
-          "type": "string",
-          "format": "date-time",
-          "description": "The UNIX time (for gRPC clients) or ISO string (for REST clients) when the object was last updated."
-        }
-      },
-      "description": "An object within the storage engine."
-    },
-    "StorageObjectAck": {
-      "type": "object",
-      "properties": {
-        "collection": {
-          "type": "string",
-          "description": "The collection which stores the object."
-        },
-        "key": {
-          "type": "string",
-          "description": "The key of the object within the collection."
-        },
-        "version": {
-          "type": "string",
-          "description": "The version hash of the object."
-        },
-        "user_id": {
-          "type": "string",
-          "description": "The owner of the object."
-        },
-        "create_time": {
-          "type": "string",
-          "format": "date-time",
-          "description": "The UNIX time (for gRPC clients) or ISO string (for REST clients) when the object was created."
-        },
-        "update_time": {
-          "type": "string",
-          "format": "date-time",
-          "description": "The UNIX time (for gRPC clients) or ISO string (for REST clients) when the object was last updated."
-        }
-      },
-      "description": "A storage acknowledgement."
-    },
-    "StoreEnvironment": {
-      "type": "string",
-      "enum": [
-        "UNKNOWN",
-        "SANDBOX",
-        "PRODUCTION"
-      ],
-      "default": "UNKNOWN",
-      "description": "- UNKNOWN: Unknown environment.\n - SANDBOX: Sandbox/test environment.\n - PRODUCTION: Production environment.",
-      "title": "Environment where a purchase/subscription took place,"
-    },
-    "StoreProvider": {
-      "type": "string",
-      "enum": [
-        "APPLE_APP_STORE",
-        "GOOGLE_PLAY_STORE",
-        "HUAWEI_APP_GALLERY",
-        "FACEBOOK_INSTANT_STORE"
-      ],
-      "default": "APPLE_APP_STORE",
-      "description": "- APPLE_APP_STORE: Apple App Store\n - GOOGLE_PLAY_STORE: Google Play Store\n - HUAWEI_APP_GALLERY: Huawei App Gallery\n - FACEBOOK_INSTANT_STORE: Facebook Instant Store",
-      "title": "Validation Provider,"
-    },
-    "SubscriptionList": {
-      "type": "object",
-      "properties": {
-        "validated_subscriptions": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/ValidatedSubscription"
-          },
-          "description": "Stored validated subscriptions."
-        },
-        "cursor": {
-          "type": "string",
-          "description": "The cursor to send when retrieving the next page, if any."
-        },
-        "prev_cursor": {
-          "type": "string",
-          "description": "The cursor to send when retrieving the previous page, if any."
-        }
-      },
-      "description": "A list of validated subscriptions stored by Nakama."
-    },
-    "Template.View": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "The identifier."
-        },
-        "name": {
-          "type": "string",
-          "description": "The display name."
-        },
-        "create_time_sec": {
-          "type": "string",
-          "format": "int64",
-          "description": "Create time."
-        },
-        "update_time_sec": {
-          "type": "string",
-          "format": "int64",
-          "description": "Update time."
-        },
-        "value": {
-          "type": "string",
-          "description": "The template value to generate the message's content."
-        },
-        "title": {
-          "type": "string",
-          "description": "The title to generate the message's title."
-        },
-        "image_url": {
-          "type": "string",
-          "description": "The image_url for the message."
-        },
-        "value_type": {
-          "type": "string",
-          "title": "The value_type for the message's content"
-        },
-        "json_metadata": {
-          "type": "string",
-          "title": "The json_metadata for the message"
-        },
-        "categories": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/Category.View"
-          },
-          "description": "Category label identifiers."
-        }
-      },
-      "description": "A template view."
-    },
-    "TemplateOverride": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string",
-          "description": "The title to generate the message's title."
-        },
-        "value": {
-          "type": "string",
-          "description": "The template value to generate the message's content."
-        },
-        "image_url": {
-          "type": "string",
-          "description": "The image_url for the message."
-        },
-        "json_metadata": {
-          "type": "string",
-          "title": "The json_metadata for the message"
-        },
-        "variants": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/TemplateOverride"
-          },
-          "description": "Language-specific template overrides. The key is the language code."
-        }
-      },
-      "description": "An template override."
-    },
-    "UnlinkDeviceBody": {
-      "type": "object",
-      "properties": {
-        "device_id": {
-          "type": "string",
-          "description": "Device ID to unlink."
-        }
-      },
-      "description": "Unlink a particular device ID from a user's account."
-    },
-    "UpdateAccountBody": {
-      "type": "object",
-      "properties": {
-        "username": {
-          "type": "string",
-          "description": "Username."
-        },
-        "display_name": {
-          "type": "string",
-          "description": "Display name."
-        },
-        "metadata": {
-          "type": "string",
-          "description": "Metadata."
-        },
-        "avatar_url": {
-          "type": "string",
-          "description": "Avatar URL."
-        },
-        "lang_tag": {
-          "type": "string",
-          "description": "Langtag."
-        },
-        "location": {
-          "type": "string",
-          "description": "Location."
-        },
-        "timezone": {
-          "type": "string",
-          "description": "Timezone."
-        },
-        "custom_id": {
-          "type": "string",
-          "description": "Custom ID."
-        },
-        "email": {
-          "type": "string",
-          "description": "Email."
-        },
-        "password": {
-          "type": "string",
-          "description": "Password."
-        },
-        "device_ids": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "Device ID modifications."
-        },
-        "wallet": {
-          "type": "string",
-          "description": "Wallet."
-        }
-      },
-      "description": "Update user account information."
-    },
-    "UpdateAclTemplateBody": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "The name of the ACL template."
-        },
-        "description": {
-          "type": "string",
-          "description": "The ACL template description."
-        },
-        "acl": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/Permissions"
-          },
-          "description": "The ACL template permissions."
-        }
-      }
-    },
-    "UpdateGroupBody": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Name."
-        },
-        "description": {
-          "type": "string",
-          "description": "Description."
-        },
-        "lang_tag": {
-          "type": "string",
-          "description": "Langtag."
-        },
-        "metadata": {
-          "type": "string",
-          "description": "Metadata."
-        },
-        "avatar_url": {
-          "type": "string",
-          "description": "Avatar URL."
-        },
-        "open": {
-          "type": "boolean",
-          "description": "Anyone can join open groups, otherwise only admins can accept members."
-        },
-        "max_count": {
-          "type": "integer",
-          "format": "int32",
-          "description": "The maximum number of members allowed."
-        }
-      },
-      "description": "Update group information."
-    },
-    "UpdateSettingBody": {
-      "type": "object",
-      "properties": {
-        "value": {
-          "type": "string",
-          "description": "Setting value."
-        }
-      },
-      "description": "Request to update an existing setting."
-    },
-    "UpdateUserBody": {
-      "type": "object",
-      "properties": {
-        "acl": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/Permissions"
-          },
-          "description": "ACL."
-        }
-      },
-      "description": "Request to update an existing user."
-    },
-    "UserGroup": {
-      "type": "object",
-      "properties": {
-        "group": {
-          "$ref": "#/definitions/Group",
-          "description": "Group."
-        },
-        "state": {
-          "type": "integer",
-          "format": "int32",
-          "description": "The user's relationship to the group."
-        }
-      },
-      "description": "A single group-role pair."
-    },
-    "UserGroupList": {
-      "type": "object",
-      "properties": {
-        "user_groups": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/UserGroup"
-          },
-          "description": "Group-role pairs for a user."
-        },
-        "cursor": {
-          "type": "string",
-          "description": "Cursor for the next page of results, if any."
-        }
-      },
-      "description": "A list of groups belonging to a user, along with the user's role in each group."
-    },
-    "UserList": {
+    "consoleUserList": {
       "type": "object",
       "properties": {
         "users": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/console.User"
+            "$ref": "#/definitions/nakamaconsoleUser"
           },
           "description": "A list of users."
         }
       },
       "description": "A list of console users."
     },
-    "UserPresence": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "string",
-          "description": "The user this presence belongs to."
-        },
-        "session_id": {
-          "type": "string",
-          "description": "A unique session ID identifying the particular connection, because the user may have many."
-        },
-        "username": {
-          "type": "string",
-          "description": "The username for display purposes."
-        },
-        "persistence": {
-          "type": "boolean",
-          "description": "Whether this presence generates persistent data/messages, if applicable for the stream type."
-        },
-        "status": {
-          "type": "string",
-          "description": "A user-set status message for this stream, if applicable."
-        }
-      },
-      "description": "A user session associated to a stream, usually through a list operation or a join/leave event."
-    },
-    "ValidatedPurchase": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "string",
-          "description": "Purchase User ID."
-        },
-        "product_id": {
-          "type": "string",
-          "description": "Purchase Product ID."
-        },
-        "transaction_id": {
-          "type": "string",
-          "description": "Purchase Transaction ID."
-        },
-        "store": {
-          "$ref": "#/definitions/StoreProvider",
-          "title": "Store identifier"
-        },
-        "purchase_time": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Timestamp when the purchase was done."
-        },
-        "create_time": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Timestamp when the receipt validation was stored in DB."
-        },
-        "update_time": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Timestamp when the receipt validation was updated in DB."
-        },
-        "refund_time": {
-          "type": "string",
-          "format": "date-time",
-          "title": "Timestamp when the purchase was refunded. Set to UNIX"
-        },
-        "provider_response": {
-          "type": "string",
-          "description": "Raw provider validation response."
-        },
-        "environment": {
-          "$ref": "#/definitions/StoreEnvironment",
-          "description": "Whether the purchase was done in production or sandbox environment."
-        },
-        "seen_before": {
-          "type": "boolean",
-          "description": "Whether the purchase had already been validated by Nakama before."
-        }
-      },
-      "description": "Validated Purchase stored by Nakama."
-    },
-    "ValidatedSubscription": {
-      "type": "object",
-      "properties": {
-        "user_id": {
-          "type": "string",
-          "description": "Subscription User ID."
-        },
-        "product_id": {
-          "type": "string",
-          "description": "Purchase Product ID."
-        },
-        "original_transaction_id": {
-          "type": "string",
-          "description": "Purchase Original transaction ID (we only keep track of the original subscription, not subsequent renewals)."
-        },
-        "store": {
-          "$ref": "#/definitions/StoreProvider",
-          "title": "Store identifier"
-        },
-        "purchase_time": {
-          "type": "string",
-          "format": "date-time",
-          "description": "UNIX Timestamp when the purchase was done."
-        },
-        "create_time": {
-          "type": "string",
-          "format": "date-time",
-          "description": "UNIX Timestamp when the receipt validation was stored in DB."
-        },
-        "update_time": {
-          "type": "string",
-          "format": "date-time",
-          "description": "UNIX Timestamp when the receipt validation was updated in DB."
-        },
-        "environment": {
-          "$ref": "#/definitions/StoreEnvironment",
-          "description": "Whether the purchase was done in production or sandbox environment."
-        },
-        "expiry_time": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Subscription expiration time. The subscription can still be auto-renewed to extend the expiration time further."
-        },
-        "refund_time": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Subscription refund time. If this time is set, the subscription was refunded."
-        },
-        "provider_response": {
-          "type": "string",
-          "description": "Raw provider validation response body."
-        },
-        "provider_notification": {
-          "type": "string",
-          "description": "Raw provider notification body."
-        },
-        "active": {
-          "type": "boolean",
-          "description": "Whether the subscription is currently active or not."
-        }
-      }
-    },
-    "WalletLedger": {
+    "consoleWalletLedger": {
       "type": "object",
       "properties": {
         "id": {
@@ -5837,14 +5344,14 @@
       },
       "description": "An individual update to a user's wallet."
     },
-    "WalletLedgerList": {
+    "consoleWalletLedgerList": {
       "type": "object",
       "properties": {
         "items": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/WalletLedger"
+            "$ref": "#/definitions/consoleWalletLedger"
           },
           "description": "A list of wallet ledger items."
         },
@@ -5859,25 +5366,30 @@
       },
       "description": "List of wallet ledger items for a particular user."
     },
-    "Warning": {
+    "googlerpcStatus": {
       "type": "object",
       "properties": {
-        "field": {
-          "type": "string",
-          "description": "The config field this warning is for in a JSON pointer format."
+        "code": {
+          "type": "integer",
+          "format": "int32"
         },
         "message": {
-          "type": "string",
-          "description": "Warning message text."
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
         }
-      },
-      "description": "A warning for a configuration field."
+      }
     },
-    "api.Account": {
+    "nakamaapiAccount": {
       "type": "object",
       "properties": {
         "user": {
-          "$ref": "#/definitions/api.User",
+          "$ref": "#/definitions/nakamaapiUser",
           "description": "The user object."
         },
         "wallet": {
@@ -5892,7 +5404,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/AccountDevice"
+            "$ref": "#/definitions/apiAccountDevice"
           },
           "description": "The devices which belong to the user's account."
         },
@@ -5913,7 +5425,7 @@
       },
       "description": "A user with additional account details. Always the current user."
     },
-    "api.Match": {
+    "nakamaapiMatch": {
       "type": "object",
       "properties": {
         "match_id": {
@@ -5945,7 +5457,7 @@
       },
       "description": "Represents a realtime match."
     },
-    "api.Notification": {
+    "nakamaapiNotification": {
       "type": "object",
       "properties": {
         "id": {
@@ -5981,7 +5493,7 @@
       },
       "description": "A notification in the server."
     },
-    "api.User": {
+    "nakamaapiUser": {
       "type": "object",
       "properties": {
         "id": {
@@ -6062,11 +5574,11 @@
       },
       "description": "A user in the server."
     },
-    "console.Account": {
+    "nakamaconsoleAccount": {
       "type": "object",
       "properties": {
         "account": {
-          "$ref": "#/definitions/api.Account",
+          "$ref": "#/definitions/nakamaapiAccount",
           "description": "The user's account details."
         },
         "disable_time": {
@@ -6077,14 +5589,14 @@
       },
       "description": "Account information."
     },
-    "console.GroupList": {
+    "nakamaconsoleGroupList": {
       "type": "object",
       "properties": {
         "groups": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/Group"
+            "$ref": "#/definitions/apiGroup"
           },
           "description": "A list of groups."
         },
@@ -6100,7 +5612,7 @@
       },
       "description": "A list of groups."
     },
-    "console.Leaderboard": {
+    "nakamaconsoleLeaderboard": {
       "type": "object",
       "properties": {
         "id": {
@@ -6208,14 +5720,14 @@
       },
       "description": "A leaderboard."
     },
-    "console.LeaderboardList": {
+    "nakamaconsoleLeaderboardList": {
       "type": "object",
       "properties": {
         "leaderboards": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/console.Leaderboard"
+            "$ref": "#/definitions/nakamaconsoleLeaderboard"
           },
           "description": "The list of leaderboards returned."
         },
@@ -6231,20 +5743,20 @@
       },
       "description": "A list of leaderboards."
     },
-    "console.MatchList": {
+    "nakamaconsoleMatchList": {
       "type": "object",
       "properties": {
         "matches": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/MatchList.Match"
+            "$ref": "#/definitions/consoleMatchListMatch"
           }
         }
       },
       "description": "A list of realtime matches, with their node names."
     },
-    "console.Notification": {
+    "nakamaconsoleNotification": {
       "type": "object",
       "properties": {
         "id": {
@@ -6283,14 +5795,14 @@
         }
       }
     },
-    "console.NotificationList": {
+    "nakamaconsoleNotificationList": {
       "type": "object",
       "properties": {
         "notifications": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/console.Notification"
+            "$ref": "#/definitions/nakamaconsoleNotification"
           },
           "description": "List of notifications."
         },
@@ -6304,7 +5816,7 @@
         }
       }
     },
-    "console.User": {
+    "nakamaconsoleUser": {
       "type": "object",
       "properties": {
         "id": {
@@ -6322,7 +5834,7 @@
         "acl": {
           "type": "object",
           "additionalProperties": {
-            "$ref": "#/definitions/Permissions"
+            "$ref": "#/definitions/consolePermissions"
           },
           "description": "ACL."
         },
@@ -6347,24 +5859,48 @@
       },
       "title": "A console user"
     },
-    "rpc.Status": {
+    "protobufAny": {
       "type": "object",
       "properties": {
-        "code": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "message": {
+        "@type": {
           "type": "string"
-        },
-        "details": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/Any"
-          }
         }
-      }
+      },
+      "additionalProperties": {}
+    },
+    "protobufNullValue": {
+      "type": "string",
+      "enum": [
+        "NULL_VALUE"
+      ],
+      "default": "NULL_VALUE",
+      "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\nThe JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
+    },
+    "realtimeUserPresence": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "description": "The user this presence belongs to."
+        },
+        "session_id": {
+          "type": "string",
+          "description": "A unique session ID identifying the particular connection, because the user may have many."
+        },
+        "username": {
+          "type": "string",
+          "description": "The username for display purposes."
+        },
+        "persistence": {
+          "type": "boolean",
+          "description": "Whether this presence generates persistent data/messages, if applicable for the stream type."
+        },
+        "status": {
+          "type": "string",
+          "description": "A user-set status message for this stream, if applicable."
+        }
+      },
+      "description": "A user session associated to a stream, usually through a list operation or a join/leave event."
     }
   },
   "securityDefinitions": {

@@ -354,10 +354,6 @@ func CheckACL(path string, userPermissions Permission) bool {
 		requiredPermissions = NewPermission(console.AclResources_SETTINGS, PermissionWrite)
 	case "/nakama.console.Console/WriteStorageObject":
 		requiredPermissions = NewPermission(console.AclResources_STORAGE_DATA, PermissionWrite)
-	case "/nakama.console.Console/SatoriListTemplates":
-		requiredPermissions = NewPermission(console.AclResources_SATORI_MESSAGE, PermissionRead)
-	case "/nakama.console.Console/SatoriSendDirectMessage":
-		requiredPermissions = NewPermission(console.AclResources_SATORI_MESSAGE, PermissionWrite)
 	case "/nakama.console.Console/SendNotificationRequest":
 		requiredPermissions = NewPermission(console.AclResources_NOTIFICATION, PermissionWrite)
 	case "/v2/console/storage/import":

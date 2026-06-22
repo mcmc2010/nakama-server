@@ -575,17 +575,6 @@ service Console {
     };
   }
 
-  rpc SatoriListTemplates (Template.ListRequest) returns (Template.ListResponse) {
-    option (google.api.http).get = "/v2/console/satori/template";
-  }
-
-  rpc SatoriSendDirectMessage (SendDirectMessageRequest) returns (SendDirectMessageResponse) {
-    option (google.api.http) = {
-      post: "/v2/console/satori/direct-message",
-      body: "*"
-    };
-  }
-
   // Send a notification.
   rpc SendNotification (SendNotificationRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
@@ -1079,8 +1068,6 @@ message Extensions {
   bool hiro = 1;
   // Hiro registered systems, if hiro is available.
   HiroSystems hiro_systems = 2;
-  // Is Satori registered.
-  bool satori = 3;
 
   // Hiro available systems.
   message HiroSystems {
@@ -1488,18 +1475,14 @@ message RuntimeInfo {
     google.protobuf.Timestamp mod_time = 2;
   }
 
-  // Lua registered RPC functions
-  repeated string lua_rpc_functions = 1;
   // Go registered RPC functions
-  repeated string go_rpc_functions = 2;
+  repeated string go_rpc_functions = 1;
   // JavaScript registered RPC functions
-  repeated string js_rpc_functions = 3;
+  repeated string js_rpc_functions = 2;
   // Go loaded modules
-  repeated ModuleInfo go_modules = 4;
-  // Lua loaded modules
-  repeated ModuleInfo lua_modules = 5;
+  repeated ModuleInfo go_modules = 3;
   // JavaScript loaded modules
-  repeated ModuleInfo js_modules = 6;
+  repeated ModuleInfo js_modules = 4;
 }
 
 // An individual update to a user's wallet.
@@ -1656,382 +1639,6 @@ message SendNotificationRequest {
   string sender_id = 6;
 }
 
-// A template.
-message Template {
-  // The identifier.
-  string id = 1;
-  // The display name.
-  string name = 2;
-  // Create time.
-  int64 create_time_sec = 4;
-  // Update time.
-  int64 update_time_sec = 5;
-  // The template value to generate the message's content.
-  string value = 6;
-  // The template variants..
-  repeated TemplateVariant variants = 7;
-  // The title to generate the message's title.
-  string title = 8;
-  // The image_url for the message.
-  string image_url = 9;
-  // The value_type for the message's content
-  string value_type = 10;
-  // The json_metadata for the message
-  string json_metadata = 11;
-  // Category label identifiers.
-  repeated Category.View categories = 12;
-
-  // A template view.
-  message View {
-    // The identifier.
-    string id = 1;
-    // The display name.
-    string name = 2;
-    // Create time.
-    int64 create_time_sec = 4;
-    // Update time.
-    int64 update_time_sec = 5;
-    // The template value to generate the message's content.
-    string value = 6;
-    // The title to generate the message's title.
-    string title = 7;
-    // The image_url for the message.
-    string image_url = 8;
-    // The value_type for the message's content
-    string value_type = 9;
-    // The json_metadata for the message
-    string json_metadata = 10;
-    // Category label identifiers.
-    repeated Category.View categories = 11;
-  }
-
-  // An export of a message template.
-  message Export {
-    // The identifier.
-    string id = 1;
-    // The display name.
-    string name = 2;
-    // The template value to generate the message's content.
-    string value = 3;
-    // The template variants..
-    repeated VariantExport variants = 4;
-    // The title to generate the message's title.
-    string title = 5;
-    // The image_url for the message.
-    string image_url = 6;
-    // The value_type for the message's content
-    string value_type = 7;
-    // The json_metadata for the message
-    string json_metadata = 8;
-    // Category label identifiers.
-    repeated string category_ids = 9;
-  }
-
-  message VariantExport {
-    // The language of the template.
-    string language = 1;
-    // The template value to generate the message's content.
-    string value = 2;
-    // The title to generate the message's title.
-    string title = 3;
-    // The image_url for the message.
-    string image_url = 4;
-  }
-
-  // The request to list templates.
-  message ListRequest {
-    // Search options.
-    SearchOptions search = 5;
-    // Pagination options.
-    PaginationOptions pagination = 6;
-
-    message SearchOptions {
-      // Filter by Name.
-      SingleTextValueFilterOption name = 1;
-      // Filter by Label name.
-      MultiTextValueFilterOption label_name = 3;
-    }
-
-    // The MultiTextValueFilterOption specifies the operation to apply to multi-value text fields.
-    // Only a single operation can be used at one time.
-    message MultiTextValueFilterOption {
-      // Filter by elements matching one of the parameters.
-      repeated string or = 1;
-      // Filter by elements matching all parameters.
-      repeated string and = 2;
-    }
-
-    message PaginationOptions {
-      // Limit of results to return.
-      int32 limit = 1;
-      // Cursor to the next page.
-      string cursor = 2;
-    }
-  }
-
-  // The SingleTextValueFilterOption specifies the operation to apply to single value text fields.
-  // Only a single operation can be used at one time.
-  message SingleTextValueFilterOption {
-    // Filter by elements matching one of the parameters.
-    repeated string or = 1;
-    // Filter by elements matching exactly the value.
-    string exact = 2;
-    // Filter by elements matching the pattern.
-    string like = 3;
-  }
-
-  // A list of templates.
-  message ListResponse {
-    // A list of templates.
-    repeated Template.View templates = 1;
-    // The pagination options, if there are more pages.
-    PageOptions page_options = 2;
-  }
-
-  // The request to create a template.
-  message CreateRequest {
-    // The name for the template.
-    string name = 1;
-    // The template value to generate the message's content.
-    string value = 2;
-    // The title to generate the message's title.
-    string title = 3;
-    // The image_url for the message.
-    string image_url = 4;
-    // The value_type for the message's content
-    string value_type = 5;
-    // The json_metadata for the message
-    string json_metadata = 6;
-    // Category label identifiers.
-    repeated string category_ids = 7;
-  }
-
-  // The request to update a template.
-  message UpdateRequest {
-    // The identifier of the template.
-    string id = 1;
-    // The new name for the template.
-    string name = 2;
-    // The template value to generate the message's content.
-    string value = 3;
-    // The title to generate the message's title.
-    string title = 4;
-    // The image_url for the message.
-    string image_url = 5;
-    // The value_type for the message's content
-    string value_type = 6;
-    // The json_metadata for the message
-    string json_metadata = 7;
-    // Category label identifiers.
-    repeated string category_ids = 8;
-  }
-
-  message PageOptions {
-    // Cursor, if there are prev pages.
-    string prev_cursor = 1;
-    // Cursor, if there are next pages.
-    string next_cursor = 2;
-  }
-}
-
-// A template variant.
-message TemplateVariant {
-  // The language of the template.
-  string language = 1;
-  // The template value to generate the message's content.
-  string value = 2;
-  // Create time.
-  int64 create_time_sec = 4;
-  // Update time.
-  int64 update_time_sec = 5;
-  // The title to generate the message's title.
-  string title = 6;
-  // The image_url for the message.
-  string image_url = 7;
-}
-
-// Represents a category label.
-message Category {
-  // Identifier.
-  string id = 1;
-  // Name.
-  string name = 2;
-  // Description.
-  string description = 3;
-  // Color hex for the label.
-  string color = 4;
-  // Create time.
-  int64 create_time_sec = 5;
-  // Update time.
-  int64 update_time_sec = 6;
-
-  // A export of a Category
-  message Export {
-    // Identifier.
-    string id = 1;
-    // Name.
-    string name = 2;
-    // Description.
-    string description = 3;
-    // Color hex for the label.
-    string color = 4;
-  }
-
-  // A summary of a Category.
-  message View {
-    // Identifier.
-    string id = 1;
-    // Name.
-    string name = 2;
-    // Color hex for the label.
-    string color = 3;
-  }
-}
-
-// The request to send direct messages.
-message SendDirectMessageRequest {
-  // The identifier of the template used to render the message content.
-  string template_id = 1;
-  // A list of recipient identity IDs.
-  repeated string identity_ids = 2;
-  // A list of integrations to use for sending the message.
-  repeated MessageIntegrationType integrations = 3;
-  // Whether the message should be stored in the recipient's inbox.
-  bool persist = 4;
-  // If applicable, channels to send this message through, per integration.
-  map<int32, MessageChannels> channels = 5;
-  // A template for the message. If this value is provided then the 'template_id' will be ignored.
-  TemplateOverride template_override = 6;
-
-  // An template override.
-  message TemplateOverride {
-    // The title to generate the message's title.
-    string title = 1;
-    // The template value to generate the message's content.
-    string value = 2;
-    // The image_url for the message.
-    string image_url = 3;
-    // The json_metadata for the message
-    string json_metadata = 4;
-    // Language-specific template overrides. The key is the language code.
-    map<string,TemplateOverride> variants = 5;
-  }
-
-  message MessageChannels {
-    repeated MessageChannelType channels = 1;
-  }
-}
-
-// The response for the SendDirectMessageRequest.
-message SendDirectMessageResponse {
-  // Results for each attempted message delivery.
-  repeated DeliveryResult delivery_results = 1;
-  // Details of each delivery attempt.
-  message DeliveryResult {
-    // The identity ID of the recipient.
-    string recipient_id = 1;
-    // Results for each valid integration used in the delivery.
-    repeated IntegrationResult integration_results = 2;
-    // The outcome of using a specific integration.
-    message IntegrationResult {
-      // The integration type used for the message delivery.
-      MessageIntegrationType integration_type = 1;
-      // Whether the message was successfully delivered using this integration.
-      bool success = 2;
-      // An error message, if the delivery failed.
-      string error_message = 3;
-      // The channel type used for the message delivery.
-      MessageChannelType channel_type = 4;
-    }
-  }
-}
-
-// Message integration's names.
-enum MessageIntegrationType {
-  UNKNOWN_MESSAGE_TYPE = 0;
-  // The variant for Google's Firebase Cloud Messaging.
-  FCM = 1;
-  // The variant for Apple's Message system.
-  APNS = 2;
-  // The variant for Facebook App-to-User Notifications.
-  FACEBOOK_NOTIFICATION = 3;
-  // The variant for OneSignal Notifications.
-  ONESIGNAL_NOTIFICATION = 4;
-  // The variant for Webhook Notifications.
-  WEBHOOK_NOTIFICATION = 5;
-}
-
-// Message channel types.
-enum MessageChannelType {
-  DEFAULT = 0;
-  // Push notification.
-  PUSH = 1;
-  // Email.
-  EMAIL = 2;
-}
-
-message MessageIntegration {
-  // The name of the Message integration.
-  MessageIntegrationType type = 1;
-  // The status of the integration.
-  bool enabled = 2;
-  // The update time of the integration.
-  int64 update_time_sec = 3;
-  // The configuration of this integration.
-  oneof configuration {
-    // The new configuration for APNs.
-    AppleMessageConfiguration apns = 4;
-    // The new configuration for FCM.
-    FirebaseMessagingConfiguration fcm = 5;
-    // The new configuration for Facebook App-to-User Notifications.
-    FacebookNotificationConfiguration facebook_notification = 6;
-    // The new configuration for OneSignal Notifications.
-    OneSignalNotificationConfiguration onesignal_notification = 7;
-  }
-
-  message Export {
-    // The type of the message integration.
-    MessageIntegrationType type = 1;
-    // The platform specific configuration as JSON.
-    string configuration = 2;
-    // The last time it was updated.
-    int64 update_time = 3;
-  }
-}
-
-// The configuration necessary to integrate with APNs.
-message AppleMessageConfiguration{
-  string team_id = 1;
-  string topic = 2;
-  string p8_auth_key_id = 3;
-  string p8_auth_key_value = 4;
-  EnvType env = 5;
-
-  // The APNs environment type.
-  enum EnvType {
-    PRODUCTION = 0;
-    DEVELOPMENT = 1;
-  }
-}
-
-// The configuration necessary to integrate with Google's Firebase Cloud Messaging.
-message FirebaseMessagingConfiguration{
-  string credentials = 1;
-  string project_id = 2;
-}
-
-// The configuration necessary to integrate with Facebook App-To-User Notifications.
-message FacebookNotificationConfiguration{
-  string app_id = 1;
-  string app_secret = 2;
-}
-
-// The configuration necessary to integrate with OneSignal Notifications.
-message OneSignalNotificationConfiguration {
-  string app_id = 1;
-  string api_key = 2;
-}
-
 // The possible actions that can done over a resource.
 message Permissions {
   // Read a resource.
@@ -2040,6 +1647,16 @@ message Permissions {
   bool write = 2;
   // Delete a resource.
   bool delete = 3;
+}
+
+enum AuditLogAction {
+  UNKNOWN = 0;
+  CREATE = 1;
+  UPDATE = 2;
+  DELETE = 3;
+  INVOKE = 4;
+  IMPORT = 5;
+  EXPORT = 6;
 }
 
 // ATTENTION: Do not modify the order of this enum.
@@ -2066,7 +1683,7 @@ enum AclResources {
   LEADERBOARD_RECORD = 18;
   MATCH = 19;
   NOTIFICATION = 20;
-  SATORI_MESSAGE = 21;
+  reserved 21; // SATORI_MESSAGE - removed
   SETTINGS = 22;
   STORAGE_DATA = 23;
   STORAGE_DATA_IMPORT = 24;
@@ -2075,14 +1692,4 @@ enum AclResources {
   HIRO_ECONOMY = 27;
   HIRO_STATS = 28;
   HIRO_ENERGY = 29;
-}
-
-enum AuditLogAction {
-  UNKNOWN = 0;
-  CREATE = 1;
-  UPDATE = 2;
-  DELETE = 3;
-  INVOKE = 4;
-  IMPORT = 5;
-  EXPORT = 6;
 }

@@ -1,0 +1,39 @@
+# Nakama server configuration file
+# Copy this file to settings.yaml and update the values.
+# For more information, see https://heroiclabs.com/docs/nakama/reference/configuration/
+name: "nakama-server"
+data_dir: "./data/"
+
+socket:
+  address: "0.0.0.0"
+  port: 7350
+  server_key: "REPLACE_WITH_YOUR_SERVER_KEY"
+
+session:
+  encryption_key: "REPLACE_WITH_YOUR_ENCRYPTION_KEY"
+  refresh_encryption_key: "REPLACE_WITH_YOUR_REFRESH_ENCRYPTION_KEY"
+
+runtime:
+  http_key: "defaultkey"
+
+database:
+  address:
+    - "root@localhost:26257"
+  conn_max_lifetime_ms: 0
+  max_open_conns: 0
+  max_idle_conns: 100
+
+console:
+  address: "0.0.0.0"
+  port: 7351
+  username: "admin"
+  password: "REPLACE_WITH_YOUR_PASSWORD"
+  signing_key: "REPLACE_WITH_YOUR_SIGNING_KEY"
+
+logger:
+  stdout: true
+  level: "info"
+  file: "logs/log.log"
+  local_time: true
+  rotation: true
+  max_size: 100
